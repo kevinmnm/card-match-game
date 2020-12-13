@@ -78,7 +78,6 @@ export default {
    methods: {
       async play() {
          this.dialog = false;
-         // alert(this.$store.state.guest.guest_display_name);
          const resp = await fetch(window.server_url + "/guest", {
             headers: { "Content-Type": "application/json" },
             method: "POST",
@@ -89,13 +88,17 @@ export default {
          });
 
          const data = await resp.json();
+         console.dir(data.new_guest);
+         localStorage.___mid = data.new_guest._id;
 
          window.socket = io(window.server_url, {
-            query: {},
+            query: {
+               payload: JSON.stringify(data)
+            }
          });
 
          window.socket.on("connect", () => {
-            console.log(window.socket);
+            localStorage.___sid = socket.id;
             this.$store.commit('general/SIGNED_IN', true);
          });
       },

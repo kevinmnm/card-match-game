@@ -1,5 +1,5 @@
 <template>
-   <v-container fluid>
+   <v-container fluid style="height:100%">
       <v-row class="text-center">
          <v-col cols="12">
             <h1>CARD MATCH</h1>

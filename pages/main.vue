@@ -1,19 +1,19 @@
 <template>
-   <v-container fluid>
+   <v-container fluid class="pa-0 ma-0" style="height:100%">
       <MainComp v-if="!signed_in" />
-      <GameComp v-else />
+      <IdleRoom v-else />
    </v-container>
 </template>
 
 <script>
 import MainComp from "@/components/MainComp.vue";
-import GameComp from "@/components/GameComp.vue";
+import IdleRoom from "@/components/IdleRoom.vue";
 
 export default {
    name: "Main",
    components: {
       MainComp,
-      GameComp
+      IdleRoom
    },
    computed: {
       signed_in(){

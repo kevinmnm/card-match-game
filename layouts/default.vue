@@ -1,8 +1,8 @@
 <template>
    <v-app>
-      <v-sheet id="place-for-ads" height="90px" width="100%" outlined class="pa-0 ma-0"></v-sheet>
+      <!-- <v-sheet id="place-for-ads" height="90px" width="100%" outlined class="pa-0 ma-0"></v-sheet> -->
       <v-main>
-         <v-container fluid>
+         <v-container class="pa-0 ma-0" fluid style="height:100%">
             <nuxt />
          </v-container>
       </v-main>

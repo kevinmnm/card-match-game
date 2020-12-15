@@ -2,7 +2,7 @@
    <v-app>
       <!-- <v-sheet id="place-for-ads" height="90px" width="100%" outlined class="pa-0 ma-0"></v-sheet> -->
       <v-main>
-         <v-container class="pa-0 ma-0" fluid style="height:100%">
+         <v-container class="pa-0 ma-0" fluid style="height: 100%">
             <nuxt />
          </v-container>
       </v-main>
@@ -10,14 +10,78 @@
 </template>
 
 <script>
+import { io } from "socket.io-client";
+
 export default {
    name: "Layout",
-   mounted(){
-      if ( process.env.NODE_ENV === 'production' ) {
-         return 
-      } else {
-         window.server_url = "http://localhost:5555"
+   computed: {
+      connect_socket_watch(){
+         return this.$store.state.general.connect_socket;
       }
-   }  
+   },
+   methods: {
+      connect_socket() {
+         let handshake_data = this.$store.state.guest.guest_info || null // || User info later;
+
+         console.dir(handshake_data);
+
+         window.socket = io(window.server_url, {
+            query: {
+               payload: JSON.stringify(handshake_data)
+            }
+         });
+
+         window.socket.on("connect", () => {
+            localStorage.___sid = socket.id;
+            this.$store.commit("general/SIGNED_IN", true);
+         });
+
+         window.socket.on('create-room', payload => {
+            this.$store.commit("room/ROOM_INFO_CREATE", payload); 
+            this.$store.commit("room/SHOW_ROOM", true);
+         });
+
+         window.socket.on('update-room', payload => {
+            this.$store.commit("room/ROOM_INFO_CREATE", payload); 
+            this.$store.commit("room/SHOW_ROOM", true);
+         });
+      }
+   },
+   watch: {
+      connect_socket_watch(newVal) {
+         newVal && this.connect_socket();
+      }
+   },
+   mounted() {
+      if (process.env.NODE_ENV === "production") {
+         return;
+      } else {
+         window.server_url = "http://localhost:5555";
+         // window.server_url = this.$store.state.general.server_url;
+      }
+   },
 };
 </script>
+
+<style>
+/* width */
+::-webkit-scrollbar {
+   width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+   background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+   background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+   /* background: #555;  */
+   background: purple;
+}
+</style>

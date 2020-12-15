@@ -1,7 +1,7 @@
 <template>
    <v-container fluid class="pa-0 ma-0" style="height:100%">
-      <IdleRoomChild v-show="false" />
-      <GameComp />
+      <IdleRoomChild v-if="!get_show_room" />
+      <GameComp v-else />
    </v-container>
 </template>
 
@@ -14,6 +14,11 @@ export default {
    components: {
       IdleRoomChild,
       GameComp
+   },
+   computed: {
+      get_show_room() {
+         return this.$store.state.room.show_room;
+      }
    }
 };
 </script>

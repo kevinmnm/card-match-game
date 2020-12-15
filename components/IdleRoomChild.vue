@@ -9,15 +9,15 @@
             <v-btn disabled>create a game</v-btn>
          </v-col>
          <v-col cols="12">
-            <v-btn @click="quickGame()" :loading="quick_game_loading">quick game</v-btn>
+            <v-btn @click="quickGame()">quick game</v-btn>
          </v-col>
          <v-col cols="12">
             <v-btn disabled>join a game</v-btn>
          </v-col>
       </v-row>
-      <Loading>
+      <Loading v-show="loading_comp">
          <template v-slot:text>
-            asdlfkjsdf
+            {{ loading_text }}
          </template>
       </Loading>
    </v-container>
@@ -33,19 +33,16 @@ export default {
    },
    data(){
       return{
-         quick_game_loading: false
+         loading_comp: false,
+         loading_text: 'Searching...'
       }
    },
    methods: {
       quickGame(){
-         this.quick_game_loading = true;
-         let payload = {
-            ___mid: localStorage.___mid,
-            ___sid: localStorage.___sid
-         }
-         window.socket.emit('quick-game', payload);
+         this.loading_comp = true;
+         window.socket.emit('quick-game');
       }
-   }
+   },
 };
 </script>
 

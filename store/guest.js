@@ -1,15 +1,19 @@
 export const state = () => ({
-   guest_display_name: ''
+   guest_display_name: '', // Will be set when user choose to play as guest.
+   guest_info: null 
 })
 
 export const mutations = {
    GUEST_DISPLAY_NAME(state, payload) {
       state.guest_display_name = payload;
+   },
+   GUEST_INFO(state, payload) {
+      state.guest_info = payload;
    }
 }
 
 export const actions = {
-   async fetch_find_guest({ commit, state }, payload) {
+   async fetch_guest_info({ commit, state }, payload) {
       const resp = await fetch(window.server_url + '/guest', {
          headers: { 'Content-Type': 'application/json' },
          method: 'POST',
@@ -19,7 +23,9 @@ export const actions = {
          })
       });
 
-      const res = await resp.json();
+      const guest = await resp.json();
+
+      commit('GUEST_INFO', guest);
       
    },
    fetch_create_guest({ commit, state }, payload) {

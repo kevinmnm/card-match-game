@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { io } from "socket.io-client";
+// import { io } from "socket.io-client";
 
 export default {
    name: "Dialog",
@@ -89,18 +89,23 @@ export default {
 
          const data = await resp.json();
          console.dir(data.new_guest);
+         console.log(data.new_guest._id);
+
          localStorage.___mid = data.new_guest._id;
 
-         window.socket = io(window.server_url, {
-            query: {
-               payload: JSON.stringify(data)
-            }
-         });
+         // window.socket = io(window.server_url, {
+         //    query: {
+         //       payload: JSON.stringify(data)
+         //    }
+         // });
 
-         window.socket.on("connect", () => {
-            localStorage.___sid = socket.id;
-            this.$store.commit('general/SIGNED_IN', true);
-         });
+         // window.socket.on("connect", () => {
+         //    localStorage.___sid = socket.id;
+         //    this.$store.commit("general/SIGNED_IN", true);
+         // });
+
+         this.$store.commit('guest/GUEST_INFO', data.new_guest);
+         this.$store.commit('general/CONNECT_SOCKET', true);
       },
       async verify() {
          if (!this.displayName) {
@@ -119,8 +124,6 @@ export default {
          });
 
          const res = await resp.json();
-
-         console.log(res);
 
          if (res.find_guest) {
             // If displayName cannot be used (already taken).

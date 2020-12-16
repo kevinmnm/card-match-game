@@ -31,19 +31,28 @@ export default {
             }
          });
 
+         /** Toggles show between <MainComp> and <IdleComep> in main.vue **/
          window.socket.on("connect", () => {
             localStorage.___sid = socket.id;
             this.$store.commit("general/SIGNED_IN", true);
          });
 
+         /** Update room data in room.js store. (Similar to update-room event) **/
          window.socket.on('create-room', payload => {
             this.$store.commit("room/ROOM_INFO_CREATE", payload); 
             this.$store.commit("room/SHOW_ROOM", true);
          });
 
+         /** Update room data in room.js store. (Similar to create-room event) **/
          window.socket.on('update-room', payload => {
             this.$store.commit("room/ROOM_INFO_CREATE", payload); 
             this.$store.commit("room/SHOW_ROOM", true);
+         });
+
+         /** Update room data in room.js and hide GameComp in IdleRoom.vue **/
+         window.socket.on('left-room', () => {
+            this.$store.commit("room/ROOM_INFO_CREATE", null); 
+            this.$store.commit("room/SHOW_ROOM", false);
          });
       }
    },

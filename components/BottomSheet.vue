@@ -27,9 +27,6 @@ export default {
    },
    methods: {
       leave_room(){
-         this.$store.dispatch('room/leave_game');
-         console.log(this.$store.state.room.room_info);
-         
          if (this.$store.state.guest.guest_info) { // If the player is a guest,
             let roomNumber = this.$store.state.room.room_info.room_number;
             let guestInfo = this.$store.state.guest.guest_info;
@@ -38,6 +35,8 @@ export default {
 
          }
          
+         this.$store.commit('room/SHOW_ROOM', false);
+         this.$store.commit('room/ROOM_INFO_CREATE', null);
 
       }
    }

@@ -58,7 +58,7 @@
                >
                   <!-- Players info of info-board -->
                   <v-sheet :height="card_size" class="d-flex flex-row pa-0 ma-0" width="100%">
-                     <v-sheet v-for="(player, ind) in Object.values(all_players_adjusted)" :key="player + ind" width="50%" class="d-flex flex-row pa-0 ma-0 font-weight-bold">
+                     <v-sheet v-for="(player, ind) in Object.values(all_players)" :key="player + ind" width="50%" class="d-flex flex-row pa-0 ma-0 font-weight-bold">
                         <v-card class="pa-0 ma-0" :width="card_size" color="yellow">rank icon1</v-card>
                         <v-sheet class="d-flex flex-column pa-0 ma-0 flex-grow-1 text-center" color="green">
                            <v-card class="pa-0 ma-0" height="50%" color="grey">{{ player.displayName }}</v-card>
@@ -107,16 +107,8 @@ export default {
          leave_confirm: false
       }
    },
-   watch: {
-      all_players_adjusted(newVal) {
-         console.log(
-            JSON.stringify(newVal, null, 3)
-         );
-      }
-   },
    computed: {
-      all_players_adjusted() {
-         // return [this.$store.state.room.room_info.players];
+      all_players() {
          return this.$store.state.room.room_info.players;
       },
       room_title_width(){
@@ -205,7 +197,7 @@ export default {
    },
    methods: {
       test(){
-         console.log(this.all_players_adjusted);
+         console.log(this.all_players);
       },
       chat_max_height_updater_handler() {
          this.chat_max_height_updater++
@@ -221,7 +213,7 @@ export default {
       window.removeEventListener('resize', this.chat_max_height_updater_handler);
    },
    mounted() {
-      console.log(this.all_players_adjusted)
+      console.log(this.all_players)
    }
 };
 </script>

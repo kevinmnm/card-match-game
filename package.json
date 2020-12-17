@@ -11,7 +11,8 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "nuxt": "^2.14.6",
-    "socket.io-client": "^3.0.4"
+    "socket.io-client": "^3.0.4",
+    "vue-chat-scroll": "^1.4.0"
   },
   "devDependencies": {
     "@nuxtjs/vuetify": "^1.11.2"

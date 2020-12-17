@@ -31,6 +31,7 @@ export default {
             let roomNumber = this.$store.state.room.room_info.room_number;
             let guestInfo = this.$store.state.guest.guest_info;
             socket.emit('leave-game', [roomNumber, guestInfo]);
+            this.$store.commit('room/SET_ROOM_CHAT', null);
          } else { // Else if the player is a user
 
          }

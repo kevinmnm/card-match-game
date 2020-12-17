@@ -43,16 +43,31 @@ export default {
             this.$store.commit("room/SHOW_ROOM", true);
          });
 
-         /** Update room data in room.js store. (Similar to create-room event) **/
+         /** Update room data in room.js store. **/
          window.socket.on('update-room', payload => {
             this.$store.commit("room/ROOM_INFO_CREATE", payload); 
             this.$store.commit("room/SHOW_ROOM", true);
+            if (payload.capacity === payload.joined) { // If room is full, trigger auto start game;
+               window.socket.emit('full-room');
+            }
          });
 
          /** Update room data in room.js and hide GameComp in IdleRoom.vue **/
          window.socket.on('left-room', () => {
             this.$store.commit("room/ROOM_INFO_CREATE", null); 
             this.$store.commit("room/SHOW_ROOM", false);
+         });
+
+         window.socket.on('add-chat', payload => { // payload = {room_number: 'room#', my_display_name: 'sdf', chat_value: 'sss'};
+            this.$store.commit("room/OPPONENT_ROOM_CHAT", payload);
+         });
+
+         window.socket.on('system-chat', payload => {
+            this.$store.commit('room/SYSTEM_ROOM_CHAT', payload);
+         });
+
+         window.socket.on('add-global-chat', payload => {
+            this.$store.commit('chat/GLOBAL_CHAT', payload);
          });
       }
    },

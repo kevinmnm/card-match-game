@@ -88,24 +88,13 @@ export default {
          });
 
          const data = await resp.json();
-         console.dir(data.new_guest);
-         console.log(data.new_guest._id);
+         console.warn(data.new_guest.displayName);
 
          localStorage.___mid = data.new_guest._id;
 
-         // window.socket = io(window.server_url, {
-         //    query: {
-         //       payload: JSON.stringify(data)
-         //    }
-         // });
-
-         // window.socket.on("connect", () => {
-         //    localStorage.___sid = socket.id;
-         //    this.$store.commit("general/SIGNED_IN", true);
-         // });
-
          this.$store.commit('guest/GUEST_INFO', data.new_guest);
          this.$store.commit('general/CONNECT_SOCKET', true);
+         this.$store.commit('general/MY_DISPLAY_NAME', data.new_guest.displayName);
       },
       async verify() {
          if (!this.displayName) {

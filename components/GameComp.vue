@@ -26,7 +26,7 @@
                flat
                tile
             >
-               <v-card width="80%" class="pa-0 ma-0" flat tile color="red" @click="test">room title</v-card>
+               <v-card width="80%" class="pa-0 ma-0" flat tile color="red">room title</v-card>
                <v-btn width="20%" tile style="font-size:16px;" height="100%" @click="confirm_leave()">leave</v-btn>
 
             </v-card>
@@ -38,13 +38,22 @@
                tag="div"
                style="background: transparent;"
             >
+            
                <!-- Card Board -->
                <v-sheet
                   :width="board_card_size"
                   :height="board_card_size"
                   class="pa-0 ma-0 d-flex flex-wrap"
+                  style="position:relative;"
                >
                   <v-card class="pa-0 ma-0" flat v-for="all in 36" :key="all" :width="card_size" :height="card_size" color="primary"></v-card>
+                  <!-- <div style="background:green; position: absolute; left:0; top:0; width:100%; height:100%">sdf</div> -->
+                  <v-fade-transition>
+                     <div class="card-board-overlay d-flex justify-center align-center" v-if="!game_started">
+                        <v-card :width="card_size" :height="card_size">5</v-card>
+                     </div>
+                  </v-fade-transition>
+
                </v-sheet>
 
                <!-- Info Board -->
@@ -68,23 +77,25 @@
                   </v-sheet>
 
                   <!-- Chat of info-board -->
-                  <v-sheet style="overflow:auto;" color="grey" class="d-flex flex-column text--primary flex-grow-1 pa-1" :max-height="chat_max_height">
-                     <div class="opponent-chat">sdfsdf</div>
-                     <div class="my-chat">11111</div>
-                     <div class="my-chat">11111</div>
-                     <div class="my-chat">11111</div>
-                     <div class="opponent-chat">sdfsdf</div>
-                     <div class="opponent-chat">sdfsdf</div>
-                     <div class="opponent-chat">sdfsdf</div>
-                     <div class="opponent-chat">sdfsdf</div>
-                     <div class="opponent-chat">sdfsdf</div>
-                     <div class="opponent-chat">sdfsdf</div>
-                     <div class="opponent-chat">sdfsdf</div>
+                  <v-sheet style="overflow:auto;" color="#303030" class="d-flex flex-column flex-grow-1 pa-1" min-height="100px" :max-height="chat_max_height" v-chat-scroll="{always: false}">
+                     <!-- 
+                     <div class="my-chat"></div>
+                     <div class="opponent-chat"></div> 
+                     <div class="system-chat"></div>
+                     -->
+                     <div v-for="(chat, ind) in room_chat" :style="chat.chat_style" :key="chat+ind">
+                        {{
+                           (chat.chat_sender) ?
+                              chat.chat_sender + ' : ' + chat.chat_val :
+                              chat.chat_val
+                        }}
+                     </div>
+
                   </v-sheet>
-                  <v-form class="d-flex pa-0" autocomplete="off" aria-autocomplete="off">
-                     <v-text-field class="pa-0 ma-0" style="font-size:18px;" width="80%" dense filled hide-details single-line outlined></v-text-field>
-                     <v-btn width="20%" height="100%">enter</v-btn>
-                  </v-form>
+                  <v-sheet class="chat-form d-flex pa-0">
+                     <v-text-field @keydown="enable_enter($event)" v-model="chat_value" class="pa-0 ma-0" style="font-size:18px;" width="80%" autocomplete="off" dense filled hide-details single-line outlined></v-text-field>
+                     <v-btn @click="chatting()" width="20%" height="100%" :disabled="chat_button_disabled">enter</v-btn>
+                  </v-sheet>
 
                </v-sheet>
             </v-sheet>
@@ -104,10 +115,20 @@ export default {
    data() {
       return {
          chat_max_height_updater: 0,
-         leave_confirm: false
+         leave_confirm: false,
+         chat_value: '',
+         chat_button_disabled: false,
+         game_started: false
       }
    },
    computed: {
+      room_chat() {
+         // return this.$store.state.room.room_chat.join('');
+         return this.$store.state.room.room_chat;
+      },
+      room_number() {
+         return this.$store.state.room.room_info.room_number;
+      },
       all_players() {
          return this.$store.state.room.room_info.players;
       },
@@ -193,11 +214,36 @@ export default {
             case "xl":
                return "120px"; // > 1904px* -- 100px
          }
+      },
+      my_display_name(){
+         return this.$store.state.general.my_display_name; // || user display name;
+      },
+      countdown_time() {
+         return this.$store.state.room.room_info.countdown
       }
    },
    methods: {
-      test(){
-         console.log(this.all_players);
+      start_game(){
+         this.game_started = true;
+      },
+      chatting(){
+         if (!this.chat_value || this.chat_button_disabled) return;
+         let room_number = this.room_number;
+         let my_display_name = this.my_display_name;
+         let chat_value = this.chat_value;
+
+         window.socket.emit('send-chat', { room_number, my_display_name, chat_value });
+         this.$store.commit('room/MY_ROOM_CHAT', { chat_value });
+         this.chat_value = '';
+         this.chat_button_disabled = true;
+         setTimeout( () => {
+            this.chat_button_disabled = false;
+         }, 1000);
+      },
+      enable_enter(e){
+         if (e.key === 'Enter' || e.keyCode === 13) {
+            this.chatting();
+         }
       },
       chat_max_height_updater_handler() {
          this.chat_max_height_updater++
@@ -218,7 +264,16 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
+
+.card-board-overlay {
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: black;
+}
 
 .my-chat {
    text-align: right;

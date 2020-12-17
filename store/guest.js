@@ -28,8 +28,5 @@ export const actions = {
       commit('GUEST_INFO', guest);
       
    },
-   fetch_create_guest({ commit, state }, payload) {
-
-   }
 }
 

@@ -26,7 +26,27 @@
                flat
                tile
             >
-               <v-card width="80%" class="pa-0 ma-0" flat tile color="red">room title</v-card>
+
+               <v-card width="80%" class="pa-0 ma-0" flat tile color="red">
+                  <v-menu auto :close-on-content-click="false" transition="fab-transition" offset-y>
+                     <template v-slot:activator="{ on, attrs }">
+                        <v-icon v-bind="attrs" v-on="on" style="position:absolute; left:0; cursor:pointer; height:100%; background:green;" color="#404040">mdi-cog</v-icon>
+                     </template>
+                     <v-sheet class="d-flex flex-column justify-space-between pa-3">
+                        <v-card>
+                           <v-card-text>Sound</v-card-text>
+                           <v-slider></v-slider>
+                        </v-card>
+                        <v-card class="ma-auto">
+                           <v-card-text>Music</v-card-text>
+                           <audio :src="require('@/assets/music/orbis.mp3')" preload="auto" controls loop>
+                              <!-- <source :src="require('@/assets/music/orbis')" type="audio/mepg" /> -->
+                           </audio>
+                        </v-card>
+                     </v-sheet>
+                  </v-menu>
+                  <div>{{ room_number }}</div>
+               </v-card>
                <v-btn width="20%" tile style="font-size:16px;" height="100%" @click="confirm_leave()">leave</v-btn>
 
             </v-card>
@@ -47,12 +67,11 @@
                   style="position:relative;"
                >
                   <v-card class="pa-0 ma-0" flat v-for="all in 36" :key="all" :width="card_size" :height="card_size" color="primary"></v-card>
-                  <!-- <div style="background:green; position: absolute; left:0; top:0; width:100%; height:100%">sdf</div> -->
-                  <v-fade-transition>
+                  <!-- <v-fade-transition>
                      <div class="card-board-overlay d-flex justify-center align-center" v-if="!game_started">
                         <v-card :width="card_size" :height="card_size">5</v-card>
                      </div>
-                  </v-fade-transition>
+                  </v-fade-transition> -->
 
                </v-sheet>
 
@@ -71,7 +90,22 @@
                         <v-card class="pa-0 ma-0" :width="card_size" color="yellow">rank icon1</v-card>
                         <v-sheet class="d-flex flex-column pa-0 ma-0 flex-grow-1 text-center" color="green">
                            <v-card class="pa-0 ma-0" height="50%" color="grey">{{ player.displayName }}</v-card>
-                           <v-card class="pa-0 ma-0" height="50%" color="red">{{ player.score }}</v-card>
+                           <v-card class="pa-0 ma-0 d-flex flex-row" height="50%" color="red" style="font-size:20px;">
+                              <div class="flex-grow-1">{{ player.score }}</div>
+                              <div style="width: 30px; background: purple;">{{ countdown_time }}</div>
+                              <!-- <div style="width: calc(100% - 30px); box-sizing:border-box; border-radius:0; background: white;">score</div>
+                              <div 
+                              style="
+                                 position:absolute; 
+                                 box-sizing: border-box;
+                                 right:0; 
+                                 background:purple; 
+                                 border-radius:0; 
+                                 width:30px; 
+                                 height:30px;">
+                                    {{ player.score }}
+                              </div> -->
+                           </v-card>
                         </v-sheet>
                      </v-sheet>
                   </v-sheet>
@@ -118,7 +152,8 @@ export default {
          leave_confirm: false,
          chat_value: '',
          chat_button_disabled: false,
-         game_started: false
+         game_started: false,
+         // orbis_mp3: new Audio(require("@/assets/music/orbis.mp3"))
       }
    },
    computed: {

@@ -36,8 +36,10 @@ export const mutations = {
          state.room_chat.push(
             {
                chat_val: payload.chat_value + ' has joined the room.',
-               chat_val: (() => (payload.join) ? payload.chat_value + ' has joined the room.' : payload.chat_value )(),
-               chat_style: "text-align:center; color:#FFFF00; font-size: 16px;"
+               chat_val: ( () => (payload.join) ? 
+                  payload.chat_value + ' has joined the room.' : 
+                  payload.chat_value )(),
+               chat_style: "text-align:center; color:#FFFF00; font-size: 16px; background: #000000;"
             }
          )
       }

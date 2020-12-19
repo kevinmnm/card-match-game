@@ -6,10 +6,10 @@
             <v-btn disabled>ranked game</v-btn>
          </v-col>
          <v-col cols="12">
-            <v-btn disabled>create a game</v-btn>
+            <v-btn disabled>create a game</v-btn> 
          </v-col>
          <v-col cols="12">
-            <v-btn @click="quickGame()">quick game</v-btn>
+            <v-btn @click="quickGame()" :disabled="loading_comp">quick game</v-btn>
          </v-col>
          <v-col cols="12">
             <v-btn disabled>join a game</v-btn>

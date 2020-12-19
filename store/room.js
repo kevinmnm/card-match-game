@@ -1,7 +1,8 @@
 export const state = () => ({
    show_room: false,
    room_info: null,
-   room_chat: [] // <div class='my-chat'>, <div class='opponent-chat'>
+   room_chat: [],
+   game_starting: false
 })
 
 export const mutations = {
@@ -10,8 +11,19 @@ export const mutations = {
    },
    ROOM_INFO_CREATE(state, payload) { // Also used for "update-room" event;
       state.room_info = payload;
+
+      if (payload) { // If room info payload was sent,
+         if (state.room_info.capacity === state.room_info.joined) { // pre-start (countdown) the game if full;
+            state.game_starting = true;
+         } else {
+            state.game_starting = false;
+         }
+      }
    },
    SET_ROOM_CHAT(state, payload) {
+      if (!payload) {
+         return state.room_chat = [];
+      }
       state.room_chat = payload;
    },
    OPPONENT_ROOM_CHAT(state, payload) { // payload = {room_number: 'room#', my_display_name: 'sdf', chat_value: 'sss'};
@@ -35,13 +47,26 @@ export const mutations = {
       if (payload.chat_type === 'yellow') {
          state.room_chat.push(
             {
-               chat_val: payload.chat_value + ' has joined the room.',
-               chat_val: ( () => (payload.join) ? 
-                  payload.chat_value + ' has joined the room.' : 
-                  payload.chat_value )(),
+               // chat_val: payload.chat_value + ' has joined the room.',
+               // chat_val: ( () => (payload.join) ? 
+               //    payload.chat_value + ' has joined the room.' : 
+               //    payload.chat_value )(),
+               chat_val: ( () => {
+                  if (payload.join) {
+                     return payload.chat_value + ' has joined the room';
+                  } else {
+                     return payload.chat_value + ' has left the room';
+                  }
+               } )(),
                chat_style: "text-align:center; color:#FFFF00; font-size: 16px; background: #000000;"
             }
          )
+      }
+   },
+   GAME_STARTED(state, payload) { // payload = true
+      state.room_info = {
+         ...state.room_info, 
+         start: payload
       }
    }
 }

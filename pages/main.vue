@@ -1,5 +1,5 @@
 <template>
-   <v-container fluid class="pa-0 ma-0" style="height:100%">
+   <v-container fluid class="pa-0 ma-0" style="height:100%;">
       <MainComp v-if="!signed_in" />
       <IdleRoom v-else />
    </v-container>

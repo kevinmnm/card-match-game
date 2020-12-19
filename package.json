@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "lodash.shuffle": "^4.2.0",
     "nuxt": "^2.14.6",
     "socket.io-client": "^3.0.4",
     "vue-chat-scroll": "^1.4.0"

@@ -2,7 +2,7 @@
    <v-container fluid>
       <v-dialog v-model="dialog" persistent max-width="290">
          <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" v-bind="attrs" v-on="on">
+            <v-btn color="primary" v-bind="attrs" v-on="on" :disabled="clicked_play">
                <slot name="button"></slot>
             </v-btn>
          </template>
@@ -69,6 +69,7 @@ export default {
          input_error: false,
          input_message: "",
          play_disabled: false,
+         clicked_play: false,
          verify_disabled: true,
          input_icon: "mdi-check-bold",
          input_color: "green",
@@ -78,6 +79,7 @@ export default {
    methods: {
       async play() {
          this.dialog = false;
+         this.clicked_play = true;
          const resp = await fetch(window.server_url + "/guest", {
             headers: { "Content-Type": "application/json" },
             method: "POST",

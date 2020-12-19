@@ -53,7 +53,7 @@ export default {
          });
 
          /** Update room data in room.js and hide GameComp in IdleRoom.vue **/
-         window.socket.on('left-room', () => {
+         window.socket.on('left-room', payload => {
             this.$store.commit("room/ROOM_INFO_CREATE", null); 
             this.$store.commit("room/SHOW_ROOM", false);
          });
@@ -68,6 +68,10 @@ export default {
 
          window.socket.on('add-global-chat', payload => {
             this.$store.commit('chat/GLOBAL_CHAT', payload);
+         });
+
+         window.socket.on('game-started', payload => { // payload = true;
+            this.$store.commit('room/GAME_STARTED', payload);
          });
       }
    },
@@ -90,12 +94,13 @@ export default {
 <style>
 /* width */
 ::-webkit-scrollbar {
-   width: 8px;
+   width: 5px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
    background: #f1f1f1;
+
 }
 
 /* Handle */

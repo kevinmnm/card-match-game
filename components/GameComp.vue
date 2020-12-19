@@ -1,6 +1,6 @@
 <template>
    <v-sheet
-      style="position: absolute"
+      style="position: absolute; top:0; left:0;"
       class="ma-0 pa-0"
       tag="div"
       width="100%"
@@ -9,6 +9,7 @@
       <v-img
          height="100%"
          width="100%"
+         style="position:absolute; left:0; top:0;"
          :src="require('@/assets/img/main/sky.png')"
       >
          <v-sheet
@@ -39,9 +40,7 @@
                         </v-card>
                         <v-card class="ma-auto">
                            <v-card-text>Music</v-card-text>
-                           <audio :src="require('@/assets/music/orbis.mp3')" preload="auto" controls loop>
-                              <!-- <source :src="require('@/assets/music/orbis')" type="audio/mepg" /> -->
-                           </audio>
+                           <audio :src="require('@/assets/music/orbis.mp3')" preload="auto" controls loop></audio>
                         </v-card>
                      </v-sheet>
                   </v-menu>
@@ -66,12 +65,12 @@
                   class="pa-0 ma-0 d-flex flex-wrap"
                   style="position:relative;"
                >
-                  <v-card class="pa-0 ma-0" flat v-for="all in 36" :key="all" :width="card_size" :height="card_size" color="primary"></v-card>
-                  <!-- <v-fade-transition>
-                     <div class="card-board-overlay d-flex justify-center align-center" v-if="!game_started">
-                        <v-card :width="card_size" :height="card_size">5</v-card>
-                     </div>
-                  </v-fade-transition> -->
+                  
+                  <CardSet v-if="room_info.start" />
+
+                  <v-fade-transition v-if="!room_info.start">
+                     <CardOverlay />
+                  </v-fade-transition>
 
                </v-sheet>
 
@@ -93,18 +92,6 @@
                            <v-card class="pa-0 ma-0 d-flex flex-row" height="50%" color="red" style="font-size:20px;">
                               <div class="flex-grow-1">{{ player.score }}</div>
                               <div style="width: 30px; background: purple;">{{ countdown_time }}</div>
-                              <!-- <div style="width: calc(100% - 30px); box-sizing:border-box; border-radius:0; background: white;">score</div>
-                              <div 
-                              style="
-                                 position:absolute; 
-                                 box-sizing: border-box;
-                                 right:0; 
-                                 background:purple; 
-                                 border-radius:0; 
-                                 width:30px; 
-                                 height:30px;">
-                                    {{ player.score }}
-                              </div> -->
                            </v-card>
                         </v-sheet>
                      </v-sheet>
@@ -112,11 +99,6 @@
 
                   <!-- Chat of info-board -->
                   <v-sheet style="overflow:auto;" color="#303030" class="d-flex flex-column flex-grow-1 pa-1" min-height="100px" :max-height="chat_max_height" v-chat-scroll="{always: false}">
-                     <!-- 
-                     <div class="my-chat"></div>
-                     <div class="opponent-chat"></div> 
-                     <div class="system-chat"></div>
-                     -->
                      <div v-for="(chat, ind) in room_chat" :style="chat.chat_style" :key="chat+ind">
                         {{
                            (chat.chat_sender) ?
@@ -142,17 +124,19 @@
 
 <script>
 import BottomSheet from "@/components/BottomSheet.vue";
+import CardOverlay from "@/components/CardOverlay.vue";
+import CardSet from "@/components/CardSet.vue";
 
 export default {
    name: "GameComp",
-   components: { BottomSheet },
+   components: { BottomSheet, CardOverlay, CardSet },
    data() {
       return {
          chat_max_height_updater: 0,
          leave_confirm: false,
          chat_value: '',
          chat_button_disabled: false,
-         game_started: false,
+         card_board_overlay: true
          // orbis_mp3: new Audio(require("@/assets/music/orbis.mp3"))
       }
    },
@@ -160,6 +144,9 @@ export default {
       room_chat() {
          // return this.$store.state.room.room_chat.join('');
          return this.$store.state.room.room_chat;
+      },
+      room_info() {
+         return this.$store.state.room.room_info;
       },
       room_number() {
          return this.$store.state.room.room_info.room_number;
@@ -258,9 +245,6 @@ export default {
       }
    },
    methods: {
-      start_game(){
-         this.game_started = true;
-      },
       chatting(){
          if (!this.chat_value || this.chat_button_disabled) return;
          let room_number = this.room_number;
@@ -293,22 +277,10 @@ export default {
    destroyed() {
       window.removeEventListener('resize', this.chat_max_height_updater_handler);
    },
-   mounted() {
-      console.log(this.all_players)
-   }
 };
 </script>
 
 <style scoped>
-
-.card-board-overlay {
-   position: absolute;
-   top: 0;
-   left: 0;
-   width: 100%;
-   height: 100%;
-   background: black;
-}
 
 .my-chat {
    text-align: right;

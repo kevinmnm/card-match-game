@@ -28,6 +28,12 @@ export default {
       };
    },
    computed: {
+      my_display_name() {
+         return this.$store.state.general.my_display_name;
+      },
+      player_1_display_name() {
+         return this.$store.state.room.room_info.players.player_1.displayName;
+      },
       game_starting() {
          return this.$store.state.room.game_starting;
       },
@@ -42,10 +48,14 @@ export default {
                this.interval_id = setInterval(() => {
                   if (this.game_start_countdown === 0) {
                      clearInterval(this.interval_id);
-                     return window.socket.emit('start-game', { 
-                        room_id: this.room_infor._id, 
-                        room_number: this.room_infor.room_number
-                     });
+                     if (this.player_1_display_name === this.my_display_name) {
+                        return window.socket.emit('start-game', { 
+                           room_id: this.room_infor._id, 
+                           room_number: this.room_infor.room_number
+                        });
+                     } else {
+                        return
+                     }
                   }
                   this.game_start_countdown--;
                }, 1000);

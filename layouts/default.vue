@@ -46,7 +46,7 @@ export default {
          /** Update room data in room.js store. **/
          window.socket.on('update-room', payload => {
             this.$store.commit("room/ROOM_INFO_CREATE", payload); 
-            this.$store.commit("room/SHOW_ROOM", true);
+            this.$store.commit("room/SHOW_ROOM", true); // This is necessary! (laster joined player's game board will show);
             if (payload.capacity === payload.joined) { // If room is full, trigger auto start game;
                window.socket.emit('full-room');
             }
@@ -54,6 +54,7 @@ export default {
 
          /** Update room data in room.js and hide GameComp in IdleRoom.vue **/
          window.socket.on('left-room', payload => {
+            this.$store.commit("room/GAME_STARTING", false);
             this.$store.commit("room/ROOM_INFO_CREATE", null); 
             this.$store.commit("room/SHOW_ROOM", false);
          });
@@ -70,8 +71,13 @@ export default {
             this.$store.commit('chat/GLOBAL_CHAT', payload);
          });
 
-         window.socket.on('game-started', payload => { // payload = true;
+         window.socket.on('game-started', payload => { // payload = { room };
             this.$store.commit('room/GAME_STARTED', payload);
+         });
+
+         window.socket.on('flipped-card', payload => { // payload = { card, cardIndex };
+            this.$store.commit('room/ROOM_CARD', payload);
+            console.log(payload);
          });
       }
    },

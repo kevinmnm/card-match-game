@@ -63,10 +63,21 @@ export const mutations = {
          )
       }
    },
-   GAME_STARTED(state, payload) { // payload = true
-      state.room_info = {
-         ...state.room_info, 
-         start: payload
-      }
-   }
+   GAME_STARTING(state, payload) {
+      state.game_starting = payload;
+   },
+   GAME_STARTED(state, payload) { // payload = { room };
+      state.room_info = payload.room;
+   },
+   ROOM_CARD(state, payload) { // payload = { card, cardIndex };
+      state.room_info.cardSet[payload.cardIndex] = payload.card;
+      this.state.card.card_key++;
+      // let original = state.room_info.cardSet[payload.cardIndex];
+      // let changed = payload.card;
+
+      // state.room_info.cardSet[payload.cardIndex] = {
+      //    ...original,
+      //    ...changed
+      // }
+   },
 }

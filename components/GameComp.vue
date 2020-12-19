@@ -29,7 +29,8 @@
             >
 
                <v-card width="80%" class="pa-0 ma-0" flat tile color="red">
-                  <v-menu auto :close-on-content-click="false" transition="fab-transition" offset-y>
+
+                  <v-menu v-if="!room_info.start" :close-on-content-click="false" min-width="30px" transition="fab-transition" auto offset-y>
                      <template v-slot:activator="{ on, attrs }">
                         <v-icon v-bind="attrs" v-on="on" style="position:absolute; left:0; cursor:pointer; height:100%; background:green;" color="#404040">mdi-cog</v-icon>
                      </template>
@@ -44,7 +45,11 @@
                         </v-card>
                      </v-sheet>
                   </v-menu>
+
+                  <v-card v-else class="font-weight-bold" color="yellow" style="position:absolute; left:0;" width="30px" height="100%">{{ countdown_time }}</v-card>
+
                   <div>{{ room_number }}</div>
+
                </v-card>
                <v-btn width="20%" tile style="font-size:16px;" height="100%" @click="confirm_leave()">leave</v-btn>
 
@@ -66,7 +71,7 @@
                   style="position:relative;"
                >
                   
-                  <CardSet v-if="room_info.start" />
+                  <CardSet :my-turn="my_turn" v-if="room_info.start" />
 
                   <v-fade-transition v-if="!room_info.start">
                      <CardOverlay />
@@ -77,24 +82,29 @@
                <!-- Info Board -->
                <v-sheet
                   :style="
-                     ($vuetify.breakpoint.name === 'xs' || $vuetify.breakpoint.name === 'sm') ? {width: board_card_size, height: 'calc(100% - 360px)'} 
-                     : ($vuetify.breakpoint.name === 'md') ? {height: board_card_size, width: 'calc(100% - 600px)'} 
-                     : {height: board_card_size, width: 'calc(100% - 720px)'}
+                     [
+                        ($vuetify.breakpoint.name === 'xs' || $vuetify.breakpoint.name === 'sm') ? {width: board_card_size, height: 'calc(100% - 360px)'} 
+                        : ($vuetify.breakpoint.name === 'md') ? {height: board_card_size, width: 'calc(100% - 600px)'} 
+                        : {height: board_card_size, width: 'calc(100% - 720px)'},
+                        { 'border: 2px solid red;': my_turn }
+                     ]
                   "
                   class="d-flex flex-column flex-wrap"
                >
                   <!-- Players info of info-board -->
                   <v-sheet :height="card_size" class="d-flex flex-row pa-0 ma-0" width="100%">
+
                      <v-sheet v-for="(player, ind) in Object.values(all_players)" :key="player + ind" width="50%" class="d-flex flex-row pa-0 ma-0 font-weight-bold">
                         <v-card class="pa-0 ma-0" :width="card_size" color="yellow">rank icon1</v-card>
                         <v-sheet class="d-flex flex-column pa-0 ma-0 flex-grow-1 text-center" color="green">
                            <v-card class="pa-0 ma-0" height="50%" color="grey">{{ player.displayName }}</v-card>
                            <v-card class="pa-0 ma-0 d-flex flex-row" height="50%" color="red" style="font-size:20px;">
                               <div class="flex-grow-1">{{ player.score }}</div>
-                              <div style="width: 30px; background: purple;">{{ countdown_time }}</div>
+                              <!-- <div style="width: 30px; background: purple;">{{ countdown_time }}</div> -->
                            </v-card>
                         </v-sheet>
                      </v-sheet>
+
                   </v-sheet>
 
                   <!-- Chat of info-board -->
@@ -140,7 +150,26 @@ export default {
          // orbis_mp3: new Audio(require("@/assets/music/orbis.mp3"))
       }
    },
+   mounted(){
+      console.warn(this.room_info.players);
+      console.warn(this.room_info.turn);
+   },
    computed: {
+      my_turn() {
+         if (this.room_info.start) {
+            console.warn('res: ' + JSON.stringify(this.room_info.players[this.room_info.turn].displayName));
+            console.warn(this.my_display_name === this.room_info.players[this.room_info.turn].displayName);
+            if (this.room_info.players[this.room_info.turn].displayName === this.my_display_name) {
+               return true;
+            }
+            return false;
+         } else {
+            return false;
+         }
+      },
+      my_display_name(){
+         return this.$store.state.general.my_display_name; 
+      },
       room_chat() {
          // return this.$store.state.room.room_chat.join('');
          return this.$store.state.room.room_chat;
@@ -236,9 +265,6 @@ export default {
             case "xl":
                return "120px"; // > 1904px* -- 100px
          }
-      },
-      my_display_name(){
-         return this.$store.state.general.my_display_name; // || user display name;
       },
       countdown_time() {
          return this.$store.state.room.room_info.countdown

@@ -84,17 +84,26 @@ export default {
       card_flip(card, ind) {
          this.flipped_tracker.push(card);
 
-         if (this.flipped_tracker.length === 2) {
-
-         } else {
-            // card.show = true;
-            let changed_card = {
+         let changed_card = {
                ...card,
                show: true
             }
-            this.$store.commit("room/ROOM_CARD", { card: changed_card, cardIndex: ind } );
 
-            window.socket.emit('card-flip', { roomNumber: this.room_number, card: changed_card, cardIndex: ind });
+         this.$store.commit("room/ROOM_CARD", { card: changed_card, cardIndex: ind } );
+
+         window.socket.emit('card-flip', { roomNumber: this.room_number, card: changed_card, cardIndex: ind });
+
+         if (this.flipped_tracker.length === 2) {
+            // this.$store.commit('card/MY_TURN', false); // neds to change turn in db as well;
+
+
+            console.log(this.flipped_tracker);
+
+            // If card matches, add score and continue;
+            // If not, flip cards back and change turn;
+
+            // window.socket.emit('change-turn', { roomNumber: this.room_number, card: this.flipped_tracker });
+            this.flipped_tracker = [];
          }
       }
    }

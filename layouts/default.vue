@@ -17,7 +17,7 @@ export default {
    computed: {
       connect_socket_watch(){
          return this.$store.state.general.connect_socket;
-      }
+      },
    },
    methods: {
       connect_socket() {
@@ -77,9 +77,27 @@ export default {
 
          window.socket.on('flipped-card', payload => { // payload = { card, cardIndex };
             this.$store.commit('room/ROOM_CARD', payload);
-            console.log(payload);
          });
-      }
+
+         window.socket.on('turn-changed', payload => { // payload = { roomInfo };
+            this.$store.commit('room/ROOM_INFO_UPDATE', payload.roomInfo);
+            this.$store.commit('card/MY_TURN_TEMP_DISABLE', false);
+         });
+
+         window.socket.on('restart-countdown', payload => { // true or false;
+            this.$store.dispatch('card/countdown_function', payload);
+         });
+
+         window.socket.on('countdown-paused', () => {
+            this.$store.commit('card/PAUSE_COUNTDOWN');
+         });
+
+         window.socket.on('room-info-update', payload => { // payload = { roomInfo: ..., currentPlayer: 'player_#' };
+            this.$store.commit('room/ROOM_INFO_UPDATE', payload.roomInfo);
+         });
+
+         
+      },
    },
    watch: {
       connect_socket_watch(newVal) {

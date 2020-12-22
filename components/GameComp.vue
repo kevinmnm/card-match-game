@@ -71,7 +71,7 @@
                   style="position:relative;"
                >
                   
-                  <CardSet :my-turn="my_turn" v-if="room_info.start" />
+                  <CardSet :my-turn="my_turn" />
 
                   <v-fade-transition v-if="!room_info.start">
                      <CardOverlay />
@@ -96,11 +96,19 @@
 
                      <v-sheet v-for="(player, ind) in Object.values(all_players)" :key="player + ind" width="50%" class="d-flex flex-row pa-0 ma-0 font-weight-bold">
                         <v-card class="pa-0 ma-0" :width="card_size" color="yellow">rank icon1</v-card>
-                        <v-sheet class="d-flex flex-column pa-0 ma-0 flex-grow-1 text-center" color="green">
-                           <v-card class="pa-0 ma-0" height="50%" color="grey">{{ player.displayName }}</v-card>
+                        <v-sheet class="d-flex flex-column pa-0 ma-0 flex-grow-1 text-center">
+                           <v-card class="pa-0 ma-0 align-center d-flex" width="100%" height="50%" color="grey" >
+                              <div class="ma-auto">{{ player.displayName }}</div>
+                           </v-card>
                            <v-card class="pa-0 ma-0 d-flex flex-row" height="50%" color="red" style="font-size:20px;">
-                              <div class="flex-grow-1">{{ player.score }}</div>
-                              <!-- <div style="width: 30px; background: purple;">{{ countdown_time }}</div> -->
+                              <div class="flex-grow-1 align-self-center">{{ player.score }}</div>
+                              <div class="align-center d-flex text-left" style="position:absolute; right:0; height:100%; width: 30%;">
+
+                                 <div class="font-weight-medium animate__animated animate__fadeOutUp" style="position: absolute; left:0; background:green;" :key="player.score">
+                                    {{ +10 }}
+                                 </div>
+
+                              </div>
                            </v-card>
                         </v-sheet>
                      </v-sheet>
@@ -146,24 +154,17 @@ export default {
          leave_confirm: false,
          chat_value: '',
          chat_button_disabled: false,
-         card_board_overlay: true
          // orbis_mp3: new Audio(require("@/assets/music/orbis.mp3"))
       }
    },
-   mounted(){
-      console.warn(this.room_info.players);
-      console.warn(this.room_info.turn);
-   },
    computed: {
       my_turn() {
-         if (this.room_info.start) {
-            console.warn('res: ' + JSON.stringify(this.room_info.players[this.room_info.turn].displayName));
-            console.warn(this.my_display_name === this.room_info.players[this.room_info.turn].displayName);
-            if (this.room_info.players[this.room_info.turn].displayName === this.my_display_name) {
+         if (this.room_info.start) { // If game started and server assigned turn to player_1;
+            if (this.room_info.players[this.room_info.turn].displayName === this.my_display_name) { // If turn player's display name matches mine;
                return true;
             }
             return false;
-         } else {
+         } else { // If game ended or not started;
             return false;
          }
       },
@@ -180,7 +181,7 @@ export default {
       room_number() {
          return this.$store.state.room.room_info.room_number;
       },
-      all_players() {
+      all_players() { // Object;
          return this.$store.state.room.room_info.players;
       },
       room_title_width(){
@@ -267,7 +268,7 @@ export default {
          }
       },
       countdown_time() {
-         return this.$store.state.room.room_info.countdown
+         return this.$store.state.card.countdown;
       }
    },
    methods: {

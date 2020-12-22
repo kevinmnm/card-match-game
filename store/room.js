@@ -9,6 +9,9 @@ export const mutations = {
    SHOW_ROOM(state, payload) {
       state.show_room = payload;
    },
+   ROOM_INFO_UPDATE(state, payload) { // payload = { roomInfo: ... };
+      state.room_info = payload;
+   },
    ROOM_INFO_CREATE(state, payload) { // Also used for "update-room" event;
       state.room_info = payload;
 
@@ -72,12 +75,14 @@ export const mutations = {
    ROOM_CARD(state, payload) { // payload = { card, cardIndex };
       state.room_info.cardSet[payload.cardIndex] = payload.card;
       this.state.card.card_key++;
-      // let original = state.room_info.cardSet[payload.cardIndex];
-      // let changed = payload.card;
-
-      // state.room_info.cardSet[payload.cardIndex] = {
-      //    ...original,
-      //    ...changed
-      // }
    },
+   INITIAL_CARD_SHOW_TRIGGER(state, payload) { // payload = {show_card: true || false, card_index: ...}
+      state.room_info.cardSet[payload.card_index].show = payload.show_card;
+
+      if (payload.card_index === state.room_info.cardSet.length - 1 && !payload.show_card) {
+         // setTimeout( () => {
+            this.state.card.my_turn_temp_disable = false;
+         // }, 1000);
+      }
+   }
 }

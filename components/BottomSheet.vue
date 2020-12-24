@@ -23,22 +23,30 @@ export default {
       },
       sheet_height() {
          return window.innerHeight / 3 + 'px';
+      },
+      room_info() {
+         return this.$store.state.room.room_info;
       }
    },
    methods: {
       leave_room(){
-         if (this.$store.state.guest.guest_info) { // If the player is a guest,
-            let roomNumber = this.$store.state.room.room_info.room_number;
-            let guestInfo = this.$store.state.guest.guest_info;
-            socket.emit('leave-game', [roomNumber, guestInfo]);
-            this.$store.commit('room/SET_ROOM_CHAT', null);
-         } else { // Else if the player is a user
-
-         }
+         let roomNumber = this.$store.state.room.room_info.room_number;
          
-         this.$store.commit('room/SHOW_ROOM', false);
-         this.$store.commit('room/ROOM_INFO_CREATE', null);
+         this.room_info.players
+         
+         let opponentInfo = [];
+         let myInfo;
 
+         Object.values(this.room_info.players).forEach( value => { 
+            if (value.displayName === this.$store.state.general.my_display_name) {
+               myInfo = value;
+            } else {
+               opponentInfo.push(value);
+            }
+         });
+
+         socket.emit('leave-game', [roomNumber, myInfo, opponentInfo]);
+         this.$store.commit('card/INITIAL_STATE_CARD');
       }
    }
 };

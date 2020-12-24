@@ -69,6 +69,11 @@ export default {
    },
    mounted() {
       console.warn(this.room_infor);
+   },
+   beforeDestroy() {
+      if (this.interval_id) {
+         clearInterval(this.interval_id);
+      }
    }
 };
 </script>

@@ -10,7 +10,10 @@ export const mutations = {
       state.show_room = payload;
    },
    ROOM_INFO_UPDATE(state, payload) { // payload = { roomInfo: ... };
-      state.room_info = payload;
+      state.room_info = {
+         ...state.room_info,
+         ...payload
+      }
    },
    ROOM_INFO_CREATE(state, payload) { // Also used for "update-room" event;
       state.room_info = payload;

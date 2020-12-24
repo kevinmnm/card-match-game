@@ -1,12 +1,26 @@
+const initialState = {
+   card_key: 0,
+   my_turn_temp_disable: true, // True will disable player's turn temporarily;
+   countdown: null, // Will be set on CardSet.vue load;
+   countdown_interval_id: null,
+   flipped_tracker: [],
+}
+
 export const state = () => ({
    card_key: 0,
    my_turn_temp_disable: true, // True will disable player's turn temporarily;
    countdown: null, // Will be set on CardSet.vue load;
    countdown_interval_id: null,
-   flipped_tracker: []
+   flipped_tracker: [],
 });
 
 export const mutations = {
+   INITIAL_STATE_CARD(state) {
+      if (state.countdown_interval_id !== null) {
+         clearInterval(state.countdown_interval_id);
+      }
+      state = { ...initialState };
+   },
    CARD_KEY(state) {
       state.card_key++
    },

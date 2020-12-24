@@ -48,7 +48,7 @@ export default {
             this.$store.commit("room/ROOM_INFO_CREATE", payload); 
             this.$store.commit("room/SHOW_ROOM", true); // This is necessary! (laster joined player's game board will show);
             if (payload.capacity === payload.joined) { // If room is full, trigger auto start game;
-               window.socket.emit('full-room');
+               // window.socket.emit('full-room');
             }
          });
 
@@ -57,6 +57,7 @@ export default {
             this.$store.commit("room/GAME_STARTING", false);
             this.$store.commit("room/ROOM_INFO_CREATE", null); 
             this.$store.commit("room/SHOW_ROOM", false);
+            this.$store.commit("room/SET_ROOM_CHAT", false);
          });
 
          window.socket.on('add-chat', payload => { // payload = {room_number: 'room#', my_display_name: 'sdf', chat_value: 'sss'};
@@ -73,6 +74,7 @@ export default {
 
          window.socket.on('game-started', payload => { // payload = { room };
             this.$store.commit('room/GAME_STARTED', payload);
+            this.$store.commit('general/CLOSE_END_GAME_SCREEN');
          });
 
          window.socket.on('flipped-card', payload => { // payload = { card, cardIndex };
@@ -88,7 +90,7 @@ export default {
             this.$store.dispatch('card/countdown_function', payload);
          });
 
-         window.socket.on('countdown-paused', () => {
+         window.socket.on('countdown-paused', () => { // Pauses countdown and resets its value to default;
             this.$store.commit('card/PAUSE_COUNTDOWN');
          });
 
@@ -96,6 +98,9 @@ export default {
             this.$store.commit('room/ROOM_INFO_UPDATE', payload.roomInfo);
          });
 
+         window.socket.on('game-ended', payload => { // payload = { winner: {...}, losers: [{...}, {...}], draws: [{...}, {...}] };
+            this.$store.commit('general/END_GAME_SCREEN', payload);
+         });
          
       },
    },
@@ -111,6 +116,7 @@ export default {
          window.server_url = "http://localhost:5555";
          // window.server_url = this.$store.state.general.server_url;
       }
+
    },
 };
 </script>

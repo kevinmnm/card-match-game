@@ -295,7 +295,21 @@ export default {
          this.chat_max_height_updater++
       },
       confirm_leave(){
-         this.leave_confirm = true;
+         if (this.room_info.start) {
+            return this.leave_confirm = true;
+         }
+
+         let myInfo;
+
+         Object.values(this.room_info.players).forEach( value => { 
+            if (value.displayName === this.$store.state.general.my_display_name) {
+               myInfo = value;
+            }
+         });
+         
+         socket.emit('leave-game', [this.room_number, myInfo, null]);
+         this.$store.commit('card/INITIAL_STATE_CARD');
+
       }
    },
    created() {

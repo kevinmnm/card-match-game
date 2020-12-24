@@ -5,6 +5,10 @@
          <Loading />
       </v-overlay>
 
+      <v-overlay absolute z-index="2" color="blue" class="text-center" opacity="0.9" v-if="show_endGameScreen">
+         <EndGameScreen />
+      </v-overlay>
+      
       
       <v-card
          class="pa-0 ma-0"
@@ -36,11 +40,12 @@
 
 <script>
 import Loading from "@/components/Loading.vue";
+import EndGameScreen from "@/components/EndGameScreen.vue";
 
 export default {
    name: "CardSetComp",
    props: ["myTurn"],
-   components: { Loading },
+   components: { Loading, EndGameScreen },
    data() {
       return {
          show_loading: false,
@@ -93,10 +98,10 @@ export default {
       },
       flipped_tracker() {
          return this.$store.state.card.flipped_tracker;
+      },
+      show_endGameScreen() {
+         return this.$store.state.general.end_game_screen;
       }
-      // countdown_interval() {
-      //    return this.$store.state.card.countdown_interval;
-      // }
    },
    methods: {
       card_flip(card, ind) {
@@ -133,10 +138,7 @@ export default {
                // this.flipped_tracker = []; // Empty out comparison array;
                this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
 
-               // this.card_array.forEach( card => {
-                  
-               // });
-
+               /**
                ( async () => {
                   await (() => {
                      return new Promise( (res, rej) => {
@@ -147,6 +149,7 @@ export default {
                   })();
 
                })();
+               **/
 
 
             } else { // If no matching cards found,
@@ -176,15 +179,17 @@ export default {
             this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn;
             this.show_loading = true; // Show loading component;
 
-            setTimeout( () => {
+            let id_1 = setTimeout( () => {
                this.show_loading = false;
 
                for (let i=0; i<card_array_length; i++) {
                   setTimeout( () => {
+                     if (this.$store.state.room.room_info === null || !this.game_started) return;
                      this.$store.commit('room/INITIAL_CARD_SHOW_TRIGGER', { show_card: true, card_index: i });  // payload = {show_card: true || false, card_index: ...}
                   }, time_delay);
 
                   setTimeout( () => {
+                     if (this.$store.state.room.room_info === null || !this.game_started) return;
                      this.$store.commit('room/INITIAL_CARD_SHOW_TRIGGER', { show_card: false, card_index: i });
                   }, time_delay + 500);
 

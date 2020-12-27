@@ -94,7 +94,7 @@ export default {
             this.$store.commit('card/PAUSE_COUNTDOWN');
          });
 
-         window.socket.on('room-info-update', payload => { // payload = { roomInfo: ..., currentPlayer: 'player_#' };
+         window.socket.on('room-info-update', payload => { // payload = { roomInfo: ... };
             this.$store.commit('room/ROOM_INFO_UPDATE', payload.roomInfo);
          });
 

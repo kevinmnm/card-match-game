@@ -98,7 +98,7 @@
                         <v-card class="pa-0 ma-0" :width="card_size" color="yellow">rank icon1</v-card>
                         <v-sheet class="d-flex flex-column pa-0 ma-0 flex-grow-1 text-center">
                            <v-card class="pa-0 ma-0 align-center d-flex" width="100%" height="50%" color="grey" >
-                              <div class="ma-auto">{{ player.displayName }}</div>
+                              <div class="ma-auto" style="cursor:pointer;" @click="open_player_info(player)">{{ player.displayName }}</div>
                            </v-card>
                            <v-card class="pa-0 ma-0 d-flex flex-row" height="50%" color="red" style="font-size:20px;">
                               <div class="flex-grow-1 align-self-center">{{ player.score }}</div>
@@ -136,6 +136,9 @@
 
          </v-sheet>
       </v-img>
+      <v-dialog v-model="player_info_dialog" class="pa-0 ma-0">
+         <PlayerInfo v-if="player_info_dialog" :player-info="player_info_prop" :img-size="card_size" @player-info-dialog-close="player_info_dialog = false" />
+      </v-dialog>
       <BottomSheet :show-comp="leave_confirm" @closeSheet="leave_confirm = false;" />
    </v-sheet>
 </template>
@@ -144,16 +147,19 @@
 import BottomSheet from "@/components/BottomSheet.vue";
 import CardOverlay from "@/components/CardOverlay.vue";
 import CardSet from "@/components/CardSet.vue";
+import PlayerInfo from "@/components/PlayerInfo.vue";
 
 export default {
    name: "GameComp",
-   components: { BottomSheet, CardOverlay, CardSet },
+   components: { BottomSheet, CardOverlay, CardSet, PlayerInfo },
    data() {
       return {
          chat_max_height_updater: 0,
          leave_confirm: false,
          chat_value: '',
          chat_button_disabled: false,
+         player_info_dialog: false,
+         player_info_prop: null
          // orbis_mp3: new Audio(require("@/assets/music/orbis.mp3"))
       }
    },
@@ -272,6 +278,10 @@ export default {
       }
    },
    methods: {
+      open_player_info(player) {
+         this.player_info_dialog = true;
+         this.player_info_prop = player;
+      },
       chatting(){
          if (!this.chat_value || this.chat_button_disabled) return;
          let room_number = this.room_number;
@@ -306,7 +316,7 @@ export default {
                myInfo = value;
             }
          });
-         
+
          socket.emit('leave-game', [this.room_number, myInfo, null]);
          this.$store.commit('card/INITIAL_STATE_CARD');
 

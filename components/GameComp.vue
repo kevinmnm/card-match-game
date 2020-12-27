@@ -96,10 +96,12 @@
 
                      <v-sheet v-for="(player, ind) in Object.values(all_players)" :key="player + ind" width="50%" class="d-flex flex-row pa-0 ma-0 font-weight-bold">
                         <v-card class="pa-0 ma-0" :width="card_size" color="yellow">rank icon1</v-card>
-                        <v-sheet class="d-flex flex-column pa-0 ma-0 flex-grow-1 text-center">
-                           <v-card class="pa-0 ma-0 align-center d-flex" width="100%" height="50%" color="grey" >
-                              <div class="ma-auto" style="cursor:pointer;" @click="open_player_info(player)">{{ player.displayName }}</div>
-                           </v-card>
+                           <v-sheet class="d-flex flex-column pa-0 ma-0 flex-grow-1 text-center">
+                              <v-hover v-slot="{ hover }">
+                                 <v-card class="pa-0 ma-0 align-center d-flex" width="100%" height="50%" color="grey" style="cursor:pointer;" @click="open_player_info(player)" :class="{ 'on-hover': hover, 'text-shadow': hover }">
+                                    <div class="ma-auto">{{ player.displayName }}</div>
+                                 </v-card>
+                              </v-hover>
                            <v-card class="pa-0 ma-0 d-flex flex-row" height="50%" color="red" style="font-size:20px;">
                               <div class="flex-grow-1 align-self-center">{{ player.score }}</div>
                               <div class="align-center d-flex text-left" style="position:absolute; right:0; height:100%; width: 30%;">
@@ -136,7 +138,7 @@
 
          </v-sheet>
       </v-img>
-      <v-dialog v-model="player_info_dialog" class="pa-0 ma-0">
+      <v-dialog v-model="player_info_dialog" class="pa-0 ma-0" overlay-opacity="0.8">
          <PlayerInfo v-if="player_info_dialog" :player-info="player_info_prop" :img-size="card_size" @player-info-dialog-close="player_info_dialog = false" />
       </v-dialog>
       <BottomSheet :show-comp="leave_confirm" @closeSheet="leave_confirm = false;" />
@@ -332,6 +334,10 @@ export default {
 </script>
 
 <style scoped>
+
+.text-shadow {
+   text-shadow: 0 0 3px white;
+}
 
 .my-chat {
    text-align: right;

@@ -7,29 +7,48 @@
       />
       <div v-if="!playerInfoLoading">
          <div class="d-flex flex-row" style="width: 100%">
-            <v-card :width="img_size">
-               <v-img
-                  v-if="player_info.guest"
-                  :src="require('@/assets/img/rank/stone.png')"
-               ></v-img>
-            </v-card>
+            <v-tooltip bottom>
+               <template v-slot:activator="{ on, attrs }">
+                  <v-card
+                     :width="img_size"
+                     :height="img_size"
+                     v-bind="attrs"
+                     v-on="on"
+                  >
+                     <v-img
+                        v-if="player_info.guest"
+                        :src="require('@/assets/img/rank/stone.png')"
+                     ></v-img>
+                  </v-card>
+               </template>
+               <span>{{ "STONE" }}</span>
+            </v-tooltip>
             <div
-               class="d-flex flex-column justify-start text-center"
-               style="flex-grow: 1; background: green; position: relative"
+               class="d-flex flex-column flex-grow-1 justify-center text-center pa-0 ma-0"
+               style="background: green; position: relative"
             >
-               <div>{{ player_info.displayName }}</div>
-               <div class="d-flex flex-row">
-                  <v-avatar color="primary" width="50%" rounded>{{
+               <div style="height: 50%; width: 100%">
+                  {{ player_info.displayName }}
+               </div>
+               <div class="d-flex flex-row" style="height: 50%">
+                  <div style="width: 50%; height: 100%; background: red">
+                     {{ "STONE" }}
+                  </div>
+                  <div style="width: 50%; height: 100%; background: yellow">
+                     {{ player_info.level }}
+                  </div>
+                  <!-- <v-avatar color="primary" width="50%" rounded>{{
                      "STONE"
                   }}</v-avatar>
                   <v-avatar color="secondary" width="50%" rounded>{{
                      player_info.level
-                  }}</v-avatar>
+                  }}</v-avatar> -->
                </div>
             </div>
          </div>
       </div>
-      <v-simple-table v-if="!playerInfoLoading" class="text-center">
+      <div v-if="!playerInfoLoading">
+         <v-simple-table class="text-center">
             <thead>
                <tr>
                   <th>RANKED</th>
@@ -40,8 +59,6 @@
                   <td>N/A</td>
                </tr>
             </tbody>
-      </v-simple-table>
-      <v-simple-table v-if="!playerInfoLoading">
             <thead>
                <tr>
                   <th>NORMALS</th>
@@ -65,8 +82,17 @@
                   <td>{{ player_info.draw }}</td>
                </tr>
             </tbody>
-      </v-simple-table>
-      <v-btn color="warning" @click="$emit('player-info-dialog-close')">close</v-btn>
+         </v-simple-table>
+      </div>
+      <v-hover v-slot="{ hover }">
+         <v-btn
+            :class="{ 'on-hover': hover }"
+            :dark="hover ? true : false"
+            @click="$emit('player-info-dialog-close')"
+         >
+            close
+         </v-btn>
+      </v-hover>
    </v-sheet>
 </template>
 

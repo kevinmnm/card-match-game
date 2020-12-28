@@ -2,7 +2,7 @@
    <v-container fluid>
       <v-dialog v-model="dialog" persistent max-width="290">
          <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" v-bind="attrs" v-on="on" :disabled="clicked_play">
+            <v-btn color="primary" v-bind="attrs" v-on="on" :disabled="clicked_play" width="150px">
                <slot name="button"></slot>
             </v-btn>
          </template>

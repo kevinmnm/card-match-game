@@ -1,18 +1,18 @@
 <template>
-   <v-container class="text-center" fluid style="height:100%">
-      <h1>IdleRoomChild</h1>
-      <v-row>
-         <v-col cols="12">
-            <v-btn disabled>ranked game</v-btn>
+   <v-container class="text-center pa-0" fluid style="height:100%">
+      <v-img class="d-xl-none" width="100%" contain :src="require('@/assets/img/main/theme.gif')"></v-img>
+      <v-row class="d-md">
+         <v-col cols="6" class="col-sm-3">
+            <v-btn width="140px" disabled>ranked game</v-btn>
          </v-col>
-         <v-col cols="12">
-            <v-btn disabled>create a game</v-btn> 
+         <v-col cols="6" class="col-sm-3">
+            <v-btn width="140px" disabled>create game</v-btn> 
          </v-col>
-         <v-col cols="12">
-            <v-btn @click="quickGame()" :disabled="loading_comp">quick game</v-btn>
+         <v-col cols="6" class="col-sm-3">
+            <v-btn width="140px" disabled>join game</v-btn>
          </v-col>
-         <v-col cols="12">
-            <v-btn disabled>join a game</v-btn>
+         <v-col cols="6" class="col-sm-3">
+            <v-btn width="140px" @click="quickGame()" :disabled="loading_comp">quick game</v-btn>
          </v-col>
       </v-row>
       <Loading v-show="loading_comp">
@@ -21,6 +21,42 @@
          </template>
       </Loading>
       <v-spacer></v-spacer>
+
+      <!-- <v-expansion-panels>
+         <v-expansion-panel>
+            <v-expansion-panel-header class="text-center">PLAYER INFO</v-expansion-panel-header>
+            <v-expansion-panel-content>
+               <v-simple-table dense>
+                  <template v-slot:default>
+                     <thead>
+                     <tr>
+                        <th class="text-center">
+                           INFO
+                        </th>
+                        <th class="text-center">
+                           STAT
+                        </th>
+                     </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <td>sdf</td>
+                           <td>sdf</td>
+                        </tr>
+                     </tbody>
+                  </template>
+               </v-simple-table>
+            </v-expansion-panel-content>
+         </v-expansion-panel>
+      </v-expansion-panels> -->
+
+      <v-btn style="position:absolute; right:0; bottom:201px;" @click="show_my_info = true;">
+         <v-icon>mdi-account</v-icon>
+      </v-btn>
+
+      <v-dialog v-model="show_my_info">
+         <MyInfo />
+      </v-dialog>
 
       <div class="all-chat-wrapper">
          <div class="all-chat-title">GLOBAL CHAT</div>
@@ -50,11 +86,12 @@
 
 <script>
 import Loading from "@/components/Loading.vue";
+import MyInfo from "@/components/MyInfo.vue";
 
 export default {
    name: "IdleRoomChild",
    components: {
-      Loading,
+      Loading, MyInfo
    },
    data(){
       return{
@@ -62,7 +99,8 @@ export default {
          loading_text: 'Searching...',
          enter_button: 'ENTER',
          enter_button_disabled: false,
-         global_chat: ''
+         global_chat: '',
+         show_my_info: false
       }
    },
    computed: {

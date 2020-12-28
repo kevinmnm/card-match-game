@@ -29,7 +29,7 @@
                :key="all.show"
             >
             </v-img> -->
-            <v-img v-if="!all.show" :src="require(`@/assets/img/card/set_1/${all.card_id}.png`)" :key="all.show" style="background: red;"></v-img>
+            <v-img v-if="!all.show" :src="require(`@/assets/img/card/set_2/${all.card_id}.png`)" :key="all.show" style="background: red;"></v-img>
             <v-img v-else :src="require(`@/assets/img/card/cover/default_white.png`)" :key="all.show"></v-img>
          </transition>
 
@@ -137,7 +137,6 @@ export default {
 
                // this.flipped_tracker = []; // Empty out comparison array;
                this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
-               console.log(this.flipped_tracker);
 
 
             } else { // If no matching cards found,
@@ -152,7 +151,6 @@ export default {
 
                   // this.flipped_tracker = [];
                   this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
-                  console.log(this.flipped_tracker);
 
                }, 1500);
             }

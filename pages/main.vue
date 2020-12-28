@@ -19,6 +19,15 @@ export default {
       signed_in(){
          return this.$store.state.general.signed_in;
       }
-   }
+   },
+   mounted() {
+      if (process.env.NODE_ENV === "production") {
+         if (location.protocol !== "https:") {
+            location.replace(`
+               https:${location.href.substring(location.protocol.length)}
+            `);
+         }
+      }
+   },
 };
 </script>

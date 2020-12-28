@@ -1,4 +1,4 @@
-import colors from '~vuetify/es5/util/colors'
+import colors from 'vuetify/es5/util/colors'
 
 export default {
    // Global page headers (https://go.nuxtjs.dev/config-head)
@@ -38,6 +38,7 @@ export default {
    // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
    vuetify: {
       customVariables: ['~/assets/variables.scss'],
+      optionsPath: 'vuetify/es5/util/colors',
       treeShake: true,
       theme: {
          dark: false,

@@ -111,7 +111,7 @@ export default {
    },
    mounted() {
       if (process.env.NODE_ENV === "production") {
-         return;
+         window.server_url = "https://monstermatches-server.herokuapp.com"
       } else {
          window.server_url = "http://localhost:5555";
          // window.server_url = this.$store.state.general.server_url;

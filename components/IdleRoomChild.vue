@@ -1,6 +1,7 @@
 <template>
    <v-container class="text-center pa-0" fluid style="height:100%">
-      <v-img class="d-xl-none" width="100%" contain :src="require('@/assets/img/main/theme.gif')"></v-img>
+      <!-- <v-img class="d-lg-none" width="100%" contain :src="require('@/assets/img/main/theme.gif')" max-height="50%"></v-img> -->
+      <v-img width="100%" contain :src="require('@/assets/img/main/theme.gif')" max-height="50%" class="mb-2"></v-img>
       <v-row class="d-md">
          <v-col cols="6" class="col-sm-3">
             <v-btn width="140px" disabled>ranked game</v-btn>
@@ -22,40 +23,12 @@
       </Loading>
       <v-spacer></v-spacer>
 
-      <!-- <v-expansion-panels>
-         <v-expansion-panel>
-            <v-expansion-panel-header class="text-center">PLAYER INFO</v-expansion-panel-header>
-            <v-expansion-panel-content>
-               <v-simple-table dense>
-                  <template v-slot:default>
-                     <thead>
-                     <tr>
-                        <th class="text-center">
-                           INFO
-                        </th>
-                        <th class="text-center">
-                           STAT
-                        </th>
-                     </tr>
-                     </thead>
-                     <tbody>
-                        <tr>
-                           <td>sdf</td>
-                           <td>sdf</td>
-                        </tr>
-                     </tbody>
-                  </template>
-               </v-simple-table>
-            </v-expansion-panel-content>
-         </v-expansion-panel>
-      </v-expansion-panels> -->
-
       <v-btn style="position:absolute; right:0; bottom:201px;" @click="show_my_info = true;">
          <v-icon>mdi-account</v-icon>
       </v-btn>
 
       <v-dialog v-model="show_my_info">
-         <MyInfo />
+         <MyInfo @hide-my-info="show_my_info = false;" />
       </v-dialog>
 
       <div class="all-chat-wrapper">

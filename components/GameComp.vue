@@ -41,7 +41,6 @@
                         </v-card>
                         <v-card class="ma-auto">
                            <v-card-text>Music</v-card-text>
-                           <audio :src="require('@/assets/music/orbis.mp3')" preload="auto" controls loop></audio>
                         </v-card>
                      </v-sheet>
                   </v-menu>
@@ -142,6 +141,7 @@
          <PlayerInfo v-if="player_info_dialog" :player-info="player_info_prop" :img-size="card_size" @player-info-dialog-close="player_info_dialog = false" />
       </v-dialog>
       <BottomSheet :show-comp="leave_confirm" @closeSheet="leave_confirm = false;" />
+      <audio ref="lith" :src="require('@/assets/music/lith.mp3')" type="audio/mpeg" preload="auto" loop></audio>
    </v-sheet>
 </template>
 
@@ -277,9 +277,17 @@ export default {
       },
       countdown_time() {
          return this.$store.state.card.countdown;
+      },
+      game_started() {
+         return this.$store.state.room.room_info.start;
       }
    },
    methods: {
+      play_lith() {
+         setTimeout( () => {
+            this.$refs.lith.play();
+         }, 1000);
+      },
       open_player_info(player) {
          this.player_info_dialog = true;
          this.player_info_prop = player;
@@ -324,12 +332,25 @@ export default {
 
       }
    },
+   mounted() {
+      this.$refs.lith.volume = this.$store.state.setting.bgm_volume;
+   },
    created() {
       window.addEventListener('resize', this.chat_max_height_updater_handler);
    },
    destroyed() {
       window.removeEventListener('resize', this.chat_max_height_updater_handler);
    },
+   watch: {
+      game_started(newVal) {
+         if (newVal) {
+            this.$refs.lith.load();
+            this.play_lith();
+         } else {
+            this.$refs.lith.pause();
+         }
+      }
+   }
 };
 </script>
 

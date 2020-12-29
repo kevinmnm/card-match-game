@@ -23,7 +23,7 @@
                      class="guest-id"
                      v-model="displayName"
                      :loading="input_loading"
-                     @input="upon_change()"
+                     @blur="upon_change()"
                   ></v-text-field>
                </v-col>
                <v-col cols="6" class="ma-auto pa-0">
@@ -57,8 +57,6 @@
 </template>
 
 <script>
-// import { io } from "socket.io-client";
-
 export default {
    name: "Dialog",
    components: {},
@@ -78,6 +76,7 @@ export default {
    },
    methods: {
       async play() {
+         this.$emit("clicked-play");
          this.dialog = false;
          this.clicked_play = true;
          const resp = await fetch(window.server_url + "/guest", {
@@ -90,7 +89,6 @@ export default {
          });
 
          const data = await resp.json();
-         console.warn(data.new_guest.displayName);
 
          localStorage.___mid = data.new_guest._id;
 
@@ -102,6 +100,12 @@ export default {
          if (!this.displayName) {
             this.input_error = true;
             this.input_message = "Unavailable";
+            return;
+         }
+
+         if (!this.displayName.includes('Guest-')) {
+            this.input_error = true;
+            this.input_message = "'Guest-' Missing";
             return;
          }
 
@@ -137,6 +141,9 @@ export default {
          }
       },
       upon_change() {
+         if (!this.displayName.includes('Guest-')) {
+            this.displayName = 'Guest-' + this.displayName;
+         }
          this.$store.commit("guest/GUEST_DISPLAY_NAME", this.displayName);
          this.verify_disabled = false;
          this.play_disabled = true;
@@ -146,6 +153,8 @@ export default {
       },
    },
    mounted() {
+      // const alphabet = "abcdefghijklmnopqrstuvwxyz";
+      // alphabet[Math.floor(Math.random() * alphabet.length)];
       let first = Math.floor(Math.random() * 10) + "";
       let second = Math.floor(Math.random() * 10) + "";
       let third = Math.floor(Math.random() * 10) + "";

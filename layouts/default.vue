@@ -23,7 +23,7 @@ export default {
       connect_socket() {
          let handshake_data = this.$store.state.guest.guest_info || null // || User info later;
 
-         console.dir(handshake_data);
+         console.dir("Handshake Data Available");
 
          window.socket = io(window.server_url, {
             query: {
@@ -75,6 +75,8 @@ export default {
          window.socket.on('game-started', payload => { // payload = { room };
             this.$store.commit('room/GAME_STARTED', payload);
             this.$store.commit('general/CLOSE_END_GAME_SCREEN');
+            this.$store.commit('setting/ELINIA_PLAY', false);
+            this.$store.commit('setting/LITH_PLAY', true);
          });
 
          window.socket.on('flipped-card', payload => { // payload = { card, cardIndex };
@@ -100,6 +102,8 @@ export default {
 
          window.socket.on('game-ended', payload => { // payload = { winner: {...}, losers: [{...}, {...}], draws: [{...}, {...}] };
             this.$store.commit('general/END_GAME_SCREEN', payload);
+            this.$store.commit('setting/ELINIA_PLAY', true);
+            this.$store.commit('setting/LITH_PLAY', false);
          });
          
       },
@@ -111,11 +115,17 @@ export default {
    },
    mounted() {
       if (process.env.NODE_ENV === "production") {
-         return;
+         if (location.protocol !== "https:") {
+            location.replace(`
+               https:${location.href.substring(location.protocol.length)}
+            `);
+         }
+         window.server_url = "https://monstermatches-server.herokuapp.com";
       } else {
          window.server_url = "http://localhost:5555";
          // window.server_url = this.$store.state.general.server_url;
       }
+
 
    },
 };

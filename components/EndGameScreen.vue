@@ -1,6 +1,7 @@
 <template>
    <v-sheet class="d-flex align-self-center" height="100%" width="100%">
       <v-card>{{ end_game_message }}</v-card>
+      <br />
       <v-btn @click="closeEndGame()">CLOSE</v-btn>
    </v-sheet>
 </template>

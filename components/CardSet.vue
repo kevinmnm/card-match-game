@@ -29,12 +29,12 @@
                :key="all.show"
             >
             </v-img> -->
-            <v-img v-if="!all.show" :src="require(`@/assets/img/card/set_2/${all.card_id}.png`)" :key="all.show" style="background: red;"></v-img>
+            <v-img v-if="all.show" :src="require(`@/assets/img/card/set_2/${all.card_id}.png`)" :key="all.show" style="background: red;"></v-img>
             <v-img v-else :src="require(`@/assets/img/card/cover/default_white.png`)" :key="all.show"></v-img>
          </transition>
 
       </v-card>
-
+      <audio ref="card_flip" :src="require('@/assets/music/card_flip.ogg')" preload="auto"></audio>
    </v-sheet>
 </template>
 
@@ -101,11 +101,12 @@ export default {
       },
       show_endGameScreen() {
          return this.$store.state.general.end_game_screen;
-      }
+      },
    },
    methods: {
       card_flip(card, ind) {
-         // this.flipped_tracker.push(card);
+         this.$refs.card_flip.load();
+         this.$refs.card_flip.play();
          this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card });
 
          let changed_card = {
@@ -135,7 +136,6 @@ export default {
                   cardMatch: this.flipped_tracker
                });
 
-               // this.flipped_tracker = []; // Empty out comparison array;
                this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
 
 
@@ -149,7 +149,6 @@ export default {
                      roomCapacity: this.$store.state.room.room_info.capacity
                   });
 
-                  // this.flipped_tracker = [];
                   this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
 
                }, 1500);
@@ -186,40 +185,15 @@ export default {
          }
       },
       my_turn_temp_disable(val) { // Watching this value (changes every turn including start);
-         // if (!val) { // If false (if it's player's turn),
          this.starter_track++;
          if (this.starter_track === 1) {
             this.$store.dispatch('card/countdown_function', true); // Trigger countdown;
          }
-         // }
-
-         // if (this.countdown_interval) { // If countdown is already in progress,
-         //    clearInterval(this.countdown_interval); // Terminate current countdown
-         // }
-         // const countdownId = setInterval( () => { // Decrease countdown state per second;
-         //    if (this.$store.state.card.countdown === 0) {
-         //       clearInterval(countdownId); // May need to use this.$store.state.card.countdown_interval instead;
-
-               /**
-                * 
-                * Logic to flip selected card back and change turn to opponent's; 
-                * If it's not my turn, just wait until server responses;
-                * 
-               **/
-
-               // if (!this.my_turn_temp_disable) {
-
-               // }
-            // }
-            // let timeLeft = this.$store.state.card.countdown - 1; 
-            // this.$store.commit('card/COUNTDOWN', timeLeft);
-         // }, 1000);
-
-         // this.$store.commit('card/COUNTDOWN_INTERVAL', countdownId); // Store countdown id in store;
       }
    },
    mounted() {
       this.$store.commit('card/COUNTDOWN', this.default_countdown); // Set room countdown value;
+      this.$refs.card_flip.volume = this.$store.state.setting.sound_volume;
    },
    destroyed() {
       this.$store.commit('card/COUNTDOWN', null);

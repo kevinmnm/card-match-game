@@ -21,12 +21,11 @@ export default {
       }
    },
    mounted() {
-      if (process.env.NODE_ENV === "production") {
-         if (location.protocol !== "https:") {
-            location.replace(`
-               https:${location.href.substring(location.protocol.length)}
-            `);
-         }
+      if (localStorage.bgm_volume) {
+         this.$store.dispatch('setting/set_bgm_volume', +localStorage.bgm_volume);
+      }
+      if (localStorage.sound_volume) {
+         this.$store.dispatch('setting/set_sound_volume', +localStorage.sound_volue);
       }
    },
 };

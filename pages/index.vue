@@ -2,7 +2,10 @@
    <v-container class="pa-0 ma-0 text-center" fluid style="height: 100%">
       <h1>Homepage Under Development</h1>
       <div>Click to test game</div>
-      <nuxt-link to="/main">MAIN</nuxt-link>
+      <!-- <nuxt-link to="/main">
+         <v-btn width="150px">game</v-btn>
+      </nuxt-link> -->
+      <v-btn to="/main" width="150px" color="primary" class="font-weight-bold">game</v-btn>
    </v-container>
 </template>
 

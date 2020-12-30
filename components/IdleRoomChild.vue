@@ -13,7 +13,13 @@
             <v-btn width="140px" disabled>join game</v-btn>
          </v-col>
          <v-col cols="6" class="col-sm-3">
-            <v-btn width="140px" @click="quickGame()" :disabled="loading_comp">quick game</v-btn>
+            <v-btn 
+            width="140px" 
+            @click="quickGame()" 
+            @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')" 
+            :disabled="loading_comp">
+               quick game
+            </v-btn>
          </v-col>
       </v-row>
       <Loading v-show="loading_comp">
@@ -23,9 +29,17 @@
       </Loading>
       <v-spacer></v-spacer>
 
-      <v-btn style="position:absolute; right:0; bottom:201px;" @click="show_my_info = true;">
-         <v-icon>mdi-account</v-icon>
-      </v-btn>
+      <v-card class="d-flex flex-row" style="position:absolute; right:0; bottom:201px;" width="100%" color="primary">
+         <v-btn @click="bgm_setter()" class="flex-grow-2" small>
+            <v-icon>{{ bgm_muted_status ? 'mdi-music-off' : 'mdi-music' }}</v-icon>
+         </v-btn>
+         <v-btn @click="sound_setter()" class="flex-grow-2" small>
+            <v-icon>{{ sound_muted_status ? 'mdi-volume-mute' : 'mdi-volume-high' }}</v-icon>
+         </v-btn>
+         <v-btn class="flex-grow-1" @click="show_my_info = true;" small>
+            <v-icon>mdi-account</v-icon>
+         </v-btn>
+      </v-card>
 
       <v-dialog v-model="show_my_info">
          <MyInfo @hide-my-info="show_my_info = false;" />
@@ -82,15 +96,35 @@ export default {
       },
       all_global_chats() {
          return this.$store.state.chat.global_chat; // []
+      },
+      bgm_muted_status() {
+         return this.$store.state.audio.bgm_muted;
+      },
+      sound_muted_status() {
+         return this.$store.state.audio.sound_muted;
       }
    },
    methods: {
+      bgm_setter() {
+         if (!this.bgm_muted_status) { // If bgm is not muted,
+            this.$store.dispatch('audio/bgm_setting', false); // Mute all bgm;
+         } else { // If bgm is muted,
+            this.$store.dispatch('audio/bgm_setting', true); // Unmute all bgm and play default bgm;
+         }
+      },
+      sound_setter() {
+         if (!this.sound_muted_status) {
+            this.$store.dispatch('audio/sound_setting', true);
+         } else {
+            this.$store.dispatch('audio/sound_setting', false);
+         }
+      },
       quickGame(){
          this.loading_comp = true;
          window.socket.emit('quick-game');
       },
       global_chat_enter(){
-         if (!this.global_chat) return;
+         if (!this.global_chat || this.enter_button_disabled) return;
 
          window.socket.emit('global-chat', { 
             type: 'all-other-chat',
@@ -118,6 +152,9 @@ export default {
             }     
          });
          this.global_chat = '';
+
+         this.enter_button_disabled = true;
+         setTimeout( () => this.enter_button_disabled = false, 1000);
       },
       enter_pressed(e){
          if (e.key === 'Enter' || e.keyCode === 13) {
@@ -127,6 +164,7 @@ export default {
    },
    mounted() {
       window.socket.emit('join-global-room');
+      setTimeout( () => this.$store.commit('audio/PLAY_BGM', 'elinia'), 0);
    },
    destroyed() {
       window.socket.emit('leave-global-room');

@@ -13,14 +13,14 @@
          :src="require('@/assets/img/main/sky.png')"
       >
          <v-sheet
-            class="ma-0 pa-1 d-flex flex-column align-center justify-center"
+            class="ma-0 pa-1 d-flex flex-column align-center justify-center flex-wrap"
             width="100%"
             height="100%"
             tag="div"
             style="background: transparent;"
          >
             <v-card 
-               class="pa-0 ma-0 d-flex flex-row text-center"
+               class="pa-0 ma-0 d-flex flex-row text-center flex-wrap"
                style="font-size:16px"
                :width="room_title_width"
                height="25px"
@@ -127,8 +127,8 @@
                      </div>
 
                   </v-sheet>
-                  <v-sheet class="chat-form d-flex pa-0">
-                     <v-text-field @keydown="enable_enter($event)" v-model="chat_value" class="pa-0 ma-0" style="font-size:18px;" width="80%" autocomplete="off" dense filled hide-details single-line outlined></v-text-field>
+                  <v-sheet class="chat-form d-flex pa-0" height="40px">
+                     <v-text-field @keydown="enable_enter($event)" v-model="chat_value" class="pa-0 ma-0" style="font-size:18px;" width="80%" autocomplete="off" dense filled hide-details single-line outlined solo></v-text-field>
                      <v-btn @click="chatting()" width="20%" height="100%" :disabled="chat_button_disabled">enter</v-btn>
                   </v-sheet>
 
@@ -213,10 +213,9 @@ export default {
             } else {
                return '180px'
             }
+         } else {
+            return 500 - 40 + 'px'
          }
-      },
-      chat_height(){
-         return this.card_size / 2;
       },
       flex_direction() {
          switch (this.$vuetify.breakpoint.name) {

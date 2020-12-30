@@ -34,7 +34,7 @@
          </transition>
 
       </v-card>
-      <audio ref="card_flip" :src="require('@/assets/music/card_flip.ogg')" preload="auto"></audio>
+      <!-- <audio ref="card_flip" :src="require('@/assets/music/card_flip.ogg')" preload="auto"></audio> -->
    </v-sheet>
 </template>
 
@@ -105,6 +105,7 @@ export default {
    },
    methods: {
       card_flip(card, ind) {
+         if (card.show) return false;
          this.$refs.card_flip.load();
          this.$refs.card_flip.play();
          this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card });
@@ -193,7 +194,6 @@ export default {
    },
    mounted() {
       this.$store.commit('card/COUNTDOWN', this.default_countdown); // Set room countdown value;
-      this.$refs.card_flip.volume = this.$store.state.setting.sound_volume;
    },
    destroyed() {
       this.$store.commit('card/COUNTDOWN', null);

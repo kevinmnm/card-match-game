@@ -75,8 +75,8 @@ export default {
          window.socket.on('game-started', payload => { // payload = { room };
             this.$store.commit('room/GAME_STARTED', payload);
             this.$store.commit('general/CLOSE_END_GAME_SCREEN');
-            this.$store.commit('setting/ELINIA_PLAY', false);
-            this.$store.commit('setting/LITH_PLAY', true);
+            // this.$store.commit('setting/ELINIA_PLAY', false);
+            // this.$store.commit('setting/LITH_PLAY', true);
          });
 
          window.socket.on('flipped-card', payload => { // payload = { card, cardIndex };
@@ -102,8 +102,8 @@ export default {
 
          window.socket.on('game-ended', payload => { // payload = { winner: {...}, losers: [{...}, {...}], draws: [{...}, {...}] };
             this.$store.commit('general/END_GAME_SCREEN', payload);
-            this.$store.commit('setting/ELINIA_PLAY', true);
-            this.$store.commit('setting/LITH_PLAY', false);
+            // this.$store.commit('setting/ELINIA_PLAY', true);
+            // this.$store.commit('setting/LITH_PLAY', false);
          });
          
       },

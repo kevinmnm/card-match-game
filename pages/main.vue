@@ -20,13 +20,5 @@ export default {
          return this.$store.state.general.signed_in;
       }
    },
-   mounted() {
-      if (localStorage.bgm_volume) {
-         this.$store.dispatch('setting/set_bgm_volume', +localStorage.bgm_volume);
-      }
-      if (localStorage.sound_volume) {
-         this.$store.dispatch('setting/set_sound_volume', +localStorage.sound_volume);
-      }
-   },
 };
 </script>

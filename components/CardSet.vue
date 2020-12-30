@@ -78,7 +78,8 @@ export default {
             case "xs":
                return "60px"; // < 600px -- 60px
             case "sm":
-               return "100px"; // 600px > < 960px -- 80px
+               // return "100px"; // 600px > < 960px -- 80px
+               return "80px"
             case "md":
                return "100px"; // 960px > < 1264px* -- 100px
             case "lg":
@@ -106,9 +107,9 @@ export default {
    methods: {
       card_flip(card, ind) {
          if (card.show) return false;
-         this.$refs.card_flip.load();
-         this.$refs.card_flip.play();
          this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card });
+
+         this.$store.commit('audio/PLAY_SOUND', 'card_flip');
 
          let changed_card = {
                ...card,

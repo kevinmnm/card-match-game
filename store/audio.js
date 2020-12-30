@@ -4,6 +4,7 @@ export const state = () => ({
       elinia: false,
       lith: false,
    },
+   current_bgm: '',
    bgm_muted: false,
    sound: {
       card_flip: 0,
@@ -23,7 +24,14 @@ export const state = () => ({
 export const mutations = {
    PLAY_BGM(state, bgmName) { // ex) bgmName = 'elinia';
       if (state.bgm_muted) return;
+      let bgm_keys = Object.keys(state.bgm);
+      bgm_keys.map( bg => {
+         if (state.bgm[bg]) {
+            state.bgm[bg] = false;
+         }
+      });
       state.bgm[bgmName] = true;
+      state.current_bgm = bgmName;
    },
    PAUSE_BGM(state, bgmName) { // ex) bgmName = 'elinia';
       state.bgm[bgmName] = false;

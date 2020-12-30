@@ -75,10 +75,12 @@ export default {
          window.socket.on('game-started', payload => { // payload = { room };
             this.$store.commit('room/GAME_STARTED', payload);
             this.$store.commit('general/CLOSE_END_GAME_SCREEN');
+            this.$store.commit('audio/PLAY_BGM', 'lith');
          });
 
          window.socket.on('flipped-card', payload => { // payload = { card, cardIndex };
             this.$store.commit('room/ROOM_CARD', payload);
+            this.$store.commit('audio/PLAY_SOUND', 'card_flip');
          });
 
          window.socket.on('turn-changed', payload => { // payload = { roomInfo };

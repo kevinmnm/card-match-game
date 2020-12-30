@@ -58,6 +58,7 @@ export default {
                      }
                   }
                   this.game_start_countdown--;
+                  this.$store.commit('audio/PLAY_SOUND', 'countdown');
                }, 1000);
             } else {
                clearInterval(this.interval_id);

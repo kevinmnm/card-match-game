@@ -12,16 +12,24 @@
          style="position:absolute; left:0; top:0;"
          :src="require('@/assets/img/main/sky.png')"
       >
-         <v-sheet
-            class="ma-0 pa-1 d-flex flex-column align-center justify-center flex-wrap"
+         <!-- <v-sheet
+            class="ma-0 pa-1 d-flex flex-column align-center justify-center"
             width="100%"
             height="100%"
             tag="div"
             style="background: transparent;"
+         > -->
+         <v-sheet
+            class="ma-0 pa-0 d-flex flex-column align-center justify-center"
+            width="100%"
+            height="100%"
+            tag="div"
+            style="background: blue;"
          >
+            <!-- Title Bar -->
             <v-card 
                class="pa-0 ma-0 d-flex flex-row text-center flex-wrap"
-               style="font-size:16px"
+               style="font-size:16px;"
                :width="room_title_width"
                height="25px"
                flat
@@ -59,7 +67,7 @@
                :class="flex_direction"
                width="100%"
                tag="div"
-               style="background: transparent;"
+               style="background: green;"
             >
             
                <!-- Card Board -->
@@ -79,7 +87,7 @@
                </v-sheet>
 
                <!-- Info Board -->
-               <v-sheet
+               <!-- <v-sheet
                   :style="
                      [
                         ($vuetify.breakpoint.name === 'xs' || $vuetify.breakpoint.name === 'sm') ? {width: board_card_size, height: 'calc(100% - 360px)'} 
@@ -89,6 +97,21 @@
                      ]
                   "
                   class="d-flex flex-column flex-wrap"
+               > -->
+               <v-sheet
+                  ref="board_info"
+                  :style="
+                     [
+                        ($vuetify.breakpoint.name === 'xs' || $vuetify.breakpoint.name === 'sm') ? {width: board_card_size, height: 'calc(100% - 360px)'} 
+                        : ($vuetify.breakpoint.name === 'md') ? {height: board_card_size} 
+                        : {height: board_card_size},
+                        { 'border: 2px solid red;': my_turn }
+                     ]
+                  "
+                  class="d-flex flex-column flex-wrap"
+                  :width="board_info_size"
+                  :height="board_info_size"
+                  color="green"
                >
                   <!-- Players info of info-board -->
                   <v-sheet :height="card_size" class="d-flex flex-row pa-0 ma-0" width="100%">
@@ -117,19 +140,23 @@
                   </v-sheet>
 
                   <!-- Chat of info-board -->
-                  <v-sheet style="overflow:auto;" color="#303030" class="d-flex flex-column flex-grow-1 pa-1" min-height="100px" :max-height="chat_max_height" v-chat-scroll="{always: false}">
-                     <div v-for="(chat, ind) in room_chat" :style="chat.chat_style" :key="chat+ind">
-                        {{
-                           (chat.chat_sender) ?
-                              chat.chat_sender + ' : ' + chat.chat_val :
-                              chat.chat_val
-                        }}
-                     </div>
+                  <v-sheet class=" d-flex flex-column" style="background: blue; overflow:auto;">
+                     <!-- <v-sheet style="overflow:auto;" color="#303030" class="d-flex flex-column flex-grow-1 pa-1" min-height="100px" :max-height="chat_max_height" v-chat-scroll="{always: false}"> -->
+                     <v-sheet style="overflow:auto;" color="#303030" class="d-flex flex-column flex-grow-1 pa-1" :height="chat_max_height" v-chat-scroll="{always: false}">
 
-                  </v-sheet>
-                  <v-sheet class="chat-form d-flex pa-0" height="40px">
-                     <v-text-field @keydown="enable_enter($event)" v-model="chat_value" class="pa-0 ma-0" style="font-size:18px;" width="80%" autocomplete="off" dense filled hide-details single-line outlined solo></v-text-field>
-                     <v-btn @click="chatting()" width="20%" height="100%" :disabled="chat_button_disabled">enter</v-btn>
+                        <div v-for="(chat, ind) in room_chat" :style="chat.chat_style" :key="chat+ind">
+                           {{
+                              (chat.chat_sender) ?
+                                 chat.chat_sender + ' : ' + chat.chat_val :
+                                 chat.chat_val
+                           }}
+                        </div>
+
+                     </v-sheet>
+                     <v-sheet class="chat-form d-flex pa-0" height="40px">
+                        <v-text-field @keydown="enable_enter($event)" v-model="chat_value" class="pa-0 ma-0" style="font-size:18px;" width="80%" autocomplete="off" dense filled hide-details single-line outlined solo></v-text-field>
+                        <v-btn @click="chatting()" width="20%" height="100%" :disabled="chat_button_disabled">enter</v-btn>
+                     </v-sheet>
                   </v-sheet>
 
                </v-sheet>
@@ -165,6 +192,14 @@ export default {
       }
    },
    computed: {
+      window_inner_height() {
+         this.chat_max_height_updater;
+         return window.innerHeight;
+      },
+      window_inner_width() {
+         this.chat_max_height_updater;
+         return window.innerWidth;
+      },
       my_turn() {
          if (this.room_info.start) { // If game started and server assigned turn to player_1;
             if (this.room_info.players[this.room_info.turn].displayName === this.my_display_name) { // If turn player's display name matches mine;
@@ -209,12 +244,21 @@ export default {
             }
          } else if (this.$vuetify.breakpoint.name === 'sm') {
             if (window.innerHeight <= 960) {
-               return '100px'
+               // return '100px'
+               // console.log(this.$refs.board_info);
+               // return +this.board_info_size.replace('px','') - +this.card_size.replace('px','') - 40 + 'px'
+               // return (+this.board_card_size.replace('px','') - (+this.card_size.replace('px','') * 7)) - 40 + 'px';
+               // console.log( this.window_inner_height - 25 - (+this.board_card_size.replace('px','')) - 40 + 'px' );
+               return this.window_inner_height - 25 - (+this.card_size.replace('px','') * 7) - 40 + 'px';
             } else {
-               return '180px'
+               // return '180px'
+               // return +this.board_info_size.replace('px','') - +this.card_size.replace('px','') - 40 + 'px'
+               // return (+this.board_card_size.replace('px','') - (+this.card_size.replace('px','') * 7)) - 40 + 'px';
+               return this.window_inner_height - 25 - (+this.card_size.replace('px','') * 7) - 40 + 'px';
             }
          } else {
-            return 500 - 40 + 'px'
+            // return 500 - 40 + 'px'
+            return +this.board_card_size.replace('px','') - +this.card_size.replace('px','') - 40 + 'px';
          }
       },
       flex_direction() {
@@ -236,7 +280,8 @@ export default {
             case "xs":
                return "360px"; // < 600px -- 60px
             case "sm":
-               return "600px"; // 600px > < 960px -- 80px
+               // return "600px"; // 600px > < 960px -- 80px
+               return "480px"
             case "md":
                return "600px"; // 960px > < 1264px* -- 100px
             case "lg":
@@ -250,7 +295,8 @@ export default {
             case "xs":
                return "calc(100% - 360px)"; // < 600px -- 60px
             case "sm":
-               return "calc(100% - 600px)"; // 600px > < 960px -- 80px
+               // return "calc(100% - 600px)"; // 600px > < 960px -- 80px
+               return "calc(100% - 480px)"
             case "md":
                return "calc(100% - 600px)"; // 960px > < 1264px* -- 100px
             case "lg":
@@ -264,7 +310,8 @@ export default {
             case "xs":
                return "60px"; // < 600px -- 60px
             case "sm":
-               return "100px"; // 600px > < 960px -- 80px
+               // return "100px"; // 600px > < 960px -- 80px
+               return "80px"
             case "md":
                return "100px"; // 960px > < 1264px* -- 100px
             case "lg":
@@ -311,6 +358,8 @@ export default {
       },
       chat_max_height_updater_handler() {
          this.chat_max_height_updater++
+         console.warn(this.$vuetify.breakpoint.name);
+         console.warn(this.window_inner_height);
       },
       confirm_leave(){
          if (this.room_info.start) {

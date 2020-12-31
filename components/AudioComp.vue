@@ -42,7 +42,7 @@ export default {
    name: "AudioComp",
    data() {
       return {
-         play_async: false
+         // play_async: false
       }
    },
    computed: mapState({
@@ -65,10 +65,11 @@ export default {
    methods: {
       trigger_audio(ref, playOrPause) { // ref = name, playOrPause = true || false;
          if (playOrPause || playOrPause === undefined) { // If play,
-            if (this.play_async) return; // Terminate if play() is current in progress;
+            // if (this.play_async) return; // Terminate if play() is current in progress;
             this.$refs[ref].load();
-            this.play_async = true;
-            this.$refs[ref].play().then( () => this.play_async = false );
+            // this.play_async = true;
+            // this.$refs[ref].play().then( () => this.play_async = false );
+            this.$refs[ref].play();
          } else { // If pause,
             this.$refs[ref].pause();
          }
@@ -77,7 +78,7 @@ export default {
    watch: {
       // BGM COLLECTION (Boolean);
       lith(newVal) { this.trigger_audio('lith', newVal) },
-      elinia(newVal) { this.trigger_audio('elinia', newVal) },
+      elinia(newVal) { this.trigger_audio('elinia', newVal); },
       
       // SOUND COLLECTION (Key);
       card_flip() { this.trigger_audio('card_flip') },
@@ -90,6 +91,11 @@ export default {
       joined() { this.trigger_audio('joined') },
       victory() { this.trigger_audio('victory') },
       win() { this.trigger_audio('win') },
+   },
+   mounted() {
+      Object.keys(this.$refs).forEach( ref => {
+         this.$refs[ref].volume = 0.7;
+      });
    }
 };
 </script>

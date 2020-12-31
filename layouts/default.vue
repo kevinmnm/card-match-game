@@ -37,6 +37,10 @@ export default {
             this.$store.commit("general/SIGNED_IN", true);
          });
 
+         window.socket.on("global-room-update", payload => { // payload = [...];
+            this.$store.commit('chat/GLOBAL_ROOM_CLIENTS', payload);
+         });
+
          /** Update room data in room.js store. (Similar to update-room event) **/
          window.socket.on('create-room', payload => {
             this.$store.commit("room/ROOM_INFO_CREATE", payload); 

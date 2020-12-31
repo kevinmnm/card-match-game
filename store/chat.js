@@ -1,12 +1,19 @@
 export const state = () => ({
-   global_chat: []
+   global_chat: [],
+   global_room_clients: [],
 });
 
 export const mutations = {
    GLOBAL_CHAT(state, payload) {
       state.global_chat.push(payload);
+   },
+   GLOBAL_ROOM_CLIENTS(state, payload) {
+      state.global_room_clients = payload
    }
 }
+
+
+
 
 /**
 

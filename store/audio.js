@@ -33,11 +33,13 @@ export const mutations = {
       state.bgm[bgmName] = true;
       state.current_bgm = bgmName;
    },
-   PAUSE_BGM(state, bgmName) { // ex) bgmName = 'elinia';
-      state.bgm[bgmName] = false;
+   PAUSE_BGM(state) {
+      state.bgm[state.current_bgm] = false;
+      state.current_bgm = '';
    },
    MUTE_BGM(state, payload) { // payload = true || false;
       state.bgm_muted = payload;
+      state.current_bgm = '';
    },
    PLAY_SOUND(state, soundName) {
       if (state.sound_muted) return;
@@ -56,12 +58,16 @@ export const actions = {
             commit('PAUSE_BGM', bgm);
          });
          commit('MUTE_BGM', true);
+         localStorage.mute_bgm = true;
+
       } else { // If player wants music,
          commit('MUTE_BGM', false);
          commit('PLAY_BGM', 'elinia');
+         localStorage.mute_bgm = false;
       }
    },
    sound_setting({ commit }, payload) { // payload = true || false;
       commit('MUTE_SOUND', payload);
+      localStorage.mute_sound = payload;
    }
 }

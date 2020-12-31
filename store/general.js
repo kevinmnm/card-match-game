@@ -19,6 +19,7 @@ export const mutations = {
    },
    CLOSE_END_GAME_SCREEN(state) {
       state.end_game_screen = false;
+      state.end_game_message = '';
    },
    END_GAME_SCREEN(state, payload) { // payload = { winner: {...}, losers: [{...}, {...}], draws: [{...}, {...}] };
       state.end_game_screen = true;

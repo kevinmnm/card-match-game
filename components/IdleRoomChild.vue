@@ -165,6 +165,17 @@ export default {
    mounted() {
       window.socket.emit('join-global-room');
       setTimeout( () => this.$store.commit('audio/PLAY_BGM', 'elinia'), 0);
+
+      if (localStorage.mute_bgm) {
+         localStorage.mute_bgm === 'true' ? 
+            this.$store.dispatch('audio/bgm_setting', false) : 
+            this.$store.dispatch('audio/bgm_setting', true);
+      }
+      if (localStorage.mute_sound) {
+         localStorage.mute_sound === 'true' ? 
+            this.$store.dispatch('audio/sound_setting', true) : 
+            this.$store.dispatch('audio/sound_setting', false);
+      }
    },
    destroyed() {
       window.socket.emit('leave-global-room');

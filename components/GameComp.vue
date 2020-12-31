@@ -24,7 +24,7 @@
             width="100%"
             height="100%"
             tag="div"
-            style="background: blue;"
+            style="background: transparent;"
          >
             <!-- Title Bar -->
             <v-card 
@@ -40,7 +40,7 @@
 
                   <v-menu v-if="!room_info.start" :close-on-content-click="false" min-width="30px" transition="fab-transition" auto offset-y>
                      <template v-slot:activator="{ on, attrs }">
-                        <v-icon v-bind="attrs" v-on="on" style="position:absolute; left:0; cursor:pointer; height:100%; background:green;" color="#404040">mdi-cog</v-icon>
+                        <v-icon v-bind="attrs" v-on="on" style="position:absolute; left:0; cursor:pointer; height:100%; background:transparent;" color="#404040">mdi-cog</v-icon>
                      </template>
                      <v-sheet class="d-flex flex-column justify-space-between pa-3">
                         <v-card>
@@ -67,7 +67,7 @@
                :class="flex_direction"
                width="100%"
                tag="div"
-               style="background: green;"
+               style="background: transparent;"
             >
             
                <!-- Card Board -->
@@ -242,7 +242,7 @@ export default {
             } else {
                return '180px'
             }
-         } else if (this.$vuetify.breakpoint.name === 'sm') {
+         } else if (this.$vuetify.breakpoint.name === 'sm') { // Width 600 to 960;
             if (window.innerHeight <= 960) {
                // return '100px'
                // console.log(this.$refs.board_info);
@@ -256,23 +256,23 @@ export default {
                // return (+this.board_card_size.replace('px','') - (+this.card_size.replace('px','') * 7)) - 40 + 'px';
                return this.window_inner_height - 25 - (+this.card_size.replace('px','') * 7) - 40 + 'px';
             }
-         } else {
+         } else { // Will change to vertical view (md);
             // return 500 - 40 + 'px'
             return +this.board_card_size.replace('px','') - +this.card_size.replace('px','') - 40 + 'px';
          }
       },
       flex_direction() {
          switch (this.$vuetify.breakpoint.name) {
-            case "xs":
-               return "flex-column"; // < 600px -- 60px
-            case "sm":
-               return "flex-column"; // 600px > < 960px -- 80px
-            case "md":
-               return "flex-row"; // 960px > < 1264px* -- 100px
-            case "lg":
-               return "flex-row"; // 1264px > < 1904px* -- 100px
-            case "xl":
-               return "flex-row"; // > 1904px* -- 100px
+            case "xs": // < 600px -- 60px
+               return "flex-column"; 
+            case "sm": // 600px > < 960px -- 80px
+                return "flex-column"; 
+            case "md": // 960px > < 1264px* -- 100px
+               return "flex-row"; 
+            case "lg": // 1264px > < 1904px* -- 100px
+               return "flex-row"; 
+            case "xl": // > 1904px* -- 100px
+               return "flex-row"; 
          }
       },
       board_card_size() {
@@ -358,8 +358,6 @@ export default {
       },
       chat_max_height_updater_handler() {
          this.chat_max_height_updater++
-         console.warn(this.$vuetify.breakpoint.name);
-         console.warn(this.window_inner_height);
       },
       confirm_leave(){
          if (this.room_info.start) {
@@ -387,11 +385,8 @@ export default {
    },
    // watch: {
    //    game_started(newVal) {
-   //       if (newVal) {
-   //          this.$refs.lith.load();
-   //          this.play_lith();
-   //       } else {
-   //          this.$refs.lith.pause();
+   //       if (!newVal) {
+   //          this.$store.commit('audio/PLAY_BGM', 'elinia');
    //       }
    //    }
    // }

@@ -39,12 +39,12 @@ export default {
       },
       room_infor() {
          return this.$store.state.room.room_info;
-      }
+      },
    },
    watch: {
       game_starting: {
          handler: function (val) {
-            if (val) {
+            if (val && !this.room_infor.terminate) {
                this.interval_id = setInterval(() => {
                   if (this.game_start_countdown === 0) {
                      clearInterval(this.interval_id);

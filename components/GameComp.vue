@@ -105,7 +105,6 @@
                         ($vuetify.breakpoint.name === 'xs' || $vuetify.breakpoint.name === 'sm') ? {width: board_card_size, height: 'calc(100% - 360px)'} 
                         : ($vuetify.breakpoint.name === 'md') ? {height: board_card_size} 
                         : {height: board_card_size},
-                        { 'border: 2px solid red;': my_turn }
                      ]
                   "
                   class="d-flex flex-column flex-wrap"

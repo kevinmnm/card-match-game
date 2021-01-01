@@ -27,7 +27,7 @@
          </v-col>
          <v-col cols="12">or</v-col>
          <v-col cols="12" class="ma-auto">
-            <v-btn width="150px" color="secondary" @click="comming_soon()">signup</v-btn>
+            <v-btn width="150px" color="secondary" to="/signup" disabled>signup</v-btn>
          </v-col>
          <v-col cols="12">or</v-col>
          <v-col cols="12" class="ma-auto">

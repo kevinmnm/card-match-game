@@ -20,7 +20,9 @@ export const mutations = {
 
       if (payload) { // If room info payload was sent,
          if (state.room_info.capacity === state.room_info.joined) { // pre-start (countdown) the game if full;
-            state.game_starting = true;
+            if (!state.room_info.terminate) { // If room doens't needs to be terminated,
+               state.game_starting = true;
+            }
          } else {
             state.game_starting = false;
          }

@@ -5,10 +5,12 @@
          <Loading />
       </v-overlay>
 
-      <v-overlay absolute z-index="2" color="blue" class="text-center" opacity="0.9" v-if="show_endGameScreen">
+      <!-- <v-overlay z-index="2" color="blue" class="text-center" opacity="1" v-if="show_endGameScreen">
          <EndGameScreen />
-      </v-overlay>
-      
+      </v-overlay> -->
+      <div style="position:absolute; z-index:2; width:100%; height:100%; background:red;" v-if="show_endGameScreen">
+         <EndGameScreen />
+      </div>
       
       <v-card
          class="pa-0 ma-0"

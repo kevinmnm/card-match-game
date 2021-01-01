@@ -23,7 +23,7 @@ export default {
       connect_socket() {
          let handshake_data = this.$store.state.guest.guest_info || null // || User info later;
 
-         console.dir("Handshake Data Available");
+         // console.dir("Handshake Data Available");
 
          window.socket = io(window.server_url, {
             query: {
@@ -106,6 +106,8 @@ export default {
 
          window.socket.on('game-ended', payload => { // payload = { winner: {...}, losers: [{...}, {...}], draws: [{...}, {...}] };
             this.$store.commit('general/END_GAME_SCREEN', payload);
+            this.$store.commit('card/INITIAL_STATE_CARD');
+            this.$store.dispatch('card/countdown_function', false);
          });
          
       },

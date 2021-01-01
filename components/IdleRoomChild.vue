@@ -42,7 +42,6 @@
          class="d-flex flex-row"
          style="position: absolute; right: 0; bottom: 201px"
          width="100%"
-         color="primary"
       >
          <v-tooltip top>
             <template v-slot:activator="{on, attrs}">
@@ -118,11 +117,13 @@
                :key="chat + ind"
                :style="chat.style"
             >
-               {{
-                  chat.type === "all-other-chat"
-                     ? chat.displayName + " : " + chat.chat
-                     : chat.chat
-               }}
+               <div>
+                  {{
+                     (chat.type === "all-other-chat")
+                        ? (chat.displayName + " : " + chat.chat)
+                        : (chat.chat)
+                  }}
+               </div>
             </div>
          </div>
          <div class="all-chat-input-wrapper">
@@ -181,6 +182,9 @@ export default {
       sound_muted_status() {
          return this.$store.state.audio.sound_muted;
       },
+      my_chat_style() {
+         return this.$store.state.chat.my_chat_style;
+      }
    },
    methods: {
       bgm_setter() {
@@ -210,12 +214,13 @@ export default {
             type: "all-other-chat",
             displayName: this.my_display_name,
             chat: this.global_chat,
-            style: {
+            style: { // How I'll see other's chat, revamp to incomming style later;
                position: "relative",
                "font-size": "14px",
                width: "100%",
                padding: "2px",
                "text-align": "left",
+               background: "#FFFFFF",
             },
          });
 
@@ -223,13 +228,7 @@ export default {
             type: "all-my-chat",
             displayName: this.my_display_name,
             chat: this.global_chat,
-            style: {
-               position: "relative",
-               "font-size": "14px",
-               width: "100%",
-               padding: "2px",
-               "text-align": "right",
-            },
+            style: this.my_chat_style,
          });
          this.global_chat = "";
 
@@ -262,6 +261,7 @@ export default {
    },
    destroyed() {
       window.socket.emit("leave-global-room");
+      this.$store.commit('chat/DELETE_GLOBAL_CHAT'); // Empty out global chat array;
    },
 };
 </script>
@@ -290,9 +290,11 @@ $text-field-border-radius: 0;
       position: absolute;
       height: calc(100% - 50px);
       width: 100%;
-      background: grey;
+      background: #9bbbd4;
       overflow-y: auto;
       bottom: 25px;
+      word-wrap: break-word;
+      overflow-x: hidden;
    }
 
    .all-chat-input-wrapper {

@@ -1,22 +1,25 @@
 {
-  "name": "card-match-game",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "nuxt",
-    "build": "nuxt build",
-    "start": "nuxt start",
-    "generate": "nuxt generate",
-    "heroku-postbuild": "npm run build"
-  },
-  "dependencies": {
-    "animate.css": "^4.1.1",
-    "core-js": "^3.6.5",
-    "nuxt": "^2.14.6",
-    "socket.io-client": "^3.0.4",
-    "vue-chat-scroll": "^1.4.0"
-  },
-  "devDependencies": {
-    "@nuxtjs/vuetify": "^1.11.2"
-  }
+   "name": "card-match-game",
+   "version": "1.0.0",
+   "private": true,
+   "scripts": {
+      "dev": "nuxt",
+      "build": "nuxt build",
+      "start": "nuxt start",
+      "generate": "nuxt generate",
+      "heroku-postbuild": "npm run build"
+   },
+   "engines": {
+      "node": "14.15.3"
+   },
+   "dependencies": {
+      "animate.css": "^4.1.1",
+      "core-js": "^3.6.5",
+      "nuxt": "^2.14.6",
+      "socket.io-client": "^3.0.4",
+      "vue-chat-scroll": "^1.4.0"
+   },
+   "devDependencies": {
+      "@nuxtjs/vuetify": "^1.11.2"
+   }
 }

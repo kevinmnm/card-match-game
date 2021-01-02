@@ -108,7 +108,7 @@ export default {
    },
    methods: {
       card_flip(card, ind) {
-         if (card.show) return false;
+         if (card.show) return;
          this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card });
 
          this.$store.commit('audio/PLAY_SOUND', 'card_flip');

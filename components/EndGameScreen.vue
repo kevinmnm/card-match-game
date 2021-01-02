@@ -13,7 +13,7 @@
       <v-sheet class="ads-section flex-grow-1">
 
       </v-sheet>
-      <v-btn @click="closeEndGame()" v-if="!terminate_room">CLOSE</v-btn>
+      <v-btn @click="closeEndGame()" v-if="!terminate_room" color="primary">CLOSE</v-btn>
    </v-sheet>
 </template>
 

@@ -139,7 +139,7 @@
                   </v-sheet>
 
                   <!-- Chat of info-board -->
-                  <v-sheet class=" d-flex flex-column" style="background: blue; overflow:auto;">
+                  <v-sheet class="d-flex flex-column flex-grow-1" style="overflow:auto;">
                      <!-- <v-sheet style="overflow:auto;" color="#303030" class="d-flex flex-column flex-grow-1 pa-1" min-height="100px" :max-height="chat_max_height" v-chat-scroll="{always: false}"> -->
                      <v-sheet style="overflow:auto;" color="#303030" class="d-flex flex-column flex-grow-1 pa-1" :height="chat_max_height" v-chat-scroll="{always: false}">
 

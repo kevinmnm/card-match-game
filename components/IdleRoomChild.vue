@@ -13,7 +13,19 @@
             <v-btn width="140px" disabled>ranked game</v-btn>
          </v-col>
          <v-col cols="6" class="col-sm-3">
-            <v-btn width="140px" disabled>create game</v-btn>
+            <v-dialog v-model="create_room_dialog">
+               <template v-slot:activator="{ on, attrs }">
+                  <v-btn 
+                     v-bind="attrs"
+                     v-on="on"
+                     width="140px" 
+                     @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')"
+                  >
+                     create game
+                  </v-btn>
+               </template>
+               <CreateRoom @close-create-room-dialog="create_room_dialog = false, create_room_key++" :key="create_room_key" />
+            </v-dialog>
          </v-col>
          <v-col cols="6" class="col-sm-3">
             <v-btn width="140px" disabled>join game</v-btn>
@@ -149,12 +161,14 @@
 <script>
 import Loading from "@/components/Loading.vue";
 import MyInfo from "@/components/MyInfo.vue";
+import CreateRoom from "@/components/CreateRoom.vue";
 
 export default {
    name: "IdleRoomChild",
    components: {
       Loading,
       MyInfo,
+      CreateRoom
    },
    data() {
       return {
@@ -164,6 +178,8 @@ export default {
          enter_button_disabled: false,
          global_chat: "",
          show_my_info: false,
+         create_room_dialog: false,
+         create_room_key: 0
       };
    },
    computed: {

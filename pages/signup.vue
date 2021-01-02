@@ -27,6 +27,21 @@
                         required
                      ></v-text-field>
                   </v-col>
+                   <v-col cols="8" md="9">
+                     <v-text-field
+                        v-model="dob"
+                        label="Date of Birth"
+                        required
+                        type='Date'
+                     ></v-text-field>
+                  </v-col>
+                   <v-col cols="8" md="9">
+                     <v-text-field
+                        v-model="gender"
+                        label="Gender"
+                        required
+                     ></v-text-field>
+                  </v-col>
                   <v-col cols="12">
                      <v-text-field
                         v-model="email"
@@ -93,6 +108,17 @@
             </v-form>
          </v-card-text>
       </v-card>
+      <v-dialog v-model="verification_code_dialog" persistent>
+         <v-card>
+            <v-card-title>Verification Code</v-card-title>
+            <v-text-field v-model="verification_code" dense ></v-text-field>
+            <v-btn @click="verify_code()" dense>Verify</v-btn>
+         </v-card>
+      </v-dialog>
+      <v-dialog v-model="account_created_dialog" persistent>
+         <h2>Account create! Please log in.</h2>
+         <v-btn to="/" color="info">Confirm</v-btn>
+      </v-dialog>
    </v-sheet>
 </template>
 
@@ -114,6 +140,8 @@ export default {
       username: "",
       firstName: "",
       lastName: "",
+      dob: "",
+      gender: "",
       email: "",
       password: "",
       verify: "",
@@ -128,6 +156,9 @@ export default {
          min: (v) => (v && v.length >= 8) || "Min 8 characters",
          idMin: val => (val && val.length >= 3) || "Min 3 characters"
       },
+      verification_code_dialog: false,
+      verification_code: null,
+      account_created_dialog: false
    }),
    methods: {
       extra_verifier() {
@@ -171,19 +202,37 @@ export default {
                firstName: this.firstName,
                lastName: this.lastName,
                email: this.email,
-               password: this.password 
+               password: this.password,
+               dob: this.dob,
+               gender: this.gender 
             })
          });
 
          const res = await response.json();
-         this.signup_loading = false;
 
          if (!res.available) { // If email already pending for verification,
             alert(res.msg);
          } else { // Send email logic needs to go here...
-            // console.log(res.msg);
+            this.verification_code_dialog = true;
          }
 
+      },
+      async verify_code() {
+         const response = await fetch(window.server_url + '/verify', {
+            headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
+            body: JSON.stringify({
+               displayName: this.username,
+               verificationCode: this.verification_code
+            })
+         });
+
+         const res = await response.json();
+         if (res.valid) {
+            this.account_created_dialog = true;
+         } else {
+            alert('Invalid code');
+         }
       }
    },
 };

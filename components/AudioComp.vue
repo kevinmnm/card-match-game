@@ -31,6 +31,9 @@
       <!-- Victory -->
       <audio ref="victory" :src="require('@/assets/music/sound/victory.ogg')" preload="auto"></audio>
       <audio ref="win" :src="require('@/assets/music/sound/win.mp3')" preload="auto"></audio>
+      <!-- Invite -->
+      <audio ref="invite" :src="require('@/assets/music/sound/invite.ogg')" preload="auto"></audio>
+
 
    </div>
 </template>
@@ -61,6 +64,7 @@ export default {
       joined: state => state.audio.sound.joined,
       victory: state => state.audio.sound.victory,
       win: state => state.audio.sound.win,
+      invite: state => state.audio.invite.win,
    }),
    methods: {
       trigger_audio(ref, playOrPause) { // ref = name, playOrPause = true || false;
@@ -91,6 +95,7 @@ export default {
       joined() { this.trigger_audio('joined') },
       victory() { this.trigger_audio('victory') },
       win() { this.trigger_audio('win') },
+      invite() { this.trigger_audio('invite') },
    },
    mounted() {
       Object.keys(this.$refs).forEach( ref => {

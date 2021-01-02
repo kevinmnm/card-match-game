@@ -39,14 +39,17 @@
                <v-card>{{ selected_type.toUpperCase() }}</v-card>
             </v-col>
             <v-col cols="12" class="pa-0 ma-0 d-flex flex-row">
-               <v-col cols="4" class="pa-0 ma-0">
-                  <v-btn width="100%" tile text outlined>1vs1</v-btn>
+               <v-col cols="3" class="pa-0 ma-0">
+                  <v-btn class="text-lowercase" width="100%" tile text outlined>1vs1</v-btn>
                </v-col>
-               <v-col cols="4" class="pa-0 ma-0">
-                  <v-btn width="100%" tile text outlined>2vs2</v-btn>
+               <v-col cols="3" class="pa-0 ma-0">
+                  <v-btn class="text-lowercase" width="100%" tile text outlined>2vs2</v-btn>
                </v-col>
-               <v-col cols="4" class="pa-0 ma-0">
-                  <v-btn width="100%" tile text outlined>3vs3</v-btn>
+               <v-col cols="3" class="pa-0 ma-0">
+                  <v-btn class="text-lowercase" width="100%" tile text outlined>3vs3</v-btn>
+               </v-col>
+               <v-col cols="3" class="pa-0 ma-0 ">
+                  <v-btn class="text-lowercase" width="100%" tile text outlined>1vs1vs1</v-btn>
                </v-col>
             </v-col>
             <v-col cols="12" class="pa-0 ma-0">

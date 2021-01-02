@@ -17,6 +17,7 @@ export const state = () => ({
       joined: 0,
       victory: 0,
       win: 0,
+      invite: 0,
    },
    sound_muted: false,
 });

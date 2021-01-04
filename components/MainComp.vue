@@ -1,37 +1,64 @@
 <template>
-   <v-container fluid style="height:100%">
+   <v-container fluid style="height: 100%">
       <v-row class="text-center">
          <v-col cols="12">
-            <h1>CARD MATCH</h1>
+            <v-btn to="/" text plain>Monster Matches</v-btn>
          </v-col>
-         <v-col cols="7" class="ma-auto">
-            <v-form autocomplete="off" style="border:2px solid lightGrey;">
+         <v-col cols="12" sm="7" md="5" class="ma-auto">
+            <v-form autocomplete="off" style="border: 2px solid lightGrey">
                <h3>Login</h3>
                <v-text-field
                   label="Email / Username"
                   autocomplete="off"
+                  v-model="login_id"
+                  @keydown.space="($event) => $event.preventDefault()"
                   dense
                   filled
                   hide-details
                   full-width
+                  :disabled="show_server_loading"
                ></v-text-field>
                <v-text-field
+                  class="ma-0 pa-0"
+                  v-model="login_pw"
+                  :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="show1 ? 'text' : 'password'"
                   label="Password"
+                  @click:append="show1 = !show1"
+                  @keydown.space="($event) => $event.preventDefault()"
                   dense
                   filled
                   hide-details
                   full-width
+                  :disabled="show_server_loading"
                ></v-text-field>
-               <v-btn @click.prevent="comming_soon()" width="100%" tile text>login</v-btn>
+               <v-checkbox
+                  class="ma-2 pa-0"
+                  v-model="remember_username"
+                  label="Remeber Email/Username"
+                  dense
+                  hide-details
+               ></v-checkbox>
+               <v-btn
+                  @click="loginFunc($event)"
+                  width="100%"
+                  tile
+                  color="deep-purple accent-4 white--text"
+                  :disabled="disable_login_button || input_empty"
+                  >login</v-btn
+               >
             </v-form>
+            <div class="text-left">
+               <span class="forgot-credentials text-caption">Forgot Username/Password</span>
+            </div>
          </v-col>
          <v-col cols="12">or</v-col>
          <v-col cols="12" class="ma-auto">
-            <v-btn width="150px" color="secondary" to="/signup" disabled>signup</v-btn>
+            <v-btn width="150px" color="secondary" to="/signup" :disabled="show_server_loading">signup</v-btn>
          </v-col>
          <v-col cols="12">or</v-col>
          <v-col cols="12" class="ma-auto">
-            <Dialog @clicked-play="clicked_play()">
+            <Dialog @clicked-play="clicked_play()" :server-loading="show_server_loading">
                <template v-slot:button>Play as guest</template>
                <template #title>Choose Display Name</template>
             </Dialog>
@@ -53,20 +80,86 @@ export default {
    name: "MainComp",
    components: {
       Dialog,
-      Loading
+      Loading,
    },
    data() {
       return {
-         show_server_loading: false
+         show1: false,
+         show_server_loading: false,
+         login_id: "",
+         login_pw: "",
+         remember_username: false,
+         disable_login_button: false,
       };
    },
-   methods: {
-      comming_soon(){
-         alert('Comming soon. Please play as guest for now.');
+   computed: {
+      input_empty() {
+         if (!this.login_id || !this.login_pw) {
+            return true;
+         } else {
+            return false;
+         }
       },
-      clicked_play(){
+   },
+   methods: {
+      async loginFunc($event) {
+         $event.preventDefault();
+         this.disable_login_button = true;
          this.show_server_loading = true;
+
+         // this.remember_username ?
+         //    localStorage.monster_matches_login = this.remember_username :
+         //    localStorage.monster_matches_login = '';
+
+         const response = await fetch(window.server_url + "/login", {
+            headers: { "Content-Type": "application/json" },
+            method: "POST",
+            body: JSON.stringify({
+               displayName: this.login_id,
+               password: this.login_pw,
+            }),
+         });
+
+         const res = await response.json();
+         if (!res.login) {
+            this.disable_login_button = false;
+            this.show_server_loading = false;
+            return alert(res.msg);
+         }
+
+         console.log(res);
+         this.$store.commit("user/USER_INFO", res);
+         this.$store.commit("user/USER_DISPLAY_NAME", res.displayName);
+         this.$store.commit("general/MY_DISPLAY_NAME", res.displayName);
+      },
+      clicked_play() {
+         this.show_server_loading = true;
+      },
+   },
+   watch: {
+      remember_username(newVal) {
+         newVal
+            ? (localStorage.monster_matches_login = this.login_id)
+            : (localStorage.monster_matches_login = "");
+      },
+   },
+   mounted() {
+      if (localStorage.monster_matches_login) {
+         this.login_id = localStorage.monster_matches_login;
+         this.remember_username = true;
       }
-   }
+   },
 };
 </script>
+
+<style lang="scss" scoped>
+.forgot-credentials{
+   color: lightGrey;
+   cursor: pointer;
+   user-select: none;
+
+   &:hover{
+      color: #800080;
+   }
+}
+</style>

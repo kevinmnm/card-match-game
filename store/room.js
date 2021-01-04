@@ -1,4 +1,5 @@
 export const state = () => ({
+   room_type: '', // Should be reset when leaving game;
    show_room: false,
    room_info: null,
    room_chat: [],
@@ -8,6 +9,9 @@ export const state = () => ({
 export const mutations = {
    SHOW_ROOM(state, payload) {
       state.show_room = payload;
+   },
+   ROOM_TYPE(state, payload) {
+      state.room_type = payload;
    },
    ROOM_INFO_UPDATE(state, payload) { // payload = { roomInfo: ... };
       state.room_info = {

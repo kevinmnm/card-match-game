@@ -3,8 +3,6 @@
       <MainComp v-if="!signed_in" />
       <IdleRoom v-else />
       <AudioComp />
-      <!-- <v-btn @click="$store.commit('audio/PLAY_SOUND', 'victory')">test1</v-btn> -->
-      <!-- <v-btn @click="$store.commit('audio/PLAY_BGM', 'elinia')">test1</v-btn> -->
    </v-container>
 </template>
 

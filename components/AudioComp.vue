@@ -33,6 +33,14 @@
       <audio ref="win" :src="require('@/assets/music/sound/win.mp3')" preload="auto"></audio>
       <!-- Invite -->
       <audio ref="invite" :src="require('@/assets/music/sound/invite.ogg')" preload="auto"></audio>
+      <!-- Add Score -->
+      <audio ref="add_score" :src="require('@/assets/music/sound/add_score.ogg')" preload="auto"></audio>
+      <!-- Confirmation -->
+      <audio ref="confirmation" :src="require('@/assets/music/sound/confirmation.ogg')" preload="auto"></audio>
+      <!-- Joined Room -->
+      <audio ref="joined_room" :src="require('@/assets/music/sound/joined_room.ogg')" preload="auto"></audio>
+      <!-- Ingame Countdown -->
+      <audio ref="ingame_countdown" :src="require('@/assets/music/sound/ingame_countdown.ogg')" preload="auto"></audio>
 
 
    </div>
@@ -64,7 +72,11 @@ export default {
       joined: state => state.audio.sound.joined,
       victory: state => state.audio.sound.victory,
       win: state => state.audio.sound.win,
-      invite: state => state.audio.invite.win,
+      invite: state => state.audio.sound.invite,
+      add_score: state => state.audio.sound.add_score,
+      confirmation: state => state.audio.sound.confirmation,
+      joined_room: state => state.audio.sound.joined_room,
+      ingame_countdown: state => state.audio.sound.ingame_countdown,
    }),
    methods: {
       trigger_audio(ref, playOrPause) { // ref = name, playOrPause = true || false;
@@ -96,6 +108,10 @@ export default {
       victory() { this.trigger_audio('victory') },
       win() { this.trigger_audio('win') },
       invite() { this.trigger_audio('invite') },
+      add_score() { this.trigger_audio('add_score') },
+      confirmation() { this.trigger_audio('confirmation') },
+      joined_room() { this.trigger_audio('joined_room') },
+      ingame_countdown() { this.trigger_audio('ingame_countdown') },
    },
    mounted() {
       Object.keys(this.$refs).forEach( ref => {

@@ -2,7 +2,7 @@
    <v-container fluid>
       <v-dialog v-model="dialog" persistent max-width="290">
          <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" v-bind="attrs" v-on="on" :disabled="clicked_play" width="150px">
+            <v-btn color="primary" v-bind="attrs" v-on="on" :disabled="clicked_play || server_loading" width="150px">
                <slot name="button"></slot>
             </v-btn>
          </template>
@@ -19,11 +19,12 @@
                      :append-icon="input_icon"
                      :color="input_color"
                      :error="input_error"
-                     :messages="input_message"
+                     :messages="input_message" 
                      class="guest-id"
                      v-model="displayName"
                      :loading="input_loading"
                      @blur="upon_change()"
+                     @keydown.space="($event) => $event.preventDefault()"
                   ></v-text-field>
                </v-col>
                <v-col cols="6" class="ma-auto pa-0">
@@ -59,6 +60,7 @@
 <script>
 export default {
    name: "Dialog",
+   props: ['serverLoading'],
    components: {},
    data() {
       return {
@@ -73,6 +75,11 @@ export default {
          input_color: "green",
          displayName: "",
       };
+   },
+   computed: {
+      server_loading() {
+         return this.serverLoading;
+      }
    },
    methods: {
       async play() {
@@ -122,7 +129,7 @@ export default {
 
          if (res.find_guest) {
             // If displayName cannot be used (already taken).
-            this.input_icon = "mdi-check-bold";
+            this.input_icon = "mdi-close-thick";
             this.play_disabled = true;
             this.verify_disabled = false;
             this.input_color = "error";
@@ -131,7 +138,7 @@ export default {
             this.input_message = "Unavailable";
          } else if (!res.find_guest) {
             // If displayName can be used.
-            this.input_icon = "mdi-close-thick";
+            this.input_icon = "mdi-check-bold";
             this.play_disabled = false;
             this.verify_disabled = true;
             this.input_color = "green";

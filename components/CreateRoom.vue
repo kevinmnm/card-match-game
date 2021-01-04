@@ -3,30 +3,30 @@
       <v-card>
          <v-card-title>Create Room</v-card-title>
       </v-card>
-      <v-sheet class="d-flex flex-row justify-center" style="overflow:hidden;">
+      <v-sheet class="d-flex flex-wrap justify-center" style="overflow:hidden;">
          <v-hover v-slot="{ hover }">
-            <v-card :class="{ 'on-hover': hover }" width="25%" style="cursor:pointer;" :elevation="hover ? 24 : 0" :style="hover ? 'opacity:1' : 'opacity:0.9'" @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')" @click="selected_type = 'classic'">
+            <v-card :class="{ 'on-hover': hover }" :width="vuetify_breakpoint === 'xs' ? '50%' : '25%'" style="cursor:pointer;" :elevation="hover ? 24 : 0" :style="hover ? 'opacity:1' : 'opacity:0.9'" @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')" @click="selected_type = 'classic'">
                <v-responsive :aspect-ratio="1/1">
                   <v-img :src="require('@/assets/img/type/classic.png')"></v-img>
                </v-responsive>
             </v-card>
          </v-hover>
          <v-hover v-slot="{ hover }">
-            <v-card :class="{ 'on-hover': hover }" width="25%" style="cursor:pointer;" :elevation="hover ? 24 : 0" :style="hover ? 'opacity:1' : 'opacity:0.9'" @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')" @click="selected_type = 'lovely'">
+            <v-card :class="{ 'on-hover': hover }" :width="vuetify_breakpoint === 'xs' ? '50%' : '25%'" style="cursor:pointer;" :elevation="hover ? 24 : 0" :style="hover ? 'opacity:1' : 'opacity:0.9'" @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')" @click="selected_type = 'lovely'">
                <v-responsive :aspect-ratio="1/1">
                   <v-img :src="require('@/assets/img/type/lovely.png')"></v-img>
                </v-responsive>
             </v-card>
          </v-hover>
          <v-hover v-slot="{ hover }">
-            <v-card :class="{ 'on-hover': hover }" width="25%" style="cursor:pointer;" :elevation="hover ? 24 : 0" :style="hover ? 'opacity:1' : 'opacity:0.9'" @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')" @click="selected_type = 'plain'">
+            <v-card :class="{ 'on-hover': hover }" :width="vuetify_breakpoint === 'xs' ? '50%' : '25%'" style="cursor:pointer;" :elevation="hover ? 24 : 0" :style="hover ? 'opacity:1' : 'opacity:0.9'" @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')" @click="selected_type = 'plain'">
                <v-responsive :aspect-ratio="1/1">
                   <v-img :src="require('@/assets/img/type/plain.png')"></v-img>
                </v-responsive>
             </v-card>
          </v-hover>
          <v-hover v-slot="{ hover }">
-            <v-card :class="{ 'on-hover': hover }" width="25%" style="cursor:pointer;" :elevation="hover ? 24 : 0" :style="hover ? 'opacity:1' : 'opacity:0.9'" @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')" @click="selected_type = 'colorless'">
+            <v-card :class="{ 'on-hover': hover }" :width="vuetify_breakpoint === 'xs' ? '50%' : '25%'" style="cursor:pointer;" :elevation="hover ? 24 : 0" :style="hover ? 'opacity:1' : 'opacity:0.9'" @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')" @click="selected_type = 'colorless'">
                <v-responsive :aspect-ratio="1/1">
                   <v-img :src="require('@/assets/img/type/colorless.png')"></v-img>
                </v-responsive>
@@ -40,16 +40,16 @@
             </v-col>
             <v-col cols="12" class="pa-0 ma-0 d-flex flex-row">
                <v-col cols="3" class="pa-0 ma-0">
-                  <v-btn class="text-lowercase" width="100%" tile text outlined>1vs1</v-btn>
+                  <v-btn @click="set_room_capacity(2)" class="text-lowercase" width="100%" tile text outlined>1vs1</v-btn>
                </v-col>
                <v-col cols="3" class="pa-0 ma-0">
-                  <v-btn class="text-lowercase" width="100%" tile text outlined>2vs2</v-btn>
+                  <v-btn @click="set_room_capacity(4)" class="text-lowercase" width="100%" tile text outlined>2vs2</v-btn>
                </v-col>
                <v-col cols="3" class="pa-0 ma-0">
-                  <v-btn class="text-lowercase" width="100%" tile text outlined>3vs3</v-btn>
+                  <v-btn @click="set_room_capacity(6)" class="text-lowercase" width="100%" tile text outlined>3vs3</v-btn>
                </v-col>
                <v-col cols="3" class="pa-0 ma-0 ">
-                  <v-btn class="text-lowercase" width="100%" tile text outlined>1vs1vs1</v-btn>
+                  <v-btn @click="set_room_capacity(3)" class="text-lowercase" width="100%" tile text outlined>1vs1vs1</v-btn>
                </v-col>
             </v-col>
             <v-col cols="12" class="pa-0 ma-0">
@@ -99,7 +99,7 @@
                   <v-btn @click="$emit('close-create-room-dialog')" class="ma-0 pa-0" width="100%" color="error">cancel</v-btn>
                </v-col>
                <v-col cols="4" class="pa-0 ma-0">
-                  <v-btn class="ma-0 pa-0" width="100%" color="success" @click="comming_soon()">create</v-btn>
+                  <v-btn class="ma-0 pa-0" width="100%" color="success" @click="create_custom_game()">create</v-btn>
                </v-col>
             </v-col>
          </v-row>
@@ -108,6 +108,8 @@
 </template>
 
 <script>
+/** ADD ALLOW GUEST OPTION (currently default to true) **/
+
 export default {
    name: "CreateRoom",
    data: () => ({
@@ -115,12 +117,37 @@ export default {
       secret_key: null,
       room_type: "public",
       show_key: false,
-      selected_type: ""
+      selected_type: "",
+      room_capacity: null,
+      allow_guest: true,
    }),
-   methods: {
-      comming_soon() {
-         alert('Under Development');
+   computed: {
+      vuetify_breakpoint() {
+         return this.$vuetify.breakpoint.name;
+      },
+      user_info() {
+         return this.$store.state.user.user_info;
       }
+   },
+   methods: {
+      set_room_capacity(capacity) {
+         this.room_capacity = capacity;
+      },
+      create_custom_game() {
+         if (!this.user_info) { 
+            alert('Only users can create games.');
+            this.$emit('close-create-room-dialog');
+            return 
+         }
+         window.socket.emit('create-custom-game', { 
+            roomType: this.room_type, 
+            roomTitle: this.room_title,
+            roomPassword: this.secret_key,
+            roomCapacity: this.room_capacity,
+            allowGuest: this.allow_guest,
+            creator_id: this.user_info._id,
+         });
+      }  
    },
 };
 </script>

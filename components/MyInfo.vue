@@ -62,7 +62,7 @@ export default {
          return this.$store.state.guest.guest_info;
       },
       user_info() {
-         return // user info;
+         return this.$store.state.user.user_info;
       }
    },
    methods: {

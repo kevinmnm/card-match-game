@@ -18,6 +18,11 @@ export const state = () => ({
       victory: 0,
       win: 0,
       invite: 0,
+      add_score: 0,
+      joined_room: 0,
+      confirmation: 0,
+      ingame_countdown: 0,
+      
    },
    sound_muted: false,
 });

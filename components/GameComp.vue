@@ -87,17 +87,6 @@
                </v-sheet>
 
                <!-- Info Board -->
-               <!-- <v-sheet
-                  :style="
-                     [
-                        ($vuetify.breakpoint.name === 'xs' || $vuetify.breakpoint.name === 'sm') ? {width: board_card_size, height: 'calc(100% - 360px)'} 
-                        : ($vuetify.breakpoint.name === 'md') ? {height: board_card_size, width: 'calc(100% - 600px)'} 
-                        : {height: board_card_size, width: 'calc(100% - 720px)'},
-                        { 'border: 2px solid red;': my_turn }
-                     ]
-                  "
-                  class="d-flex flex-column flex-wrap"
-               > -->
                <v-sheet
                   ref="board_info"
                   :style="
@@ -116,7 +105,20 @@
                   <v-sheet :height="card_size" class="d-flex flex-row pa-0 ma-0" width="100%">
 
                      <v-sheet v-for="(player, ind) in Object.values(all_players)" :key="player + ind" width="50%" class="d-flex flex-row pa-0 ma-0 font-weight-bold">
-                        <v-card class="pa-0 ma-0" :width="card_size" color="yellow">rank icon1</v-card>
+                        <v-tooltip bottom>
+                           <template v-slot:activator="{ on, attrs }">
+                              <v-card class="pa-0 ma-0" :width="card_size" color="yellow" v-bind="attrs" v-on="on">
+                                 <v-img 
+                                    :src="
+                                       player.guest ? 
+                                          require('@/assets/img/rank/stone.png') : 
+                                          require(`@/assets/img/rank/${user_rank_img}`)
+                                    "
+                                 ></v-img>
+                              </v-card>
+                           </template>
+                           <span>{{ player.guest ? 'STONE' : player.rank[0].tier }}</span>
+                        </v-tooltip>
                            <v-sheet class="d-flex flex-column pa-0 ma-0 flex-grow-1 text-center">
                               <v-hover v-slot="{ hover }">
                                  <v-card class="pa-0 ma-0 align-center d-flex" width="100%" height="50%" color="grey" style="cursor:pointer;" @click="open_player_info(player)" :class="{ 'on-hover': hover, 'text-shadow': hover }">
@@ -163,11 +165,10 @@
 
          </v-sheet>
       </v-img>
-      <v-dialog v-model="player_info_dialog" class="pa-0 ma-0" overlay-opacity="0.8">
+      <v-dialog v-model="player_info_dialog" class="pa-0 ma-0" overlay-opacity="0.8" :width="window_inner_width <= 600 ? '100%' : '60%'">
          <PlayerInfo v-if="player_info_dialog" :player-info="player_info_prop" :img-size="card_size" @player-info-dialog-close="player_info_dialog = false" />
       </v-dialog>
       <BottomSheet :show-comp="leave_confirm" @closeSheet="leave_confirm = false;" />
-      <!-- <audio ref="lith" :src="require('@/assets/music/lith.mp3')" type="audio/mpeg" preload="auto" loop></audio> -->
    </v-sheet>
 </template>
 
@@ -191,6 +192,14 @@ export default {
       }
    },
    computed: {
+      user_rank_img() {
+         if (!this.$store.state.user.user_info) {return 'Not a user'};
+         let userInfo = this.$store.state.user.user_info;
+         if (userInfo.rank[0].tier === 'noobie') {return 'noobie.png'}
+         if (userInfo.rank[0].tier === 'bronze') {return 'bronze.png'}
+         if (userInfo.rank[0].tier === 'silver') {return 'silver.png'}
+         if (userInfo.rank[0].tier === 'gold') {return 'gold.png'}
+      },
       window_inner_height() {
          this.chat_max_height_updater;
          return window.innerHeight;

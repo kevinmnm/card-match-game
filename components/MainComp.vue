@@ -48,7 +48,24 @@
                   >login</v-btn>
             </v-form>
             <div class="text-left">
-               <span class="forgot-credentials text-caption">Forgot Username/Password</span>
+               <v-dialog>
+                  <template v-slot:activator="{ on, attrs }">
+                     <span v-bind="attrs" v-on="on" class="forgot-credentials text-caption">Forgot Username/Password</span>
+                  </template>
+                  <v-sheet>
+                     <v-card>
+                        <v-text-field
+                           v-model="email_forgot"         
+                           @keydown.space="($event) => $event.preventDefault()"  
+                           :rules="emailRules"
+                           label="Associated Email"      
+                           filled     
+                        >
+                        </v-text-field>
+                     </v-card>
+                     <v-btn @click="forgot()">Send</v-btn>
+                  </v-sheet>
+               </v-dialog>
             </div>
          </v-col>
          <v-col cols="12">or</v-col>
@@ -89,6 +106,11 @@ export default {
          login_pw: "",
          remember_username: false,
          disable_login_button: false,
+         email_forgot: "",
+         emailRules: [
+            (v) => !!v || "Required",
+            (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
+         ],
       };
    },
    computed: {
@@ -101,6 +123,15 @@ export default {
       },
    },
    methods: {
+      async forgot() {
+         const response = await fetch(window.server_url + '/forgot', {
+            headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
+            body: JSON.stringify({
+
+            })
+         });
+      },
       async loginFunc($event) {
          $event.preventDefault();
          this.disable_login_button = true;

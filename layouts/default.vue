@@ -21,7 +21,7 @@ export default {
    },
    methods: {
       connect_socket() {
-         let handshake_data = this.$store.state.guest.guest_info || null // || User info later;
+         let handshake_data = this.$store.state.guest.guest_info || this.$store.state.user.user_info;
 
          // console.dir("Handshake Data Available");
 

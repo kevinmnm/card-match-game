@@ -12,13 +12,6 @@
          style="position:absolute; left:0; top:0;"
          :src="require('@/assets/img/main/sky.png')"
       >
-         <!-- <v-sheet
-            class="ma-0 pa-1 d-flex flex-column align-center justify-center"
-            width="100%"
-            height="100%"
-            tag="div"
-            style="background: transparent;"
-         > -->
          <v-sheet
             class="ma-0 pa-0 d-flex flex-column align-center justify-center"
             width="100%"
@@ -88,7 +81,6 @@
 
                <!-- Info Board -->
                <v-sheet
-                  ref="board_info"
                   :style="
                      [
                         ($vuetify.breakpoint.name === 'xs' || $vuetify.breakpoint.name === 'sm') ? {width: board_card_size, height: 'calc(100% - 360px)'} 
@@ -108,16 +100,10 @@
                         <v-tooltip bottom>
                            <template v-slot:activator="{ on, attrs }">
                               <v-card class="pa-0 ma-0" :width="card_size" color="yellow" v-bind="attrs" v-on="on">
-                                 <v-img 
-                                    :src="
-                                       player.guest ? 
-                                          require('@/assets/img/rank/stone.png') : 
-                                          require(`@/assets/img/rank/${user_rank_img}`)
-                                    "
-                                 ></v-img>
+                                 <v-img :src="require(`~/assets/img/rank/${player.rank}.png`)"></v-img>
                               </v-card>
                            </template>
-                           <span>{{ player.guest ? 'STONE' : player.rank[0].tier }}</span>
+                           <span>{{ player.guest ? 'STONE' : player.rank }}</span>
                         </v-tooltip>
                            <v-sheet class="d-flex flex-column pa-0 ma-0 flex-grow-1 text-center">
                               <v-hover v-slot="{ hover }">
@@ -192,14 +178,6 @@ export default {
       }
    },
    computed: {
-      user_rank_img() {
-         if (!this.$store.state.user.user_info) {return 'Not a user'};
-         let userInfo = this.$store.state.user.user_info;
-         if (userInfo.rank[0].tier === 'noobie') {return 'noobie.png'}
-         if (userInfo.rank[0].tier === 'bronze') {return 'bronze.png'}
-         if (userInfo.rank[0].tier === 'silver') {return 'silver.png'}
-         if (userInfo.rank[0].tier === 'gold') {return 'gold.png'}
-      },
       window_inner_height() {
          this.chat_max_height_updater;
          return window.innerHeight;
@@ -336,11 +314,6 @@ export default {
       }
    },
    methods: {
-      // play_lith() {
-      //    setTimeout( () => {
-      //       this.$refs.lith.play();
-      //    }, 1000);
-      // },
       open_player_info(player) {
          this.player_info_dialog = true;
          this.player_info_prop = player;
@@ -390,14 +363,8 @@ export default {
    },
    destroyed() {
       window.removeEventListener('resize', this.chat_max_height_updater_handler);
+      this.$store.commit('room/ROOM_TYPE', '');
    },
-   // watch: {
-   //    game_started(newVal) {
-   //       if (!newVal) {
-   //          this.$store.commit('audio/PLAY_BGM', 'elinia');
-   //       }
-   //    }
-   // }
 };
 </script>
 

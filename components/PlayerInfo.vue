@@ -15,13 +15,10 @@
                      v-bind="attrs"
                      v-on="on"
                   >
-                     <v-img
-                        v-if="player_info.guest"
-                        :src="require('@/assets/img/rank/stone.png')"
-                     ></v-img>
+                     <v-img :src="require(`@/assets/img/rank/${player_info.rank}.png`)"></v-img>
                   </v-card>
                </template>
-               <span>{{ "STONE" }}</span>
+               <span>{{ (player_info.guest ? player_info.rank : `${player_info.rank} ${player_info.tier}`).toUpperCase() }}</span>
             </v-tooltip>
             <div
                class="d-flex flex-column flex-grow-1 justify-center text-center pa-0 ma-0"
@@ -32,7 +29,7 @@
                </div>
                <div class="d-flex flex-row" style="height: 50%">
                   <div style="width: 50%; height: 100%; background: red">
-                     {{ "STONE" }}
+                     {{ (player_info.guest ? player_info.rank : `${player_info.rank} ${player_info.tier}`).toUpperCase() }}
                   </div>
                   <div style="width: 50%; height: 100%; background: yellow">
                      {{ player_info.level }}
@@ -49,26 +46,13 @@
       </div>
       <div v-if="!playerInfoLoading">
          <v-simple-table class="text-center">
+
             <thead>
                <tr>
                   <th>RANKED</th>
                </tr>
             </thead>
-            <tbody>
-               <tr>
-                  <td>N/A</td>
-               </tr>
-            </tbody>
-            <thead>
-               <tr>
-                  <th>NORMALS</th>
-               </tr>
-            </thead>
-            <tbody>
-               <tr>
-                  <td>SCORES</td>
-                  <td>{{ player_info.totalScore }}</td>
-               </tr>
+            <tbody v-if="!player_info.guest">
                <tr>
                   <td>WINS</td>
                   <td>{{ player_info.win }}</td>
@@ -81,6 +65,39 @@
                   <td>DRAWS</td>
                   <td>{{ player_info.draw }}</td>
                </tr>
+               <tr>
+                  <td>SCORE</td>
+                  <td>{{ player_info.rankScore }}</td>
+               </tr>
+            </tbody>
+            <tbody>
+               <tr>
+                  <td>N/A</td>
+               </tr>
+            </tbody>
+
+            <thead>
+               <tr>
+                  <th>NORMALS</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr>
+                  <td>WINS</td>
+                  <td>{{ player_info.win }}</td>
+               </tr>
+               <tr>
+                  <td>LOSSES</td>
+                  <td>{{ player_info.loss }}</td>
+               </tr>
+               <tr>
+                  <td>DRAWS</td>
+                  <td>{{ player_info.draw }}</td>
+               </tr>
+               <tr>
+                  <td>SCORES</td>
+                  <td>{{ player_info.totalScore }}</td>
+               </tr>
             </tbody>
          </v-simple-table>
       </div>
@@ -88,6 +105,7 @@
          <v-btn
             :class="{ 'on-hover': hover }"
             :dark="hover ? true : false"
+            color="error"
             @click="$emit('player-info-dialog-close')"
          >
             close
@@ -120,7 +138,6 @@ export default {
    methods: {
       async get_guest_info() {
          this.playerInfoLoading = true;
-
          const response = await fetch(window.server_url + "/guest", {
             headers: { "Content-Type": "application/json" },
             method: "POST",
@@ -135,12 +152,30 @@ export default {
 
          this.playerInfoLoading = false;
       },
+      async get_user_info() {
+         this.playerInfoLoading = true;
+         const response = await fetch(window.server_url + "/user", {
+            headers: { "Content-Type": "application/json" },
+            method: "POST",
+            body: JSON.stringify({
+               displayName: this.player_info_prop.displayName
+            })
+         })
+
+         const res = await response.json();
+         this.player_info = res.foundUser;
+
+         this.playerInfoLoading = false;
+      }
+   },
+   mounted(){
+      console.log(this.player_info_prop);
    },
    created() {
-      if (this.playerInfo.guest) {
-         // If clicked player is a guest,
+      if (this.playerInfo.guest) { // If clicked player is a guest,
          this.get_guest_info();
-      } else {
+      } else { // If clicked player is a user,
+         this.get_user_info();
       }
    },
 };

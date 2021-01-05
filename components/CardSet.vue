@@ -1,5 +1,5 @@
 <template>
-   <v-sheet class="pa-0 ma-0 d-flex flex-wrap card-wrapper" :style="(my_turn && !my_turn_temp_disable) ? turnStyle : null">
+   <v-sheet class="pa-0 ma-0 d-flex flex-wrap" :style="(my_turn && !my_turn_temp_disable) ? turnStyle : null">
       <v-overlay absolute z-index="1" class="text-center" opacity="0.6" v-if="show_loading">
          <span>Loading...</span>
          <Loading />
@@ -12,42 +12,87 @@
          <EndGameScreen />
       </div>
       
-      <v-card
-         class="pa-0 ma-0"
-         :ripple="false"
-         hover
-         tile
-         v-for="(all, ind) in card_array"
-         :key="all + ind"
-         :width="card_size"
-         :height="card_size"
-         color="primary"
-         @click="card_flip(all, ind)"
-         :disabled="!my_turn || my_turn_temp_disable"
-      >
-         <transition name="flip" class="d-flex flex-wrap" tag="div" :key="card_key" mode="out-in">
-            <!-- <v-img
-               :src="(all.show) ? require(`@/assets/img/card/set_1/${all.card_id}.png`) : require(`@/assets/img/card/cover/default_white.png`)"
-               :key="all.show"
-            >
-            </v-img> -->
-            <v-img v-if="all.show" :src="require(`@/assets/img/card/set_1/${all.card_id}.png`)" :key="all.show" style="background: red;"></v-img>
-            <v-img v-else :src="require(`@/assets/img/card/cover/default_white.png`)" :key="all.show"></v-img>
-         </transition>
+      <v-sheet v-if="room_type === 'quick'" class="pa-0 ma-0 d-flex flex-wrap" width="100%" height="100%">
+         <v-card
+            class="pa-0 ma-0"
+            :ripple="false"
+            hover
+            tile
+            v-for="(all, ind) in card_array"
+            :key="all + ind"
+            :width="card_size"
+            :height="card_size"
+            color="primary"
+            @click="card_flip(all, ind)"
+            :disabled="!my_turn || my_turn_temp_disable"
+         >
+            <transition name="flip" class="d-flex flex-wrap" tag="div" :key="card_key" mode="out-in">
+               <!-- <v-img
+                  :src="(all.show) ? require(`@/assets/img/card/set_1/${all.card_id}.png`) : require(`@/assets/img/card/cover/default_white.png`)"
+                  :key="all.show"
+               >
+               </v-img> -->
+               <v-img v-if="!all.show" :src="require(`@/assets/img/card/classic/${all.card_id}.png`)" :key="all.show" style="background: red;"></v-img>
+               <v-img v-else :src="require(`@/assets/img/card/cover/default_white.png`)" :key="all.show"></v-img>
+            </transition>
 
-      </v-card>
-      <!-- <audio ref="card_flip" :src="require('@/assets/music/card_flip.ogg')" preload="auto"></audio> -->
+         </v-card>
+      </v-sheet>
+
+      <!-- <v-sheet v-if="room_type === 'custom'" class="pa-0 ma-0" width="100%" height="100%">
+         <v-card
+            class="ma-0 pa-0"
+            :width="screen_layout === 'horizontal' ? card_size_horizontal : $vuetify.breakpoint.width / 6 + 'px'"
+            :height="screen_layout === 'horizontal' ? card_size_horizontal : $vuetify.breakpoint.width / 6 + 'px'"
+            v-for="all in 36" :key="all"
+         >
+            {{all}}
+         </v-card>
+      </v-sheet> -->
+
+      <v-sheet v-if="room_type === 'custom'">
+         <v-responsive
+            :aspect-ratio="1 / 1"
+            :width="screen_layout === 'horizontal' ? +(card_size_horizontal.replace('px','')) * 6 + 'px' : window_width"
+            :height="screen_layout === 'horizontal' ? +(card_size_horizontal.replace('px','')) * 6 + 'px' : 'auto'"
+            class="ma-auto yellow responsive-content-class pa-0"
+         >
+            <v-fade-transition v-if="!room_info.start">
+               <CardOverlay />
+            </v-fade-transition>
+            <v-card
+               class="ma-0 pa-0"
+               :width="screen_layout === 'horizontal' ? card_size_horizontal : $vuetify.breakpoint.width / 6 + 'px'"
+               :height="screen_layout === 'horizontal' ? card_size_horizontal : $vuetify.breakpoint.width / 6 + 'px'"
+               :ripple="false"
+               hover
+               tile
+               v-for="(all, ind) in card_array"
+               :key="all + ind"
+               color="primary"
+               @click="card_flip(all, ind)"
+               :disabled="!my_turn || my_turn_temp_disable"
+            >
+               <transition name="flip" class="d-flex flex-wrap" tag="div" :key="card_key" mode="out-in">
+                  <v-img v-if="!all.show" :src="require(`@/assets/img/card/classic/${all.card_id}.png`)" :key="all.show" style="background: red;"></v-img>
+                  <v-img v-else :src="require(`@/assets/img/card/cover/default_white.png`)" :key="all.show"></v-img>
+               </transition>
+            </v-card>
+         </v-responsive>
+      </v-sheet>
+
    </v-sheet>
 </template>
 
 <script>
 import Loading from "@/components/Loading.vue";
 import EndGameScreen from "@/components/EndGameScreen.vue";
+import CardOverlay from "@/components/CardOverlay.vue";
 
 export default {
    name: "CardSetComp",
    props: ["myTurn"],
-   components: { Loading, EndGameScreen },
+   components: { Loading, EndGameScreen, CardOverlay },
    data() {
       return {
          show_loading: false,
@@ -57,6 +102,25 @@ export default {
       }
    },
    computed: {
+      window_width() {
+         return this.$vuetify.breakpoint.width;
+      },
+      window_height() {
+         return this.$vuetify.breakpoint.height;
+      },
+      screen_layout() {
+         if (this.window_width > this.window_height) { // If device is horizontal (likely a PC),
+            return 'horizontal';
+         } else if (this.window_width <= this.window_height) { // If device is vertical (likely a phone),
+            return 'vertical';
+         }
+      },
+      card_size_horizontal() {
+         return (this.window_height * 0.7) / 6 + 'px';
+      },
+      room_type() {
+         return this.$store.state.room.room_type;
+      },
       my_turn() { // Sets initial turn to player_1 on game start;
          return this.myTurn;
       },
@@ -105,6 +169,9 @@ export default {
       show_endGameScreen() {
          return this.$store.state.general.end_game_screen;
       },
+      room_info() {
+         return this.$store.state.room.room_info;
+      }
    },
    methods: {
       card_flip(card, ind) {

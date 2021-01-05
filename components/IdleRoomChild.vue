@@ -88,7 +88,7 @@
 
       </v-card>
 
-      <v-dialog v-model="show_my_info">
+      <v-dialog v-model="show_my_info" persistent>
          <MyInfo @hide-my-info="show_my_info = false" />
       </v-dialog>
 
@@ -221,6 +221,7 @@ export default {
       },
       quickGame() {
          this.loading_comp = true;
+         this.$store.commit('room/ROOM_TYPE', 'quick');
          window.socket.emit("quick-game");
       },
       global_chat_enter() {

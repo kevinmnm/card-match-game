@@ -154,8 +154,10 @@
                Email has sent to:
                <span class="font-weight-bold">{{
                   email
-               }}</span></v-card-text
-            >
+               }}</span>
+               <br />
+               <span class="error--text">Code will expire in <b>20 minutes</b> after initial issuance.</span>
+            </v-card-text>
             <v-card-title class="mt-0">
                <v-text-field
                   color="deep-purple accent-4"
@@ -304,7 +306,7 @@ export default {
          if (!res.available) {
             if (res.status === 'pending') {
                alert(res.msg);
-               this.verification_code_dialog = true;
+               return this.verification_code_dialog = true;
             } else {
                alert(res.msg);
                window.$nuxt.$router.push('/main');

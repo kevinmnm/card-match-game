@@ -2,26 +2,101 @@
    <v-sheet class="d-flex flex-column text-center">
       <v-card class="mb-1 font-weight-bold" style="font-size:16px;">
          {{ my_display_name }}
-         <v-btn absolute text style="top:0; right:0;" height="100%" width="50px" @click="$emit('hide-my-info')">
-            <v-icon color="error">mdi-close</v-icon>
-         </v-btn>
+         <v-menu offset-y>
+            <template v-slot:activator="{ on, attrs }">
+               <v-btn absolute text style="top:0; right:0;" height="100%" width="50px" v-bind="attrs" v-on="on" v-if="!my_info.guest">
+                  <v-icon color="secondary">mdi-cog</v-icon>
+               </v-btn>
+            </template>
+            <v-sheet class="d-flex flex-column text-center">
+               <v-btn @click="comming_soon()">Change Username</v-btn>
+               <v-btn @click="show_change_cred = true;">Change Password</v-btn>
+            </v-sheet>
+         </v-menu>
       </v-card>
+
+      <v-dialog v-model="show_change_cred" persistent>
+         <v-sheet>
+            <v-card>
+               <v-card-title>Change Password</v-card-title>
+            </v-card>
+            <v-text-field
+               class="ma-0 pa-0"
+               v-model="current_pw"
+               :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+               :type="show1 ? 'text' : 'password'"
+               label="Current Password"
+               @click:append="show1 = !show1"
+               @keydown.space="($event) => $event.preventDefault()"
+               @input="current_pw_error = false;"
+               :error="current_pw_error"
+               dense
+               filled
+               hide-details
+               full-width
+            ></v-text-field>
+            <v-text-field
+               class="ma-0 pa-0"
+               v-model="new_pw"
+               :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+               :type="show1 ? 'text' : 'password'"
+               label="New Password"
+               @click:append="show1 = !show1"
+               @keydown.space="($event) => $event.preventDefault()"
+               @input="new_pw_error = false;"
+               :error="new_pw_error"
+               dense
+               filled
+               hide-details
+               full-width
+            ></v-text-field>
+            <v-text-field
+               class="ma-0 pa-0"
+               v-model="confirm_new_pw"
+               :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+               :type="show1 ? 'text' : 'password'"
+               label="Confirm New Password"
+               @click:append="show1 = !show1"
+               @keydown.space="($event) => $event.preventDefault()"
+               @input="new_pw_error = false;"
+               :error="new_pw_error"
+               dense
+               filled
+               hide-details
+               full-width
+            ></v-text-field>
+            <v-col cols="12" class="ma-o pa-0 d-flex flex-row">
+               <v-btn width="50%" color="error" @click="show_change_cred = false, reset_change_cred()">Cancel</v-btn>
+               <v-btn color="primary" width="50%" @click="cred_action = 'change-password', change_cred()" :disabled="(!current_pw || !new_pw || !confirm_new_pw) ? true : false" :loading="change_button_loading">Change</v-btn>
+            </v-col>
+         </v-sheet>
+      </v-dialog>
+      
       <Loading v-if="loader_show" />
       <v-sheet v-else class="d-flex justify-center" :class="$vuetify.breakpoint.name === 'xs' ? 'flex-column' : 'flex-row'">
          <v-card flat tile height="100%" width="50%" min-width="240px" class="ma-auto">
-            <v-img height="100%" :src="require('@/assets/img/rank/stone.png')"></v-img>
+            <v-img height="100%" :src="require(`@/assets/img/rank/${my_info.rank}.png`)"></v-img>
          </v-card>
          <v-sheet class="d-flex flex-column ma-auto" height="100%" width="50%" min-width="240px">
             <v-simple-table>
                <tbody>
                   <tr class="text-left">
-                     <th>LEVEL</th>
-                     <td>{{ my_info.level }}</td>
+                     <th>RANK</th>
+                     <td>{{ (my_info.rank).toUpperCase() }}</td>
                   </tr>
                   <tr class="text-left">
-                     <th>RANK</th>
-                     <td>{{ my_info.rank ? my_info.rank.tier : "Stone" }}</td>
+                     <th>TIER</th>
+                     <td>{{ my_info.guest ? 'N/A' : my_info.tier }}</td>
                   </tr>
+                  <v-tooltip bottom>
+                     <template v-slot:activator="{ on, attrs }">
+                        <tr class="text-left" v-bind="attrs" v-on="on">
+                           <th>EXP</th>
+                           <td>{{ my_info.guest ? 'N/A' : `${my_info.totalScore} / ${exp_needed}` }}</td>
+                        </tr>
+                     </template>
+                     <div>{{my_info.tier === 'III' ? 'Until Next Rank' : 'Until Next Tier'}}</div>
+                  </v-tooltip>
                   <tr class="text-left">
                      <th>WIN</th>
                      <td>{{ my_info.win }}</td>
@@ -34,11 +109,15 @@
                      <th>DRAW</th>
                      <td>{{ my_info.draw }}</td>
                   </tr>
+                  <tr class="text-left">
+                     <th>JOINED</th>
+                     <td>{{ my_info.guest ? 'N/A' : my_info.joinedOn }}</td>
+                  </tr>
                </tbody>
             </v-simple-table>
          </v-sheet>
       </v-sheet>
-      <hr />
+      <v-btn color="error" @click="$emit('hide-my-info')">Close</v-btn>
    </v-sheet>
 </template>
 
@@ -51,21 +130,97 @@ export default {
    data() {
       return {
          loader_show: true,
-         my_info: null,
+         show_change_cred: false,
+         cred_action: '',
+         show1: false,
+         current_pw: '',
+         new_pw: '',
+         confirm_new_pw: '',
+         new_pw_error: false,
+         current_pw_error: false,
+         change_button_loading: false,
       }
    },
    computed: {
       my_display_name() {
          return this.$store.state.general.my_display_name;
       },
+      my_info() {
+         return this.$store.state.guest.guest_info || this.$store.state.user.user_info;
+      },
       guest_info() {
          return this.$store.state.guest.guest_info;
       },
       user_info() {
          return this.$store.state.user.user_info;
+      },
+      exp_needed() {
+         if (this.my_info.rank === 'noobie') {
+            if (this.my_info.tier === 'I') {return 500;}
+            if (this.my_info.tier === 'II') {return 1000;}
+            if (this.my_info.tier === 'III') {return 2000;}
+         }
+         if (this.my_info.rank === 'junior') {
+            if (this.my_info.tier == 'I') {return 4000}
+            if (this.my_info.tier === 'II') {return 8000;}
+            if (this.my_info.tier === 'III') {return 16000;}
+         }
+         if (this.my_info.rank === 'bronze') {
+            if (this.my_info.tier === 'I') {return 32000;}
+            if (this.my_info.tier === 'II') {return 64000;}
+            if (this.my_info.tier === 'III') {return 128000;}
+         }
+         if (this.my_info.rank === 'silver') {
+            if (this.my_info.tier === 'I') {return 256000;}
+            if (this.my_info.tier === 'II') {return 512000;}
+            if (this.my_info.tier === 'III') {return 1024000;}
+         }
       }
    },
    methods: {
+      comming_soon(){
+         alert('Comming Soon');
+      },
+      reset_change_cred() {
+         this.new_pw = '';
+         this.current_pw = '';
+         this.current_pw_error = false;
+         this.confirm_new_pw = '';
+         this.new_pw_error = false;
+         this.current_pw_error = false;
+         this.show1 = false;
+      },
+      async change_cred() {
+         this.change_button_loading = true;
+         if (this.new_pw !== this.confirm_new_pw) {
+            alert('Passwords are not matching');
+            this.new_pw = '';
+            this.confirm_new_pw = '';
+            this.new_pw_error = true;
+            return this.change_button_loading = false;
+         }
+
+         const response = await fetch(window.server_url + "/change", {
+            headers: { "Content-Type": "application/json" },
+            method: "POST",
+            body: JSON.stringify({
+               _id: this.user_info._id,
+               action: this.cred_action,
+               currentPassword: this.current_pw,
+               newPassword: this.new_pw
+            })
+         })
+
+         const res = await response.json();
+         if (!res.status) {
+            alert(res.msg);
+            this.current_pw_error = true;
+            this.current_pw = '';
+            return this.change_button_loading = false;
+         }
+         alert(res.msg);
+         window.location.reload();
+      },
       async get_guest_info() {
          const response = await fetch(window.server_url + "/guest", {
             headers: { "Content-Type": "application/json" },
@@ -75,9 +230,6 @@ export default {
                displayName: this.my_display_name,
             }),
          });
-
-         const res = await response.json();
-         this.my_info = res.find_guest;
 
          this.loader_show = false;
       },
@@ -90,9 +242,6 @@ export default {
                displayName: this.my_display_name,
             }),
          });
-
-         const res = await response.json();
-         this.my_info = res.find_guest;
 
          this.loader_show = false;
       },

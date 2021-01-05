@@ -45,8 +45,7 @@
                   tile
                   color="deep-purple accent-4 white--text"
                   :disabled="disable_login_button || input_empty"
-                  >login</v-btn
-               >
+                  >login</v-btn>
             </v-form>
             <div class="text-left">
                <span class="forgot-credentials text-caption">Forgot Username/Password</span>
@@ -107,10 +106,6 @@ export default {
          this.disable_login_button = true;
          this.show_server_loading = true;
 
-         // this.remember_username ?
-         //    localStorage.monster_matches_login = this.remember_username :
-         //    localStorage.monster_matches_login = '';
-
          const response = await fetch(window.server_url + "/login", {
             headers: { "Content-Type": "application/json" },
             method: "POST",
@@ -127,10 +122,12 @@ export default {
             return alert(res.msg);
          }
 
-         console.log(res);
-         this.$store.commit("user/USER_INFO", res);
-         this.$store.commit("user/USER_DISPLAY_NAME", res.displayName);
-         this.$store.commit("general/MY_DISPLAY_NAME", res.displayName);
+         this.$store.commit("guest/GUEST_DISPLAY_NAME", "");
+         this.$store.commit("user/USER_INFO", res.user);
+         this.$store.commit("user/USER_DISPLAY_NAME", res.user.displayName);
+         this.$store.commit("general/MY_DISPLAY_NAME", res.user.displayName);
+         this.$store.commit("general/CONNECT_SOCKET", true);
+         localStorage.___mid = res.user._id;
       },
       clicked_play() {
          this.show_server_loading = true;

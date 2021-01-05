@@ -51,11 +51,6 @@ import { mapState } from 'vuex'
 
 export default {
    name: "AudioComp",
-   data() {
-      return {
-         // play_async: false
-      }
-   },
    computed: mapState({
       // BGM COLLECTION (Boolean);
       lith: state => state.audio.bgm.lith,
@@ -80,11 +75,12 @@ export default {
    }),
    methods: {
       trigger_audio(ref, playOrPause) { // ref = name, playOrPause = true || false;
-         if (playOrPause || playOrPause === undefined) { // If play,
-            // if (this.play_async) return; // Terminate if play() is current in progress;
-            this.$refs[ref].load();
-            // this.play_async = true;
-            // this.$refs[ref].play().then( () => this.play_async = false );
+         if (playOrPause || playOrPause === undefined) { // If play, (false is pause);
+            if (this.$refs[ref].paused) {
+               this.$refs[ref].play();
+            } else {
+               this.$refs[ref].currentTime = 0;
+            }
             this.$refs[ref].play();
          } else { // If pause,
             this.$refs[ref].pause();

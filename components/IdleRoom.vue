@@ -1,8 +1,9 @@
 <template>
    <v-container fluid class="pa-0 ma-0" style="height:100%">
       <IdleRoomChild v-if="!get_show_room" />
-      <GameComp v-if="get_show_room && !room_type" />
+      <GameComp v-if="get_show_room && room_type === 'quick'" />
       <CustomGame v-if="get_show_room && room_type === 'custom'" />
+      <!-- <CustomGame v-if="show" /> -->
    </v-container>
 </template>
 
@@ -13,6 +14,7 @@ import CustomGame from "@/components/CustomGame.vue";
 
 export default {
    name: "IdleRoom",
+   data: () => ({ show:true }),
    components: {
       IdleRoomChild,
       GameComp

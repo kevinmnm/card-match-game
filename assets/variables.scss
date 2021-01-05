@@ -12,3 +12,10 @@ $body-font-family: 'Nunito', sans-serif; // Re-setting default sass variable;
       opacity: 1;
    }
 }
+
+.responsive-content-class {
+   .v-responsive__content {
+      display: flex;
+      flex-wrap: wrap;
+   }
+}

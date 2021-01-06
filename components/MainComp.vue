@@ -48,22 +48,25 @@
                   >login</v-btn>
             </v-form>
             <div class="text-left">
-               <v-dialog>
+               <v-dialog v-model="show_forgot" :width="$vuetify.breakpoint.width <= 600 ? '100%' : $vuetify.breakpoint.width < 1000 ? '50%' : '40%'">
                   <template v-slot:activator="{ on, attrs }">
                      <span v-bind="attrs" v-on="on" class="forgot-credentials text-caption">Forgot Username/Password</span>
                   </template>
                   <v-sheet>
-                     <v-card>
-                        <v-text-field
-                           v-model="email_forgot"         
-                           @keydown.space="($event) => $event.preventDefault()"  
-                           :rules="emailRules"
-                           label="Associated Email"      
-                           filled     
-                        >
-                        </v-text-field>
-                     </v-card>
-                     <v-btn @click="forgot()">Send</v-btn>
+                     <v-col>
+                        <v-card class="ma-auto" flat>
+                           <v-text-field
+                              v-model="email_forgot"         
+                              @keydown.space="($event) => $event.preventDefault()"  
+                              :rules="emailRules"
+                              label="Email"
+                           >
+                           </v-text-field>
+                           <v-col cols="12" class="d-flex flex-row justify-center">
+                              <v-btn color="success" width="25%" @click="forgot()" :loading="send_button_loading">Send</v-btn>
+                           </v-col>
+                        </v-card>
+                     </v-col>
                   </v-sheet>
                </v-dialog>
             </div>
@@ -107,6 +110,8 @@ export default {
          remember_username: false,
          disable_login_button: false,
          email_forgot: "",
+         send_button_loading: false,
+         show_forgot: false,
          emailRules: [
             (v) => !!v || "Required",
             (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
@@ -124,13 +129,31 @@ export default {
    },
    methods: {
       async forgot() {
+         this.send_button_loading = true;
+         console.log(window.server_url);
+
          const response = await fetch(window.server_url + '/forgot', {
             headers: { 'Content-Type': 'application/json' },
             method: 'POST',
             body: JSON.stringify({
-
+               email: this.email_forgot
             })
          });
+
+         const res = await response.json();
+
+         if (!res.status) {
+            this.send_button_loading = false;
+            this.show_forgot = false;
+            return alert(res.msg);
+         }
+
+         if (res.status) {
+            this.send_button_loading = false;
+            this.show_forgot = false;
+            alert(res.msg);
+         }
+
       },
       async loginFunc($event) {
          $event.preventDefault();

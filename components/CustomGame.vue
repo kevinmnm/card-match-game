@@ -1,8 +1,8 @@
 <template>
-   <v-sheet class="two-vs-two ma-0 pa-0" width="100%" height="100%">
+   <v-sheet class="two-vs-two ma-0 pa-0" width="100%" height="100%" max-height="100%">
       <!-- Grand Wrapper -->
       <v-sheet class="ma-0 pa-0 d-flex flex-column" width="100%" height="100%">
-         <v-sheet class="ma-0 pa-0 d-flex flex-row" width="100%" height="max-content">
+         <v-sheet ref="top_wrapper" class="top-wrapper ma-0 pa-0 d-flex flex-row" width="100%" height="max-content">
             <v-col
                cols="12"
                class="ma-0 pa-0 d-flex flex-row"
@@ -17,54 +17,179 @@
                </v-col>
             </v-col>
          </v-sheet>
-         <!-- Card Set + Info Set + Chat -->
-         <v-sheet  width="100%" :height="screen_layout === 'vertical' ? 'auto' : '70%'" color="primary" class="d-flex flex-wrap" :class="screen_layout === 'vertical' ? 'flex-column' : 'flex-row'">
+
+         <v-sheet ref="middle_wrapper" class="middle-wrapper d-flex flex-wrap"   width="100%" :height="screen_layout === 'vertical' ? 'auto' : '70%'" color="primary" :class="screen_layout === 'vertical' ? 'flex-column' : 'flex-row'">
             <!-- Card Set -->
             <v-sheet width="100%" :height="screen_layout === 'vertical' ? 'auto' : '100%'" :class="screen_layout === 'vertical' ? 'ma-0' : 'd-flex flex-row'">
-               <v-sheet class="d-flex flex-column flex-grow-1" v-if="screen_layout === 'horizontal'">
-                  <v-card width="max-content">team 1 score</v-card>
+               <v-sheet class="d-flex flex-column flex-grow-1 text-center" v-if="screen_layout === 'horizontal' && room_info.capacity === 4">
+                  <v-card width="100%">{{ score_1 }}</v-card>
+                  <!-- VERTICAL -->
+                  <v-sheet class="flex-grow-1">
+                     <v-sheet v-if="all_players.player_1" class="d-flex flex-column">
+                        <v-card class="flex-grow-1 d-flex flex-column text-center" height="50%">
+                           <v-responsive :aspect-ratio="1/1" width="100%" max-width="100px" max-height="100px" class="ma-auto red">
+                              <v-img :src="require(`@/assets/img/rank/${all_players.player_1.rank}.png`)"></v-img>
+                           </v-responsive>
+                        </v-card>
+                        <v-card>{{ all_players.player_1.displayName }}</v-card>
+                     </v-sheet>
+                     <v-sheet v-if="all_players.player_2" class="d-flex flex-column">
+                        <v-card class="flex-grow-1 d-flex flex-column text-center" height="50%">
+                           <v-responsive :aspect-ratio="1/1" width="100%" max-width="100px" max-height="100px" class="ma-auto red">
+                              <v-img :src="require(`@/assets/img/rank/${all_players.player_2.rank}.png`)"></v-img>
+                           </v-responsive>
+                        </v-card>
+                        <v-card>{{ all_players.player_2.displayName }}</v-card>
+                     </v-sheet>
+                  </v-sheet>
+
+               </v-sheet>
+<!-- HORIZONTAL && CAPACITY === 2 (1vs1) -->
+               <v-sheet class="d-flex flex-column flex-grow-1" v-if="screen_layout === 'horizontal' && room_info.capacity === 2">
+                  <v-card width="max-content">{{ score_1 }}</v-card>
                   <v-card class="flex-grow-1">
                      player 1
-                  </v-card>
-                  <v-card class="flex-grow-1">
-                     player 2
                   </v-card>
                </v-sheet>
 
                <CardSet :my-turn="my_turn" />
 
-               <v-sheet class="d-flex flex-column flex-grow-1" v-if="screen_layout === 'horizontal'">
-                  <v-card width="max-content">team 2 score</v-card>
+               <v-sheet class="d-flex flex-column flex-grow-1 text-center" v-if="screen_layout === 'horizontal' && room_info.capacity === 4">
+                  <v-card width="100%">{{ score_2 }}</v-card>
+                  <!-- VERTICAL -->
+                  <v-sheet class="flex-grow-1">
+                     <v-sheet v-if="all_players.player_3" class="d-flex flex-column">
+                        <v-card class="flex-grow-1 d-flex flex-column text-center" height="50%">
+                           <v-responsive :aspect-ratio="1/1" width="100%" max-width="100px" max-height="100px" class="ma-auto red">
+                              <v-img :src="require(`@/assets/img/rank/${all_players.player_3.rank}.png`)"></v-img>
+                           </v-responsive>
+                        </v-card>
+                        <v-card>{{ all_players.player_3.displayName }}</v-card>
+                     </v-sheet>
+                     <v-sheet v-if="all_players.player_4" class="d-flex flex-column">
+                        <v-card class="flex-grow-1 d-flex flex-column text-center" height="50%">
+                           <v-responsive :aspect-ratio="1/1" width="100%" max-width="100px" max-height="100px" class="ma-auto red">
+                              <v-img :src="require(`@/assets/img/rank/${all_players.player_4.rank}.png`)"></v-img>
+                           </v-responsive>
+                        </v-card>
+                        <v-card>{{ all_players.player_4.displayName }}</v-card>
+                     </v-sheet>
+                  </v-sheet>
+
+               </v-sheet>
+
+               <v-sheet class="d-flex flex-column flex-grow-1" v-if="screen_layout === 'horizontal' && room_info.capacity === 2">
+                  <v-card width="max-content">{{ score_2 }}</v-card>
                   <v-card class="flex-grow-1">
-                     player 3
-                  </v-card>
-                  <v-card class="flex-grow-1">
-                     player 4
+                     player 2
                   </v-card>
                </v-sheet>
             </v-sheet>
-            <!-- Info Set -->
-            <v-sheet class="ma-0 pa-0 d-flex flex-row" width="100%" height="max-content" color="green" v-if="screen_layout == 'vertical'">
+<!-- VERTICAL && CAPACITY === 4 (2vs2) -->
+            <v-sheet class="ma-0 pa-0 d-flex flex-row text-center" width="100%" height="max-content" color="green" v-if="screen_layout == 'vertical' && room_info.capacity === 4">
                <v-sheet width="50%">
-                  <v-card>team score 1</v-card>
+                  <v-card>{{ score_1 }}</v-card>
                   <v-sheet class="d-flex flex-row">
-                     <v-card width="50%">player 1</v-card>
-                     <v-card width="50%">player 2</v-card>
+
+                     <v-card v-if="room_info.players.player_1" width="50%" class="d-flex flex-row">
+                        <v-responsive v-if="window_width >= 600" :aspect-ratio="1/1" width="100%" max-width="50px" max-height="50px" class="ma-auto red">
+                           <v-img :src="require(`@/assets/img/rank/${all_players.player_1.rank}.png`)"></v-img>
+                        </v-responsive>
+                        <v-tooltip bottom>
+                           <template v-slot:activator="{ on, attrs }">
+                              <v-card class="display-name text-truncate" width="100%" v-bind="attrs" v-on="on">{{ all_players.player_1.displayName }}</v-card>
+                           </template>
+                           <span>{{ all_players.player_1.displayName }}</span>
+                        </v-tooltip>
+                     </v-card>
+
+                     <v-card v-if="room_info.players.player_2" width="50%" class="d-flex flex-row">
+                        <v-responsive v-if="window_width >= 600" :aspect-ratio="1/1" width="100%" max-width="50px" max-height="50px" class="ma-auto red">
+                           <v-img :src="require(`@/assets/img/rank/${all_players.player_2.rank}.png`)"></v-img>
+                        </v-responsive>
+                        <v-tooltip bottom>
+                           <template v-slot:activator="{ on, attrs }">
+                              <v-card class="display-name text-truncate" width="100%" v-bind="attrs" v-on="on">{{ all_players.player_2.displayName }}</v-card>
+                           </template>
+                           <span>{{ all_players.player_2.displayName }}</span>
+                        </v-tooltip>
+                     </v-card>
+
                   </v-sheet>
                </v-sheet>
                <v-sheet width="50%">
                   <v-card>team score 2</v-card>
                   <v-sheet class="d-flex flex-row">
-                     <v-card width="50%">player 3</v-card>
-                     <v-card width="50%">player 4</v-card>
+
+                     <v-card v-if="room_info.players.player_3" width="50%" class="d-flex flex-row">
+                        <v-responsive v-if="window_width >= 600" :aspect-ratio="1/1" width="100%" max-width="50px" max-height="50px" class="ma-auto red">
+                           <v-img :src="require(`@/assets/img/rank/${all_players.player_3.rank}.png`)"></v-img>
+                        </v-responsive>
+                        <v-tooltip bottom>
+                           <template v-slot:activator="{ on, attrs }">
+                              <v-card class="display-name text-truncate" width="100%" v-bind="attrs" v-on="on">{{ all_players.player_3.displayName }}</v-card>
+                           </template>
+                           <span>{{ all_players.player_3.displayName }}</span>
+                        </v-tooltip>
+                     </v-card>
+
+                     <v-card v-if="room_info.players.player_4" width="50%" class="d-flex flex-row">
+                        <v-responsive v-if="window_width >= 600" :aspect-ratio="1/1" width="100%" max-width="50px" max-height="50px" class="ma-auto red">
+                           <v-img :src="require(`@/assets/img/rank/${all_players.player_4.rank}.png`)"></v-img>
+                        </v-responsive>
+                        <v-tooltip bottom>
+                           <template v-slot:activator="{ on, attrs }">
+                              <v-card class="display-name text-truncate" width="100%" v-bind="attrs" v-on="on">{{ all_players.player_4.displayName }}</v-card>
+                           </template>
+                           <span>{{ all_players.player_4.displayName }}</span>
+                        </v-tooltip>
+                     </v-card>
+
+                  </v-sheet>
+               </v-sheet>
+            </v-sheet>
+<!-- VERTICAL && CAPACITY === 2 (1vs1) -->
+            <v-sheet class="ma-0 pa-0 d-flex flex-row" width="100%" color="green" v-if="screen_layout == 'vertical' && room_info.capacity === 2">
+               <v-sheet width="50%" v-if="all_players.player_1">
+                  <v-sheet class="d-flex flex-row" height="100%">
+                     <v-responsive max-width="60px" :aspect-ratio="1/1">
+                        <v-img :src="require(`@/assets/img/rank/${all_players.player_1.rank}.png`)"></v-img>
+                     </v-responsive>
+                     <v-sheet class="d-flex flex-column" height="100%" width="100%" color="primary">
+                        <v-card height="50%">{{ all_players.player_1.displayName }}</v-card>
+                        <v-card height="50%">{{ all_players.player_1.score }}</v-card>
+                     </v-sheet>
+                  </v-sheet>
+               </v-sheet>
+               <v-sheet width="50%" v-if="all_players.player_2">
+                  <v-sheet class="d-flex flex-row" height="100%">
+                     <v-responsive max-width="60px" :aspect-ratio="1/1">
+                        <v-img :src="require(`@/assets/img/rank/${all_players.player_2.rank}.png`)"></v-img>
+                     </v-responsive>
+                     <v-sheet class="d-flex flex-column" height="100%" width="100%" color="primary">
+                        <v-card height="50%">{{ all_players.player_2.displayName }}</v-card>
+                        <v-card height="50%">{{ all_players.player_2.score }}</v-card>
+                     </v-sheet>
                   </v-sheet>
                </v-sheet>
             </v-sheet>
           
          </v-sheet>
          <!-- Chat Set -->
-         <v-sheet class="flex-grow-1" color="primary">
-            
+         <v-sheet ref="chat_wrapper" class="bottom-wrapper flex-grow-1 d-flex flex-column" style="overflow:auto;" :height="chat_height">
+            <v-sheet style="overflow:auto;" color="#303030" class="d-flex flex-column flex-grow-1 pa-1" v-chat-scroll="{always: false}">
+            <div v-for="(chat, ind) in room_chat" :style="chat.chat_style" :key="chat+ind" :height="chat_height">
+               {{
+                  (chat.chat_sender) ?
+                     chat.chat_sender + ' : ' + chat.chat_val :
+                     chat.chat_val
+               }}
+            </div>
+            </v-sheet>
+         </v-sheet>
+         <v-sheet ref="bottom_wrapper" class="chat-form d-flex pa-0" height="40px">
+            <v-text-field @keydown="enable_enter($event)" v-model="chat_value" class="pa-0 ma-0" style="font-size:18px;" width="80%" autocomplete="off" dense filled hide-details single-line outlined solo></v-text-field>
+            <v-btn @click="chatting()" width="20%" height="100%" :disabled="chat_button_disabled">enter</v-btn>
          </v-sheet>
       </v-sheet>
    </v-sheet>
@@ -83,9 +208,18 @@ export default {
       chat_value: '',
       chat_button_disabled: false,
       player_info_dialog: false,
-      player_info_prop: null
+      player_info_prop: null,
+      isMounted: false,
    }),
    computed: {
+      score_1() {
+         if (this.room_info.capacity === 4 || 6) {return this.room_info.team_1_score}
+         return this.room_info.players.player_1.score
+      },
+      score_2() {
+         if (this.room_info.capacity === 4 || 6) {return this.room_info.team_2_score}
+         return this.room_info.players.player_2.score
+      },
       card_size_horizontal() {
          return (this.window_height * 0.7) / 6 + 'px';
       },
@@ -103,7 +237,16 @@ export default {
          return this.$vuetify.breakpoint.height;
       },
       room_info() {
+         console.log(this.$store.state.room.room_info.players.player_1.score);
          return this.$store.state.room.room_info;
+      },
+      chat_height() {
+         if (!this.isMounted) {return}
+         this.window_width;
+         let top_wrapper_height = this.$refs.top_wrapper.$el.clientHeight;
+         let middle_wrapper_height = this.$refs.middle_wrapper.$el.clientHeight;
+         let bottom_wrapper_height = this.$refs.bottom_wrapper.$el.clientHeight;
+         return this.window_height - top_wrapper_height - middle_wrapper_height - bottom_wrapper_height + 'px';
       },
 // COPYING FROM GAMECOMP //
       my_turn() {
@@ -120,7 +263,6 @@ export default {
          return this.$store.state.general.my_display_name; 
       },
       room_chat() {
-         // return this.$store.state.room.room_chat.join('');
          return this.$store.state.room.room_chat;
       },
       room_number() {
@@ -134,9 +276,28 @@ export default {
       },
       game_started() {
          return this.$store.state.room.room_info.start;
-      }
+      },
    },
    methods: {
+      chatting(){
+         if (!this.chat_value || this.chat_button_disabled) return;
+         let room_number = this.room_number;
+         let my_display_name = this.my_display_name;
+         let chat_value = this.chat_value;
+
+         window.socket.emit('send-chat', { room_number, my_display_name, chat_value });
+         this.$store.commit('room/MY_ROOM_CHAT', { chat_value });
+         this.chat_value = '';
+         this.chat_button_disabled = true;
+         setTimeout( () => {
+            this.chat_button_disabled = false;
+         }, 1000);
+      },
+      enable_enter(e){
+         if (e.key === 'Enter' || e.keyCode === 13) {
+            this.chatting();
+         }
+      },
       confirm_leave(){
          if (this.room_info.start) {
             return this.leave_confirm = true;
@@ -155,6 +316,9 @@ export default {
 
       }
    },
+   mounted() {
+      this.isMounted = true;
+   },
    destroyed() {
       this.$store.commit('room/ROOM_TYPE', '');
    }
@@ -163,6 +327,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.display-name {
+   cursor: pointer;
+   font-weight: bold;
+   &:hover {
+      text-shadow: 0 0 3px white;
+   }
+}
 
 .responsive-content-class {
    background: red;

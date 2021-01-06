@@ -101,6 +101,7 @@
                      tile
                      text
                      outlined
+                     disabled
                      >3vs3</v-btn
                   >
                   <v-btn
@@ -110,6 +111,7 @@
                      tile
                      text
                      outlined
+                     disabled
                      >1vs1vs1</v-btn
                   >
                </v-btn-toggle>
@@ -286,6 +288,7 @@ export default {
             roomPassword: this.secret_key,
             roomCapacity: this.room_capacity,
             allowGuest: this.allow_guest,
+            roomTheme: this.selected_type,
             creator_id: this.user_info._id,
          });
       },

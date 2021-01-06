@@ -1,59 +1,79 @@
 <template>
-   <v-container class="text-center pa-0" fluid style="height: 100%">
+   <v-container class="text-center pa-0 d-flex flex-column" fluid style="height: 100%">
       <!-- <v-img class="d-lg-none" width="100%" contain :src="require('@/assets/img/main/theme.gif')" max-height="50%"></v-img> -->
       <v-img
          width="100%"
          contain
          :src="require('@/assets/img/main/theme.gif')"
-         max-height="50%"
+         max-height="25%"
          class="mb-2"
+         ref="child_img"
       ></v-img>
-      <v-row class="d-md">
-         <v-col cols="6" class="col-sm-3">
-            <v-btn width="140px" disabled>ranked game</v-btn>
-         </v-col>
-         <v-col cols="6" class="col-sm-3">
-            <v-dialog v-model="create_room_dialog">
-               <template v-slot:activator="{ on, attrs }">
-                  <v-btn 
-                     v-bind="attrs"
-                     v-on="on"
-                     width="140px" 
-                     @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')"
-                  >
-                     create game
-                  </v-btn>
-               </template>
-               <CreateRoom @close-create-room-dialog="create_room_dialog = false, create_room_key++" :key="create_room_key" />
-            </v-dialog>
-         </v-col>
-         <v-col cols="6" class="col-sm-3">
-            <v-btn width="140px" disabled>join game</v-btn>
-         </v-col>
-         <v-col cols="6" class="col-sm-3">
-            <v-btn
-               width="140px"
-               @click="quickGame()"
-               @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')"
-               :disabled="loading_comp"
-               plain
-            >
-               quick game
-            </v-btn>
-         </v-col>
-      </v-row>
+      <v-sheet ref="child_button" width="100%">
+         <v-row>
+            <v-col cols="6" class="col-sm-3">
+               <v-btn width="140px" disabled>ranked game</v-btn>
+            </v-col>
+            <v-col cols="6" class="col-sm-3">
+               <v-dialog v-model="create_room_dialog">
+                  <template v-slot:activator="{ on, attrs }">
+                     <v-btn 
+                        v-bind="attrs"
+                        v-on="on"
+                        width="140px" 
+                        @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')"
+                     >
+                        create game
+                     </v-btn>
+                  </template>
+                  <CreateRoom @close-create-room-dialog="create_room_dialog = false, create_room_key++" :key="create_room_key" />
+               </v-dialog>
+            </v-col>
+            <v-col cols="6" class="col-sm-3">
+               <v-btn width="140px" @click="open_custom_dialog()" :loading="$store.state.custom.loading" @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')">join game</v-btn>
+            </v-col>
+            <v-col cols="6" class="col-sm-3">
+               <v-btn
+                  width="140px"
+                  @click="quickGame()"
+                  @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')"
+                  :disabled="loading_comp"
+                  plain
+               >
+                  quick game
+               </v-btn>
+            </v-col>
+         </v-row>
+      </v-sheet>
       <Loading v-show="loading_comp">
          <template v-slot:text>
             {{ loading_text }}
          </template>
       </Loading>
-      <v-spacer></v-spacer>
+
+      <!-- <v-dialog v-model="custom_dialog" persistent fullscreen>
+         <v-btn plain class="ma-0 pa-0" style="top:0; right:0;" text width="50px" height="50px" absolute @click="$store.commit('custom/SHOW_CUSTOM_DIALOG', false)">
+            <v-icon class="ma-0 pa-0" color="red" x-large>mdi-close-box</v-icon>
+         </v-btn>
+         <RoomList />
+      </v-dialog> -->
+
+      <div class="custom-dialog d-flex flex-column justify-center" v-if="custom_dialog">
+         <v-btn plain class="ma-0 pa-0" style="top:0; left:0;" text width="50px" height="50px" absolute>
+            <v-icon class="ma-0 pa-0" color="primary" x-large @click="$store.dispatch('custom/fetch_custom_room_list')">mdi-reload</v-icon>
+         </v-btn>
+         <v-btn plain class="ma-0 pa-0" style="top:0; right:0;" text width="50px" height="50px" absolute @click="$store.commit('custom/SHOW_CUSTOM_DIALOG', false)">
+            <v-icon class="ma-0 pa-0" color="red" x-large>mdi-close-box</v-icon>
+         </v-btn>
+         <RoomList />
+      </div>
 
 <!-- VOLUME/SOUND BAR -->
       <v-card
          class="d-flex flex-row"
          style="position: absolute; right: 0; bottom: 201px"
          width="100%"
+         ref="child_volume"
       >
          <v-tooltip top>
             <template v-slot:activator="{on, attrs}">
@@ -93,7 +113,7 @@
       </v-dialog>
 
 <!-- GLOBAL CHAT -->
-      <div class="all-chat-wrapper">
+      <v-sheet ref="child_chat" class="all-chat-wrapper">
          <div class="all-chat-title">
             <div
                class="text-left"
@@ -154,7 +174,7 @@
                {{ enter_button }}
             </button>
          </div>
-      </div>
+      </v-sheet>
    </v-container>
 </template>
 
@@ -162,13 +182,15 @@
 import Loading from "@/components/Loading.vue";
 import MyInfo from "@/components/MyInfo.vue";
 import CreateRoom from "@/components/CreateRoom.vue";
+import RoomList from "@/components/RoomList.vue";
 
 export default {
    name: "IdleRoomChild",
    components: {
       Loading,
       MyInfo,
-      CreateRoom
+      CreateRoom,
+      RoomList,
    },
    data() {
       return {
@@ -179,10 +201,22 @@ export default {
          global_chat: "",
          show_my_info: false,
          create_room_dialog: false,
-         create_room_key: 0
+         create_room_key: 0,
+         comp_mounted: false,
       };
    },
    computed: {
+      // room_list_height() {
+      //    if (!this.comp_mounted) {return;}
+      //    let window_height = this.$vuetify.breakpoint.height;
+      //    let ref_keys = Object.keys(this.$refs);
+      //    this.$refs.child_img.$el.clientHeight;
+      //    ref_keys.forEach( key => {
+      //       window_height -= this.$refs[key].$el.clientHeight;
+      //       console.log(this.$refs[key].$el.clientHeight);
+      //    });
+      //    return window_height;
+      // },
       global_room_clients() {
          return this.$store.state.chat.global_room_clients;
       },
@@ -200,9 +234,15 @@ export default {
       },
       my_chat_style() {
          return this.$store.state.chat.my_chat_style;
+      },
+      custom_dialog() {
+         return this.$store.state.custom.show_custom_dialog;
       }
    },
    methods: {
+      open_custom_dialog() {
+         this.$store.dispatch('custom/fetch_custom_room_list');
+      },
       bgm_setter() {
          if (!this.bgm_muted_status) {
             // If bgm is not muted,
@@ -275,6 +315,8 @@ export default {
             ? this.$store.dispatch("audio/sound_setting", true)
             : this.$store.dispatch("audio/sound_setting", false);
       }
+
+      this.comp_mounted = true;
    },
    destroyed() {
       window.socket.emit("leave-global-room");
@@ -284,6 +326,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.custom-dialog {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   // background: rgba(48, 48, 48, 0.8);
+   background: rgba(0,0,0,0.8);
+   z-index: 10;
+}
+
 $text-field-border-radius: 0;
 .all-chat-wrapper {
    position: absolute;

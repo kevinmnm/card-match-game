@@ -7,16 +7,30 @@ export const state = () => ({
 })
 
 export const mutations = {
+   RESET_SCORE(state) { // TEMPORARY QUICK-FIX FOR NOW;
+      // console.warn('triggered');
+      if (!state.room_info) return;
+      // console.warn('executing');
+      let playerKey = Object.keys(state.room_info.players);
+      // console.warn(`playerKey: ${playerKey}`);
+      playerKey.forEach( key => {
+         state.room_info.players[key].score = 0;
+         // console.warn(`Players score: ${state.room_info.players[key].score}`);
+      });
+   },
    SHOW_ROOM(state, payload) {
       state.show_room = payload;
    },
    ROOM_TYPE(state, payload) {
       state.room_type = payload;
    },
-   ROOM_INFO_UPDATE(state, payload) { // payload = { roomInfo: ... };
+   ROOM_INFO_UPDATE(state, payload) { // payload = { ...roomInfo };
       state.room_info = {
          ...state.room_info,
          ...payload
+      }
+      if (!payload.start) {
+         state.game_starting = false;
       }
    },
    ROOM_INFO_CREATE(state, payload) { // Also used for "update-room" event;

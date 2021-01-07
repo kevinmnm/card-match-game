@@ -15,6 +15,7 @@
                <v-responsive :aspect-ratio="1 / 1">
                   <v-img
                      :src="require('@/assets/img/type/classic.png')"
+                     eager
                   ></v-img>
                </v-responsive>
             </v-card>
@@ -30,7 +31,7 @@
                @click="selected_type = 'lovely'"
             >
                <v-responsive :aspect-ratio="1 / 1">
-                  <v-img :src="require('@/assets/img/type/lovely.png')"></v-img>
+                  <v-img :src="require('@/assets/img/type/lovely.png')" eager></v-img>
                </v-responsive>
             </v-card>
          </v-hover>
@@ -211,7 +212,7 @@
             <v-col cols="12" class="flex-row d-flex justify-space-around mt-5">
                <v-col cols="4" class="pa-0 ma-0">
                   <v-btn
-                     @click="$emit('close-create-room-dialog')"
+                     @click="$emit('close-create-room-dialog');"
                      class="ma-0 pa-0"
                      width="100%"
                      color="error"
@@ -219,12 +220,20 @@
                   >
                </v-col>
                <v-col cols="4" class="pa-0 ma-0">
-                  <v-btn
+                  <!-- <v-btn
                      class="ma-0 pa-0"
                      width="100%"
                      color="success"
                      @click="create_custom_game()"
                      :disabled="create_button_disabled"
+                     >create</v-btn
+                  > -->
+                  <v-btn
+                     class="ma-0 pa-0"
+                     width="100%"
+                     color="success"
+                     @click="create_custom_game()"
+                     disabled
                      >create</v-btn
                   >
                </v-col>
@@ -239,6 +248,7 @@
 
 export default {
    name: "CreateRoom",
+   scrollToTop: true,
    data: () => ({
       room_title: "Let's play!",
       secret_key: null,
@@ -293,6 +303,13 @@ export default {
          });
       },
    },
+   // mounted() {
+   //    // this.$refs['create-room-component'].scrollTop = 0;
+   //    this.$vuetify.goTo(this.$refs['create-room-component'])
+   // },
+   // beforeDestroy() {
+   //    console.log(this.$refs['create-room-component']);
+   // }
 };
 </script>
 

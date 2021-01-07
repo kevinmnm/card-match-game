@@ -43,6 +43,13 @@ export default {
       theme: {
          dark: false,
          themes: {
+            light: {
+               classic: colors.deepPurple.accent4,
+               lovely: colors.pink.lighten1,
+               plain: colors.black,
+               colorless: colors.grey.lighten5
+
+            },
             dark: {
                primary: colors.blue.darken2,
                accent: colors.grey.darken3,

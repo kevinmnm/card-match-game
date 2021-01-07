@@ -16,10 +16,11 @@
          </div>
       </v-card>
 
-      <v-card v-if="room_type === 'custom' && room_infor.room_master">
+      <v-card v-if="room_type === 'custom' && room_infor.room_master && !game_starting">
          <v-btn 
             v-if="my_display_name === room_infor.room_master.displayName"
             :disabled="disable_start_button"
+            @click="custom_game_start()"
          >
             Start
          </v-btn>
@@ -78,16 +79,20 @@ export default {
       ready() {
          this.ready_button_disabled = true;
          window.socket.emit('custom-ready', { displayName: this.my_display_name, ready: true, roomInfo: this.room_infor });
+      },
+      custom_game_start() {
+         window.socket.emit('custom-start', {roomInfo: this.room_infor});
       }
    },
    watch: {
       game_starting: {
          handler: function (val) {
-            if (val && !this.room_infor.terminate) {
+            if (val && !this.room_infor.terminate) { // If store room_starting is true and room is not terminating,
                this.interval_id = setInterval(() => {
                   if (this.game_start_countdown === 0) {
                      clearInterval(this.interval_id);
                      if (this.player_1_display_name === this.my_display_name) {
+                        this.$store.commit('room/RESET_SCORE'); // TEMPORARY QUICK-FIX FOR NOW;
                         return window.socket.emit('start-game', { 
                            room_id: this.room_infor._id, 
                            room_number: this.room_infor.room_number
@@ -104,7 +109,7 @@ export default {
                this.game_start_countdown = 5;
             }
          },
-         immediate: true,
+         immediate: true
       },
    },
    beforeDestroy() {

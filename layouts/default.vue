@@ -87,6 +87,10 @@ export default {
             this.$store.commit('audio/PLAY_SOUND', 'card_flip');
          });
 
+         window.socket.on('my-turn-temp-disable', payload => { // payload = true || false (false is enable my turn);
+            this.$store.commit('card/MY_TURN_TEMP_DISABLE', payload);
+         });
+
          window.socket.on('turn-changed', payload => { // payload = { roomInfo };
             this.$store.commit('room/ROOM_INFO_UPDATE', payload.roomInfo);
             this.$store.commit('card/MY_TURN_TEMP_DISABLE', false);
@@ -112,6 +116,10 @@ export default {
          
          window.socket.on('joined-custom-room', () => {
             this.$store.commit('room/ROOM_TYPE', 'custom');
+         });
+
+         window.socket.on('custom-game-start', () => {
+            this.$store.commit('room/GAME_STARTING', true); 
          });
       },
    },

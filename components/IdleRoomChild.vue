@@ -186,6 +186,7 @@ import RoomList from "@/components/RoomList.vue";
 
 export default {
    name: "IdleRoomChild",
+   scrollToTop: true,
    components: {
       Loading,
       MyInfo,

@@ -7,11 +7,11 @@
 
 $body-font-family: 'Nunito', sans-serif; // Re-setting default sass variable;
 
-.card-wrapper { // Custom style for specific element;
-   .v-card--disabled > * {
-      opacity: 1;
-   }
-}
+// .card-set-wrapper { // Custom style for specific element;
+//    .v-card--disabled > *:not(.v-card__progress) {
+//       opacity: 1;
+//     }
+// }
 
 .responsive-content-class {
    .v-responsive__content {

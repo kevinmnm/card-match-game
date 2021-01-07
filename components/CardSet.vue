@@ -12,7 +12,7 @@
          <EndGameScreen />
       </div> -->
 <!-- IF QUICK GAME -->
-      <v-sheet v-if="room_type === 'quick'" class="pa-0 ma-0 d-flex flex-wrap" width="100%" height="100%">
+      <v-sheet v-if="room_type === 'quick'" class="card-set-wrapper pa-0 ma-0 d-flex flex-wrap" width="100%" height="100%">
 
          <div style="position:absolute; z-index:2; width:100%; height:100%;" v-if="show_endGameScreen">
             <EndGameScreen />
@@ -27,9 +27,9 @@
             :key="all + ind"
             :width="card_size"
             :height="card_size"
-            color="primary"
             @click="card_flip(all, ind)"
             :disabled="!my_turn || my_turn_temp_disable"
+            color="deep-purple accent-5"
          >
             <transition name="flip" class="d-flex flex-wrap" tag="div" :key="card_key" mode="out-in">
                <!-- <v-img
@@ -37,8 +37,8 @@
                   :key="all.show"
                >
                </v-img> -->
-               <v-img v-if="!all.show" :src="require(`@/assets/img/card/classic/${all.card_id}.png`)" :key="all.show" style="background: red;"></v-img>
-               <v-img v-else :src="require(`@/assets/img/card/cover/default_white.png`)" :key="all.show"></v-img>
+               <v-img v-if="all.show" :src="require(`~/assets/img/card/classic/${all.card_id}.png`)" :key="all.show" eager></v-img>
+               <v-img v-else :src="require(`~/assets/img/card/cover/default_white.png`)" :key="all.show"></v-img>
             </transition>
 
          </v-card>
@@ -62,17 +62,16 @@
             :aspect-ratio="1 / 1"
             :width="screen_layout === 'horizontal' ? +(card_size_horizontal.replace('px','')) * 6 + 'px' : window_width"
             :height="screen_layout === 'horizontal' ? +(card_size_horizontal.replace('px','')) * 6 + 'px' : 'auto'"
-            class="ma-auto yellow responsive-content-class pa-0"
+            class="ma-auto responsive-content-class pa-0"
          >
-            <div style="position:absolute; z-index:2; width:100%; height:100%;" v-if="show_endGameScreen">
-               <EndGameScreen />
+            <div v-if="!game_started" style="position:absolute; z-index:2; width:100%; height:100%;">
+               <EndGameScreen v-if="show_endGameScreen" />
+               <TerminateScreen v-if="!show_endGameScreen && terminate_room" />
+               <CardOverlay v-if="!show_endGameScreen && !terminate_room" />
             </div>
 
-            <v-fade-transition v-if="!room_info.start">
-               <CardOverlay />
-            </v-fade-transition>
             <v-card
-               class="ma-0 pa-0"
+               class="card-set ma-0 pa-0"
                :width="screen_layout === 'horizontal' ? card_size_horizontal : $vuetify.breakpoint.width / 6 + 'px'"
                :height="screen_layout === 'horizontal' ? card_size_horizontal : $vuetify.breakpoint.width / 6 + 'px'"
                :ripple="false"
@@ -85,7 +84,7 @@
                :disabled="!my_turn || my_turn_temp_disable"
             >
                <transition name="flip" class="d-flex flex-wrap" tag="div" :key="card_key" mode="out-in">
-                  <v-img v-if="!all.show" :src="require(`@/assets/img/card/classic/${all.card_id}.png`)" :key="all.show" style="background: red;"></v-img>
+                  <v-img v-if="all.show" :src="require(`@/assets/img/card/classic/${all.card_id}.png`)" :key="all.show" style="background: red;"></v-img>
                   <v-img v-else :src="require(`@/assets/img/card/cover/default_white.png`)" :key="all.show"></v-img>
                </transition>
             </v-card>
@@ -99,11 +98,12 @@
 import Loading from "@/components/Loading.vue";
 import EndGameScreen from "@/components/EndGameScreen.vue";
 import CardOverlay from "@/components/CardOverlay.vue";
+import TerminateScreen from "@/components/TerminateScreen.vue";
 
 export default {
    name: "CardSetComp",
    props: ["myTurn"],
-   components: { Loading, EndGameScreen, CardOverlay },
+   components: { Loading, EndGameScreen, CardOverlay, TerminateScreen },
    data() {
       return {
          show_loading: false,
@@ -180,13 +180,15 @@ export default {
       show_endGameScreen() {
          return this.$store.state.general.end_game_screen;
       },
-      room_info() {
-         return this.$store.state.room.room_info;
+      terminate_room() {
+         return this.$store.state.room.room_info.terminate;
       },
    },
    methods: {
       card_flip(card, ind) {
-         if (card.show) return;
+         this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn (ensures quick disabling);
+         if (card.show) return this.$store.commit('card/MY_TURN_TEMP_DISABLE', false); // If card already showing, enable my turn;
+
          this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card });
 
          this.$store.commit('audio/PLAY_SOUND', 'card_flip');
@@ -204,6 +206,8 @@ export default {
             cardIndex: ind,
             flippedAmount: this.flipped_tracker.length
          });
+
+         // Waiting for socket.io to grant my turn again when only one card flipped...
 
          if (this.flipped_tracker.length === 2) { // If player flipped 2 cards,
             this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn (ensures quick disabling);
@@ -285,6 +289,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.v-card--disabled > *:not(.v-card__progress) {
+   opacity: 1;
+}
 
 .flip-enter {
    transform: rotateY(94deg);

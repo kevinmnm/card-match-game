@@ -30,6 +30,10 @@ export const actions = {
       commit('SHOW_CUSTOM_DIALOG', true);
 
       return state.custom_room_list;
+   },
+
+   async trigger_start_game_countdown({ commit, state }) {
+      
    }
 
 }

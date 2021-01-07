@@ -20,12 +20,14 @@
 
          <v-sheet ref="middle_wrapper" class="middle-wrapper d-flex flex-wrap"   width="100%" :height="screen_layout === 'vertical' ? 'auto' : '70%'" color="primary" :class="screen_layout === 'vertical' ? 'flex-column' : 'flex-row'">
             
-            <!-- Card Set -->
+<!--------------------------->
+<!-- MIDDLE FOR HORIZONTAL -->
+<!--------------------------->
             <v-sheet width="100%" :height="screen_layout === 'vertical' ? 'auto' : '100%'" :class="screen_layout === 'vertical' ? 'ma-0' : 'd-flex flex-row'">
 
                <v-sheet class="d-flex flex-column flex-grow-1 text-center" v-if="screen_layout === 'horizontal' && room_info.capacity === 4">
                   <v-card width="100%">{{ score_1 }}</v-card>
-                  <!-- HORIZONTAL -->
+   <!-- HORIZONTAL && CAPACITY === 4 (2vs2) -->
                   <v-sheet class="flex-grow-1">
                      <v-sheet v-if="all_players.player_1" class="d-flex flex-column">
                         <v-card class="flex-grow-1 d-flex flex-column text-center" height="50%">
@@ -44,21 +46,49 @@
                         <v-card>{{ all_players.player_2.displayName }}</v-card>
                      </v-sheet>
                   </v-sheet>
-
                </v-sheet>
-<!-- HORIZONTAL && CAPACITY === 2 (1vs1) -->
-               <v-sheet class="d-flex flex-column flex-grow-1" v-if="screen_layout === 'horizontal' && room_info.capacity === 2">
-                  <v-card width="max-content">{{ score_1 }}</v-card>
-                  <v-card class="flex-grow-1">
-                     player 1
-                  </v-card>
+               
+   <!-- HORIZONTAL && CAPACITY === 2 (1vs1) <player_1> -->
+               <v-sheet class="d-flex flex-column flex-grow-1 text-center" :height="card_size_horizontal*6+'px'" v-if="screen_layout === 'horizontal' && room_info.capacity === 2 && all_players.player_1" :max-width="(window_width - card_size_horizontal*6) / 2">
+                  <v-card width="100%" height="max-content">{{ all_players.player_1.score }}</v-card>
+                  <v-sheet class="d-flex flex-column flex-grow-1" width="100%" color="primary">
+                     <v-sheet class="mt-2 mb-2" height="40%">
+                        <v-responsive height="100%" :aspect-ratio="1/1" class="red">
+                           <v-img class="purple" height="100%" contain :src="require(`@/assets/img/rank/${all_players.player_1.rank}.png`)"></v-img>
+                        </v-responsive>
+                     </v-sheet>
+                     <v-sheet class="d-flex flex-column flex-grow-1" width="100%" color="primary">
+                        <v-card class="d-flex flex-row justify-center" style="font-size: 18px;">
+                           {{ all_players.player_1.displayName }}
+                           <DisplayNameIcon :player-prop="all_players.player_1" />
+                        </v-card>
+                     </v-sheet>
+                  </v-sheet>
                </v-sheet>
 
                <CardSet :my-turn="my_turn" />
 
+   <!-- HORIZONTAL && CAPACITY === 2 (1vs1) <player_2> -->
+               <v-sheet class="d-flex flex-column flex-grow-1 text-center" :height="card_size_horizontal*6+'px'" v-if="screen_layout === 'horizontal' && room_info.capacity === 2 && all_players.player_2" :max-width="(window_width - card_size_horizontal*6) / 2">
+                  <v-card width="100%" height="max-content">{{ all_players.player_2.score }}</v-card>
+                  <v-sheet class="d-flex flex-column flex-grow-1" width="100%" color="primary">
+                     <v-sheet class="mt-2 mb-2" height="40%">
+                        <v-responsive height="100%" :aspect-ratio="1/1" class="red">
+                           <v-img class="purple" height="100%" contain :src="require(`@/assets/img/rank/${all_players.player_2.rank}.png`)"></v-img>
+                        </v-responsive>
+                     </v-sheet>
+                     <v-sheet class="d-flex flex-column flex-grow-1" width="100%" color="primary">
+                        <v-card class="d-flex flex-row justify-center" style="font-size: 18px;">
+                           {{ all_players.player_2.displayName }}
+                           <DisplayNameIcon :player-prop="all_players.player_2" />
+                        </v-card>
+                     </v-sheet>
+                  </v-sheet>
+               </v-sheet>
+               
+   <!-- HORIZONTAL && CAPACITY === 4 (2vs2) -->
                <v-sheet class="d-flex flex-column flex-grow-1 text-center" v-if="screen_layout === 'horizontal' && room_info.capacity === 4">
                   <v-card width="100%">{{ score_2 }}</v-card>
-                  <!-- VERTICAL -->
                   <v-sheet class="flex-grow-1">
                      <v-sheet v-if="all_players.player_3" class="d-flex flex-column">
                         <v-card class="flex-grow-1 d-flex flex-column text-center" height="50%">
@@ -77,17 +107,15 @@
                         <v-card>{{ all_players.player_4.displayName }}</v-card>
                      </v-sheet>
                   </v-sheet>
-
                </v-sheet>
 
-               <v-sheet class="d-flex flex-column flex-grow-1" v-if="screen_layout === 'horizontal' && room_info.capacity === 2">
-                  <v-card width="max-content">{{ score_2 }}</v-card>
-                  <v-card class="flex-grow-1">
-                     player 2
-                  </v-card>
-               </v-sheet>
             </v-sheet>
-<!-- VERTICAL && CAPACITY === 4 (2vs2) -->
+         
+<!--------------------------->
+<!-- MIDDLE FOR VERTICAL ---->
+<!--------------------------->
+
+   <!-- VERTICAL && CAPACITY === 4 (2vs2) -->
             <v-sheet class="ma-0 pa-0 d-flex flex-row text-center" width="100%" height="max-content" color="green" v-if="screen_layout == 'vertical' && room_info.capacity === 4">
                <v-sheet width="50%">
                   <v-card>{{ score_1 }}</v-card>
@@ -150,8 +178,9 @@
                   </v-sheet>
                </v-sheet>
             </v-sheet>
-<!-- VERTICAL && CAPACITY === 2 (1vs1) -->
-            <v-sheet class="ma-0 pa-0 d-flex flex-row" width="100%" color="green" v-if="screen_layout == 'vertical' && room_info.capacity === 2">
+   <!-- VERTICAL && CAPACITY === 2 (1vs1) -->
+            <v-sheet class="ma-0 pa-0 d-flex flex-row text-center" width="100%" color="green" v-if="screen_layout == 'vertical' && room_info.capacity === 2">
+      <!-- player_1 -->
                <v-sheet width="50%" v-if="all_players.player_1">
                   <v-sheet class="d-flex flex-row" height="100%">
                      <v-responsive max-width="60px" :aspect-ratio="1/1">
@@ -162,10 +191,11 @@
                            {{ all_players.player_1.displayName }}
                            <DisplayNameIcon :player-prop="all_players.player_1" />
                         </v-card>
-                        <v-card class="text-center" height="50%">{{ all_players.player_1.score }}</v-card>
+                        <v-card height="50%">{{ all_players.player_1.score }}</v-card>
                      </v-sheet>
                   </v-sheet>
                </v-sheet>
+      <!-- player_2 -->
                <v-sheet width="50%" v-if="all_players.player_2">
                   <v-sheet class="d-flex flex-row" height="100%">
                      <v-responsive max-width="60px" :aspect-ratio="1/1">
@@ -180,10 +210,11 @@
                      </v-sheet>
                   </v-sheet>
                </v-sheet>
+
             </v-sheet>
           
          </v-sheet>
-         <!-- Chat Set -->
+
          <v-sheet ref="chat_wrapper" class="bottom-wrapper flex-grow-1 d-flex flex-column" style="overflow:auto;" :height="chat_height">
             <v-sheet style="overflow:auto;" color="#303030" class="d-flex flex-column flex-grow-1 pa-1" v-chat-scroll="{always: false}">
             <div v-for="(chat, ind) in room_chat" :style="chat.chat_style" :key="chat+ind" :height="chat_height">
@@ -232,7 +263,7 @@ export default {
          return this.room_info.players.player_2.score
       },
       card_size_horizontal() {
-         return (this.window_height * 0.7) / 6 + 'px';
+         return (this.window_height * 0.7) / 6;
       },
       screen_layout() {
          if (this.window_width > this.window_height) { // If device is horizontal (likely a PC),

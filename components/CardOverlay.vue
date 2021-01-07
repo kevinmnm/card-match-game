@@ -15,6 +15,22 @@
             {{ game_start_countdown }}
          </div>
       </v-card>
+
+      <v-card v-if="room_type === 'custom' && room_infor.room_master">
+         <v-btn 
+            v-if="my_display_name === room_infor.room_master.displayName"
+            :disabled="disable_start_button"
+         >
+            Start
+         </v-btn>
+         <v-btn 
+            v-else
+            @click="ready()"
+            :disabled="ready_button_disabled"
+         >
+            Ready
+         </v-btn>
+      </v-card>
    </div>
 </template>
 
@@ -24,7 +40,8 @@ export default {
    data() {
       return {
          game_start_countdown: 5,
-         interval_id: null
+         interval_id: null,
+         ready_button_disabled: false,
       };
    },
    computed: {
@@ -40,6 +57,28 @@ export default {
       room_infor() {
          return this.$store.state.room.room_info;
       },
+      room_type() {
+         return this.$store.state.room.room_type;
+      },
+      disable_start_button() {
+         let playersValues = Object.values(this.room_infor.players);
+         let readyPlayers = 0;
+         playersValues.forEach( ea => {
+            if (ea.ready) { readyPlayers++ }
+         });
+
+         if (readyPlayers === this.room_infor.capacity - 1) {
+            return false;
+         } else {
+            return true;
+         }
+      }
+   },
+   methods: {
+      ready() {
+         this.ready_button_disabled = true;
+         window.socket.emit('custom-ready', { displayName: this.my_display_name, ready: true, roomInfo: this.room_infor });
+      }
    },
    watch: {
       game_starting: {

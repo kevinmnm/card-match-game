@@ -51,9 +51,9 @@ export default {
          window.socket.on('update-room', payload => {
             this.$store.commit("room/ROOM_INFO_CREATE", payload); 
             this.$store.commit("room/SHOW_ROOM", true); // This is necessary! (laster joined player's game board will show);
-            if (payload.capacity === payload.joined) { // If room is full, trigger auto start game;
-               // window.socket.emit('full-room');
-            }
+            // if (payload.capacity === payload.joined) { // If room is full, trigger auto start game;
+            //    // window.socket.emit('full-room');
+            // }
          });
 
          /** Update room data in room.js and hide GameComp in IdleRoom.vue **/
@@ -110,6 +110,9 @@ export default {
             this.$store.dispatch('card/countdown_function', false);
          });
          
+         window.socket.on('joined-custom-room', () => {
+            this.$store.commit('room/ROOM_TYPE', 'custom');
+         });
       },
    },
    watch: {

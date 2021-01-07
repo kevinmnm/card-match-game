@@ -1,5 +1,5 @@
 export const state = () => ({
-   room_type: '', // Should be reset when leaving game;
+   room_type: '', // Should be reset when leaving game; // 'quick' || 'custom';
    show_room: false,
    room_info: null,
    room_chat: [],
@@ -23,13 +23,18 @@ export const mutations = {
       state.room_info = payload;
 
       if (payload) { // If room info payload was sent,
+
          if (state.room_info.capacity === state.room_info.joined) { // pre-start (countdown) the game if full;
-            if (!state.room_info.terminate) { // If room doens't needs to be terminated,
+            if (!state.room_info.terminate && state.room_type === 'quick') { // If room doens't needs to be terminated,
                state.game_starting = true;
             }
          } else {
             state.game_starting = false;
          }
+
+         // if (state.room_type === 'custom' && payload.room_info.terminate) {
+
+         // }
       }
    },
    SET_ROOM_CHAT(state, payload) {

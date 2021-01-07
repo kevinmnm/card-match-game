@@ -19,11 +19,13 @@
          </v-sheet>
 
          <v-sheet ref="middle_wrapper" class="middle-wrapper d-flex flex-wrap"   width="100%" :height="screen_layout === 'vertical' ? 'auto' : '70%'" color="primary" :class="screen_layout === 'vertical' ? 'flex-column' : 'flex-row'">
+            
             <!-- Card Set -->
             <v-sheet width="100%" :height="screen_layout === 'vertical' ? 'auto' : '100%'" :class="screen_layout === 'vertical' ? 'ma-0' : 'd-flex flex-row'">
+
                <v-sheet class="d-flex flex-column flex-grow-1 text-center" v-if="screen_layout === 'horizontal' && room_info.capacity === 4">
                   <v-card width="100%">{{ score_1 }}</v-card>
-                  <!-- VERTICAL -->
+                  <!-- HORIZONTAL -->
                   <v-sheet class="flex-grow-1">
                      <v-sheet v-if="all_players.player_1" class="d-flex flex-column">
                         <v-card class="flex-grow-1 d-flex flex-column text-center" height="50%">
@@ -156,8 +158,11 @@
                         <v-img :src="require(`@/assets/img/rank/${all_players.player_1.rank}.png`)"></v-img>
                      </v-responsive>
                      <v-sheet class="d-flex flex-column" height="100%" width="100%" color="primary">
-                        <v-card height="50%">{{ all_players.player_1.displayName }}</v-card>
-                        <v-card height="50%">{{ all_players.player_1.score }}</v-card>
+                        <v-card height="50%" class="d-flex flex-row justify-center" style="font-size: 18px;">
+                           {{ all_players.player_1.displayName }}
+                           <DisplayNameIcon :player-prop="all_players.player_1" />
+                        </v-card>
+                        <v-card class="text-center" height="50%">{{ all_players.player_1.score }}</v-card>
                      </v-sheet>
                   </v-sheet>
                </v-sheet>
@@ -167,7 +172,10 @@
                         <v-img :src="require(`@/assets/img/rank/${all_players.player_2.rank}.png`)"></v-img>
                      </v-responsive>
                      <v-sheet class="d-flex flex-column" height="100%" width="100%" color="primary">
-                        <v-card height="50%">{{ all_players.player_2.displayName }}</v-card>
+                        <v-card height="50%" class="d-flex flex-row justify-center" style="font-size: 18px;">
+                           {{ all_players.player_2.displayName }}
+                           <DisplayNameIcon :player-prop="all_players.player_2" />
+                        </v-card>
                         <v-card height="50%">{{ all_players.player_2.score }}</v-card>
                      </v-sheet>
                   </v-sheet>
@@ -192,6 +200,7 @@
             <v-btn @click="chatting()" width="20%" height="100%" :disabled="chat_button_disabled">enter</v-btn>
          </v-sheet>
       </v-sheet>
+      <BottomSheet :show-comp="leave_confirm" @closeSheet="leave_confirm = false;" />
    </v-sheet>
 </template>
 
@@ -199,10 +208,12 @@
 import CardSet from "@/components/CardSet.vue"
 import BottomSheet from "@/components/BottomSheet.vue";
 import PlayerInfo from "@/components/PlayerInfo.vue";
+import EndGameScreen from "@/components/EndGameScreen.vue";
+import DisplayNameIcon from "@/components/DisplayNameIcon.vue";
 
 export default {
    name: "CustomGame",
-   components: { BottomSheet, CardSet, PlayerInfo },
+   components: { BottomSheet, CardSet, PlayerInfo, EndGameScreen, DisplayNameIcon },
    data: () => ({
       leave_confirm: false,
       chat_value: '',
@@ -237,7 +248,6 @@ export default {
          return this.$vuetify.breakpoint.height;
       },
       room_info() {
-         console.log(this.$store.state.room.room_info.players.player_1.score);
          return this.$store.state.room.room_info;
       },
       chat_height() {
@@ -276,6 +286,9 @@ export default {
       },
       game_started() {
          return this.$store.state.room.room_info.start;
+      },
+      show_endGameScreen() {
+         return this.$store.state.general.end_game_screen;
       },
    },
    methods: {

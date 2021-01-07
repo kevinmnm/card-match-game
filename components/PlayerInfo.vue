@@ -168,9 +168,6 @@ export default {
          this.playerInfoLoading = false;
       }
    },
-   mounted(){
-      console.log(this.player_info_prop);
-   },
    created() {
       if (this.playerInfo.guest) { // If clicked player is a guest,
          this.get_guest_info();

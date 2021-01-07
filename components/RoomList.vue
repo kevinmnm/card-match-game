@@ -1,5 +1,15 @@
 <template>
    <v-sheet ref="list_wrapper" width="100%" height="80%">
+      <div class="overlay" v-if="show_loading_overlay">
+         <div style="width:100%; height:100px;">
+            <Loading>
+               <template v-slot:text>
+                  Joining Room...
+               </template>
+            </Loading>
+         </div>
+      </div>
+      
       <!-- PC -->
       <v-sheet
          v-if="window_width > window_height"
@@ -7,6 +17,9 @@
          class="d-flex flex-row flex-start flex-wrap"
          style="overflow:auto;"
       >
+         <v-card  width="100%" height="100%" color="error" v-if="custom_room_list.length === 0">
+            Empty
+         </v-card>
          <v-card
             v-for="(all, ind) in custom_room_list"
             :key="all + ind"
@@ -23,7 +36,7 @@
                   :elevation="hover ? 24 : 0"
                >
                   <div class="enter-button" v-show="hover">
-                     <v-btn>Join</v-btn>
+                     <v-btn @click="join_custom_room(all)">Join</v-btn>
                   </div>
 
                   <v-sheet :width="wrapper_height / 3 + 'px'">
@@ -56,6 +69,9 @@
          height="100%"
          class="room"
       >
+         <v-card  width="100%" height="100%" color="error" v-if="custom_room_list.length === 0">
+            Empty
+         </v-card>
          <v-card
             v-for="(all, ind) in custom_room_list"
             :key="all + ind"
@@ -73,7 +89,7 @@
                   :elevation="hover ? 24 : 0"
                >
                   <div class="enter-button" v-show="hover">
-                     <v-btn>Join</v-btn>
+                     <v-btn @click="join_custom_room(all)">Join</v-btn>
                   </div>
 
                   <v-sheet :width="wrapper_height / 5 + 'px'">
@@ -102,10 +118,14 @@
 </template>
 
 <script>
+import Loading from "@/components/Loading.vue";
+
 export default {
    name: "RoomListComp",
+   components: { Loading },
    data: () => ({
       isMounted: false,
+      show_loading_overlay: false,
    }),
    computed: {
       custom_room_list() {
@@ -124,11 +144,47 @@ export default {
       window_height() {
          return this.$vuetify.breakpoint.height;
       },
-      // img_size() {
-      //    if (!this.isMounted) {return}
-      //    console.log(this.$refs.list_wrapper.$el.clientHeight);
-      //    return this.$refs.list_wrapper.$el.clientHeight / 2;
-      // }
+      my_info() {
+         return this.$store.state.guest.guest_info || this.$store.state.user.user_info;
+      },
+   },
+   methods: {
+      async join_custom_room(all) {
+         this.show_loading_overlay = true;
+
+         let updated_list = await this.$store.dispatch('custom/fetch_custom_room_list');
+         let selected_room;
+
+         updated_list.forEach( room => {
+            if (room.room_number === all.room_number) {
+               selected_room = room;
+            }
+         });
+
+         if (!selected_room) {
+            alert('This room no longer exists.');
+            return this.show_loading_overlay = false;
+         }
+         if (selected_room.start) {
+            alert('Game already started.');
+            return this.show_loading_overlay = false;
+         }
+         if (selected_room.joined === all.capacity) {
+            alert('Room is already full.');
+            return this.show_loading_overlay = false;
+         }
+         if (this.my_info.guest && !selected_room.allow_guest) {
+            alert('Guest is not allowed in this game.');
+            return this.show_loading_overlay = false;
+         }
+         if (selected_room.terminate) {
+            alert('This room will terminate soon.');
+            return this.show_loading_overlay = false;
+         }
+         
+         window.socket.emit('join-custom-game', { roomInfo: all, joinerInfo: this.my_info });
+         this.$emit('update-room-list-comp');
+      },
    },
    mounted() {
       this.isMounted = true;
@@ -137,6 +193,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.overlay {
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background: rgba(0,0,0,0.9);
+   z-index: 2;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
 .enter-button {
    position: absolute;
    top: 0;

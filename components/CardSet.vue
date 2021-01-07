@@ -8,11 +8,16 @@
       <!-- <v-overlay z-index="2" color="blue" class="text-center" opacity="1" v-if="show_endGameScreen">
          <EndGameScreen />
       </v-overlay> -->
-      <div style="position:absolute; z-index:2; width:100%; height:100%; background:red;" v-if="show_endGameScreen">
+      <!-- <div style="position:absolute; z-index:2; width:100%; height:100%;" v-if="show_endGameScreen">
          <EndGameScreen />
-      </div>
-      
+      </div> -->
+<!-- IF QUICK GAME -->
       <v-sheet v-if="room_type === 'quick'" class="pa-0 ma-0 d-flex flex-wrap" width="100%" height="100%">
+
+         <div style="position:absolute; z-index:2; width:100%; height:100%;" v-if="show_endGameScreen">
+            <EndGameScreen />
+         </div>
+
          <v-card
             class="pa-0 ma-0"
             :ripple="false"
@@ -50,13 +55,19 @@
          </v-card>
       </v-sheet> -->
 
+<!-- IF CUSTOM GAME -->
       <v-sheet v-if="room_type === 'custom'">
+         
          <v-responsive
             :aspect-ratio="1 / 1"
             :width="screen_layout === 'horizontal' ? +(card_size_horizontal.replace('px','')) * 6 + 'px' : window_width"
             :height="screen_layout === 'horizontal' ? +(card_size_horizontal.replace('px','')) * 6 + 'px' : 'auto'"
             class="ma-auto yellow responsive-content-class pa-0"
          >
+            <div style="position:absolute; z-index:2; width:100%; height:100%;" v-if="show_endGameScreen">
+               <EndGameScreen />
+            </div>
+
             <v-fade-transition v-if="!room_info.start">
                <CardOverlay />
             </v-fade-transition>
@@ -171,7 +182,7 @@ export default {
       },
       room_info() {
          return this.$store.state.room.room_info;
-      }
+      },
    },
    methods: {
       card_flip(card, ind) {

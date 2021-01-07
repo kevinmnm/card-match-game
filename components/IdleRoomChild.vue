@@ -65,7 +65,7 @@
          <v-btn plain class="ma-0 pa-0" style="top:0; right:0;" text width="50px" height="50px" absolute @click="$store.commit('custom/SHOW_CUSTOM_DIALOG', false)">
             <v-icon class="ma-0 pa-0" color="red" x-large>mdi-close-box</v-icon>
          </v-btn>
-         <RoomList />
+         <RoomList @update-room-list-comp="$store.commit('custom/SHOW_CUSTOM_DIALOG', false)" />
       </div>
 
 <!-- VOLUME/SOUND BAR -->
@@ -213,7 +213,6 @@ export default {
       //    this.$refs.child_img.$el.clientHeight;
       //    ref_keys.forEach( key => {
       //       window_height -= this.$refs[key].$el.clientHeight;
-      //       console.log(this.$refs[key].$el.clientHeight);
       //    });
       //    return window_height;
       // },

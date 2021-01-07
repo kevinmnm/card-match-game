@@ -231,10 +231,8 @@ export default {
          } else if (this.$vuetify.breakpoint.name === 'sm') { // Width 600 to 960;
             if (window.innerHeight <= 960) {
                // return '100px'
-               // console.log(this.$refs.board_info);
                // return +this.board_info_size.replace('px','') - +this.card_size.replace('px','') - 40 + 'px'
                // return (+this.board_card_size.replace('px','') - (+this.card_size.replace('px','') * 7)) - 40 + 'px';
-               // console.log( this.window_inner_height - 25 - (+this.board_card_size.replace('px','')) - 40 + 'px' );
                return this.window_inner_height - 25 - (+this.card_size.replace('px','') * 7) - 40 + 'px';
             } else {
                // return '180px'

@@ -130,7 +130,6 @@ export default {
    methods: {
       async forgot() {
          this.send_button_loading = true;
-         console.log(window.server_url);
 
          const response = await fetch(window.server_url + '/forgot', {
             headers: { 'Content-Type': 'application/json' },

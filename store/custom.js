@@ -1,5 +1,5 @@
 export const state = () => ({
-   custom_room_list: null, // Will be an array;
+   custom_room_list: [], // Will be an array;
    loading: false,
    show_custom_dialog: false,
 });
@@ -17,7 +17,7 @@ export const mutations = {
 }
 
 export const actions = {
-   async fetch_custom_room_list({ commit }) {
+   async fetch_custom_room_list({ commit, state }) {
       commit('LOADING', true);
       const response = await fetch(window.server_url + '/custom', {
          headers: { 'Content-Type': 'application/json' },
@@ -28,5 +28,8 @@ export const actions = {
       commit('CUSTOM_ROOM_LIST', res.roomList);
       commit('LOADING', false);
       commit('SHOW_CUSTOM_DIALOG', true);
+
+      return state.custom_room_list;
    }
+
 }

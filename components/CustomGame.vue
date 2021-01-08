@@ -365,6 +365,7 @@ export default {
    },
    destroyed() {
       this.$store.commit('room/ROOM_TYPE', '');
+      this.$store.commit("general/CLOSE_END_GAME_SCREEN");
    }
    
 };

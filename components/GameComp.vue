@@ -362,6 +362,7 @@ export default {
    destroyed() {
       window.removeEventListener('resize', this.chat_max_height_updater_handler);
       this.$store.commit('room/ROOM_TYPE', '');
+      this.$store.commit("general/CLOSE_END_GAME_SCREEN");
    },
 };
 </script>

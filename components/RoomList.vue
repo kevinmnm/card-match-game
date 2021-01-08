@@ -52,7 +52,10 @@
                      </v-responsive>
                   </v-sheet>
                   <v-sheet class="d-flex flex-column flex-grow-1">
-                     <v-card height="50%" width="100%">{{ all.title }}</v-card>
+                     <v-card height="50%" width="100%">
+                        <v-card flat>{{ all.title }}</v-card>
+                        <v-icon v-if="all.room_type === 'private'">mdi-lock</v-icon>
+                     </v-card>
                      <v-card height="50%" width="100%">{{
                         all.joined + "/" + all.capacity
                      }}</v-card>
@@ -89,7 +92,7 @@
                   :elevation="hover ? 24 : 0"
                >
                   <div class="enter-button" v-show="hover">
-                     <v-btn @click="join_custom_room(all)">Join</v-btn>
+                     <v-btn @click="all.room_type === 'private' ? private_dialog = true : join_custom_room(all)">Join</v-btn>
                   </div>
 
                   <v-sheet :width="wrapper_height / 5 + 'px'">
@@ -112,6 +115,30 @@
                   </v-sheet>
                </v-sheet>
             </v-hover>
+            <v-dialog v-model="private_dialog">
+         <template persistent>
+            <v-card class="pa-3">
+               <v-card flat width="100%" class="mb-2 text-left" style="font-size:20px;">Room Password</v-card>
+               <v-text-field
+                  v-model="room_password"
+                  color="deep-purple accent-4"
+                  :append-icon="show_room_password ? 'mdi-eye' : 'mdi-eye-off'"
+                  @click:append="show_room_password = !show_room_password"
+                  @keydown.space="($event) => $event.preventDefault()"
+                  @input="private_dialog_error_msg = ''"
+                  :type="show_room_password ? 'text' : 'password'"
+                  :error-messages="private_dialog_error_msg"
+                  autocomplete="off"
+                  dense
+                  filled
+               ></v-text-field>
+               <v-card class="mt-2 d-flex flex-row justify-space-around" flat width="100%">
+                  <v-btn color="error" @click="private_dialog = false, private_dialog_error_msg = '', room_password = ''">Cancel</v-btn>
+                  <v-btn color="classic white--text" @click="enter_private_room(all)">Enter</v-btn>
+               </v-card>
+            </v-card>
+         </template>
+      </v-dialog>
          </v-card>
       </v-sheet>
    </v-sheet>
@@ -126,6 +153,10 @@ export default {
    data: () => ({
       isMounted: false,
       show_loading_overlay: false,
+      private_dialog: false,
+      private_dialog_error_msg: '',
+      show_room_password: false,
+      room_password: '',
    }),
    computed: {
       custom_room_list() {
@@ -149,8 +180,22 @@ export default {
       },
    },
    methods: {
+      enter_private_room(all) {
+         if (all.password === this.room_password) {
+            return this.join_custom_room(all);
+         }
+         this.private_dialog_error_msg = 'Incorrect Password!';
+      },
       async join_custom_room(all) {
          this.show_loading_overlay = true;
+
+         // if (all.room_type === 'private' && !bypass) {
+         //    this.room_password = '';
+         //    this.private_dialog_error_msg = '';
+         //    this.private_dialog = true;
+         //    this.show_loading_overlay = false;
+         //    return
+         // }
 
          let updated_list = await this.$store.dispatch('custom/fetch_custom_room_list');
          let selected_room;

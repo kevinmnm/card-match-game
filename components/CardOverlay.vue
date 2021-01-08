@@ -20,6 +20,7 @@
          <v-btn 
             v-if="my_display_name === room_infor.room_master.displayName"
             :disabled="disable_start_button"
+            :loading="start_button_loading"
             @click="custom_game_start()"
          >
             Start
@@ -43,6 +44,7 @@ export default {
          game_start_countdown: 5,
          interval_id: null,
          ready_button_disabled: false,
+         start_button_loading: false,
       };
    },
    computed: {
@@ -80,7 +82,10 @@ export default {
          this.ready_button_disabled = true;
          window.socket.emit('custom-ready', { displayName: this.my_display_name, ready: true, roomInfo: this.room_infor });
       },
-      custom_game_start() {
+      custom_game_start() { // Extract all player's info and sent it to customStart.js to reset scores to 0;
+         this.start_button_loading = true;
+         // const currentPlayersArray = Object.values(this.room_infor.players);
+         let room_master_id = this.room_infor
          window.socket.emit('custom-start', {roomInfo: this.room_infor});
       }
    },

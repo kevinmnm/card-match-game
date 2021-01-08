@@ -93,6 +93,7 @@
                      tile
                      text
                      outlined
+                     disabled
                      >2vs2</v-btn
                   >
                   <v-btn
@@ -140,7 +141,7 @@
                      tile
                      text
                      outlined
-                     @click="room_type = 'public', secret_key = null;"
+                     @click="room_type = 'public', secret_key = '';"
                      >public</v-btn
                   >
                   <v-btn
@@ -220,20 +221,12 @@
                   >
                </v-col>
                <v-col cols="4" class="pa-0 ma-0">
-                  <!-- <v-btn
-                     class="ma-0 pa-0"
-                     width="100%"
-                     color="success"
-                     @click="create_custom_game()"
-                     :disabled="create_button_disabled"
-                     >create</v-btn
-                  > -->
                   <v-btn
                      class="ma-0 pa-0"
                      width="100%"
                      color="success"
                      @click="create_custom_game()"
-                     disabled
+                     :disabled="create_button_disabled"
                      >create</v-btn
                   >
                </v-col>
@@ -251,7 +244,7 @@ export default {
    scrollToTop: true,
    data: () => ({
       room_title: "Let's play!",
-      secret_key: null,
+      secret_key: "",
       room_type: "",
       show_key: false,
       selected_type: "",

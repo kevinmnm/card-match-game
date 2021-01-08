@@ -1,6 +1,7 @@
 export const state = () => ({
    custom_room_list: [], // Will be an array;
    loading: false,
+   start_button_loading: false,
    show_custom_dialog: false,
 });
 
@@ -10,6 +11,9 @@ export const mutations = {
    },
    LOADING(state, payload) {
       state.loading = payload;
+   },
+   START_BUTTON_LOADING(state, payload) {
+      state.start_button_loading = payload;
    },
    SHOW_CUSTOM_DIALOG(state, payload) {
       state.show_custom_dialog = payload;
@@ -33,7 +37,7 @@ export const actions = {
    },
 
    async trigger_start_game_countdown({ commit, state }) {
-      
+
    }
 
 }

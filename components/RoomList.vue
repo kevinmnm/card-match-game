@@ -53,8 +53,8 @@
                   </v-sheet>
                   <v-sheet class="d-flex flex-column flex-grow-1">
                      <v-card height="50%" width="100%">
-                        <v-card flat>{{ all.title }}</v-card>
-                        <v-icon v-if="all.room_type === 'private'">mdi-lock</v-icon>
+                        {{ all.title }}
+                        <v-icon v-if="all.room_type === 'private'" small>mdi-lock</v-icon>
                      </v-card>
                      <v-card height="50%" width="100%">{{
                         all.joined + "/" + all.capacity
@@ -108,7 +108,10 @@
                      </v-responsive>
                   </v-sheet>
                   <v-sheet class="d-flex flex-column flex-grow-1">
-                     <v-card height="50%" width="100%">{{ all.title }}</v-card>
+                     <v-card height="50%" width="100%">
+                        {{ all.title }}
+                        <v-icon v-if="all.room_type === 'private'" small>mdi-lock</v-icon>
+                     </v-card>
                      <v-card height="50%" width="100%">{{
                         all.joined + "/" + all.capacity
                      }}</v-card>

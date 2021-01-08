@@ -37,8 +37,8 @@
                   :key="all.show"
                >
                </v-img> -->
-               <v-img v-if="!all.show" :src="require(`~/assets/img/card/classic/${all.card_id}.png`)" :key="all.show" eager></v-img>
-               <v-img v-else :src="require(`~/assets/img/card/cover/default_white.png`)" :key="all.show"></v-img>
+               <v-img v-if="!all.show" :src="require(`~/assets/img/card/cover/default_white.png`)" :key="all.show" eager></v-img>
+               <v-img v-else :src="require(`~/assets/img/card/classic/${all.card_id}.png`)" :key="all.show" eager></v-img>
             </transition>
 
          </v-card>
@@ -84,8 +84,8 @@
                :disabled="!my_turn || my_turn_temp_disable"
             >
                <transition name="flip" class="d-flex flex-wrap" tag="div" :key="card_key" mode="out-in">
-                  <v-img v-if="!all.show" :src="require(`@/assets/img/card/${game_theme}/${all.card_id}.png`)" :key="all.show" style="background: red;"></v-img>
-                  <v-img v-else :src="require(`@/assets/img/card/cover/default_white.png`)" :key="all.show"></v-img>
+                  <v-img v-if="!all.show" :src="require(`@/assets/img/card/cover/default_white.png`)" :key="all.show" eager></v-img>
+                  <v-img v-else :src="require(`@/assets/img/card/${game_theme}/${all.card_id}.png`)" :key="all.show" eager></v-img>
                </transition>
             </v-card>
          </v-responsive>
@@ -189,6 +189,7 @@ export default {
    },
    methods: {
       card_flip(card, ind) {
+
          this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn (ensures quick disabling);
          if (card.show) return this.$store.commit('card/MY_TURN_TEMP_DISABLE', false); // If card already showing, enable my turn;
 
@@ -197,11 +198,11 @@ export default {
          this.$store.commit('audio/PLAY_SOUND', 'card_flip');
 
          let changed_card = {
-               ...card,
-               show: true
-            }
+            ...card,
+            show: true
+         }
 
-         this.$store.commit("room/ROOM_CARD", { card: changed_card, cardIndex: ind } );
+         // this.$store.commit("room/ROOM_CARD", { card: changed_card, cardIndex: ind } );
 
          window.socket.emit('card-flip', { 
             roomNumber: this.room_number, 
@@ -209,6 +210,27 @@ export default {
             cardIndex: ind,
             flippedAmount: this.flipped_tracker.length
          });
+
+
+/**
+         if (card.show) return
+         this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn (ensures quick disabling);
+         let changed_card = {
+            ...card,
+            show: true
+         }
+         this.$store.commit('room/ROOM_CARD', {card: changed_card, cardIndex: ind}); // Make my card show first;
+         this.$store.commit('audio/PLAY_SOUND', 'card_flip'); // Play flip sound;
+         this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card }); // Track flipped cards in array;
+         
+
+         window.socket.emit('card-flip', { // Make oppoent's card show;
+            roomNumber: this.room_number, 
+            card: changed_card, 
+            cardIndex: ind,
+            flippedAmount: this.flipped_tracker.length
+         });
+**/
 
          // Waiting for socket.io to grant my turn again when only one card flipped...
 

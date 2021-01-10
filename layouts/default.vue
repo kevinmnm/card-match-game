@@ -18,6 +18,24 @@ export default {
       connect_socket_watch(){
          return this.$store.state.general.connect_socket;
       },
+      my_player_number() { // player_1, etc;
+         if (this.$store.state.room.room_info) {
+            let roomInfo = this.$store.state.room.room_info;
+            let myDisplayName = this.$store.state.general.my_display_name;
+            let myPlayerNumber;
+            for (let playerN in roomInfo.players) {
+               if (roomInfo.players[playerN].displayName === myDisplayName) {
+                  myPlayerNumber = playerN;
+                  break;
+               } else {
+                  myPlayerNumber = '';
+               }
+            }
+            return myPlayerNumber;
+         } else {
+            return '';
+         }
+      }
    },
    methods: {
       connect_socket() {
@@ -80,11 +98,17 @@ export default {
             this.$store.commit('room/GAME_STARTED', payload);
             this.$store.commit('general/CLOSE_END_GAME_SCREEN');
             this.$store.commit('audio/PLAY_BGM', 'lith');
+            
          });
 
          window.socket.on('flipped-card', payload => { // payload = { card, cardIndex };
             this.$store.commit('room/ROOM_CARD', payload);
             this.$store.commit('audio/PLAY_SOUND', 'card_flip');
+            if (payload.flippedCardArray && this.$store.state.room.room_info.turn === this.my_player_number) {
+               payload.flippedCardArray.forEach( card => {
+                  this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card });
+               });
+            }
          });
 
          window.socket.on('my-turn-temp-disable', payload => { // payload = true || false (false is enable my turn);
@@ -92,8 +116,14 @@ export default {
          });
 
          window.socket.on('turn-changed', payload => { // payload = { roomInfo };
-            this.$store.commit('room/ROOM_INFO_UPDATE', payload.roomInfo);
-            this.$store.commit('card/MY_TURN_TEMP_DISABLE', false);
+            this.$store.commit('room/ROOM_INFO_UPDATE', payload.roomInfo); // Simply updates room info;
+            // If it's a team match and first turn of my team didn't time out and if it's my turn,
+            // if (payload.flippedCardArray && this.$store.state.room.room_info.turn === this.my_player_number) {
+            //    payload.flippedCardArray.forEach( card => {
+            //       this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card });
+            //    });
+            // }
+            this.$store.commit('card/MY_TURN_TEMP_DISABLE', false); // Enable temp turn (turn will be determined by other turn data);
          });
 
          window.socket.on('restart-countdown', payload => { // true or false;

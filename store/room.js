@@ -108,9 +108,23 @@ export const mutations = {
       state.room_info.cardSet[payload.card_index].show = payload.show_card;
 
       if (payload.card_index === state.room_info.cardSet.length - 1 && !payload.show_card) {
-         // setTimeout( () => {
-            this.state.card.my_turn_temp_disable = false;
-         // }, 1000);
+         // if (state.room_info.capacity === 4) { // If it's 2vs2,
+         //    const enable = () => this.state.card.my_turn_temp_disable = false;
+         //    return setTimeout( enable, 300);
+         // }
+         this.state.card.my_turn_temp_disable = false;
       }
    }
 }
+
+// export const actions = {
+//    initial_card_show_trigger({ state, commit }, payload) {
+//       commit('INITIAL_CARD_SHOW_TRIGGER', payload);
+
+//       if (payload.card_index === state.room_info.cardSet.length - 1 && !payload.show_card) {
+//          setTimeout( () => {
+//             state.card.my_turn_temp_disable = false;
+//          }, 3000);
+//       }
+//    }
+// }

@@ -93,7 +93,6 @@
                      tile
                      text
                      outlined
-                     disabled
                      >2vs2</v-btn
                   >
                   <v-btn
@@ -296,13 +295,6 @@ export default {
          });
       },
    },
-   // mounted() {
-   //    // this.$refs['create-room-component'].scrollTop = 0;
-   //    this.$vuetify.goTo(this.$refs['create-room-component'])
-   // },
-   // beforeDestroy() {
-   //    console.log(this.$refs['create-room-component']);
-   // }
 };
 </script>
 

@@ -148,7 +148,7 @@
                   </v-sheet>
                </v-sheet>
                <v-sheet width="50%">
-                  <v-card>team score 2</v-card>
+                  <v-card>{{ score_2 }}</v-card>
                   <v-sheet class="d-flex flex-row">
 
                      <v-card v-if="room_info.players.player_3" width="50%" class="d-flex flex-row">

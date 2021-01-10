@@ -67,7 +67,7 @@ export default {
          let playersValues = Object.values(this.room_infor.players);
          let readyPlayers = 0;
          playersValues.forEach( ea => {
-            if (ea.ready) { readyPlayers++ }
+            if (ea.ready) { readyPlayers = readyPlayers + 1 }
          });
 
          if (readyPlayers === this.room_infor.capacity - 1) {

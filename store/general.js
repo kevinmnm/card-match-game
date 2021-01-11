@@ -25,8 +25,16 @@ export const mutations = {
       state.end_game_screen = true;
 
       if (payload.winner) {
-         if (payload.winner.displayName === state.my_display_name) {
-            return state.end_game_message = 'VICTORY';
+         if (Array.isArray(payload.winner)) { // If it's 2vs2,
+            payload.winner.forEach( win => {
+               if (win.displayName === state.my_display_name) {
+                  return state.end_game_message = 'VICTORY';
+               }
+            });
+         } else { // If it's not 2vs2,
+            if (payload.winner.displayName === state.my_display_name) {
+               return state.end_game_message = 'VICTORY';
+            }
          }
       }
 

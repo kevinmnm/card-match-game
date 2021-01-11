@@ -35,6 +35,12 @@ export default {
          } else {
             return '';
          }
+      },
+      room_capacity() {
+         return this.$store.state.room.room_info.capacity;
+      },
+      room_turn() {
+         return this.$store.state.room.room_info.turn;
       }
    },
    methods: {
@@ -104,11 +110,11 @@ export default {
          window.socket.on('flipped-card', payload => { // payload = { card, cardIndex };
             this.$store.commit('room/ROOM_CARD', payload);
             this.$store.commit('audio/PLAY_SOUND', 'card_flip');
-            if (payload.flippedCardArray && this.$store.state.room.room_info.turn === this.my_player_number) {
-               payload.flippedCardArray.forEach( card => {
-                  this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card });
-               });
-            }
+            // if (payload.flippedCardArray && this.$store.state.room.room_info.turn === this.my_player_number) {
+            //    payload.flippedCardArray.forEach( card => {
+            //       this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card });
+            //    });
+            // }
          });
 
          window.socket.on('my-turn-temp-disable', payload => { // payload = true || false (false is enable my turn);
@@ -117,13 +123,34 @@ export default {
 
          window.socket.on('turn-changed', payload => { // payload = { roomInfo };
             this.$store.commit('room/ROOM_INFO_UPDATE', payload.roomInfo); // Simply updates room info;
-            // If it's a team match and first turn of my team didn't time out and if it's my turn,
-            // if (payload.flippedCardArray && this.$store.state.room.room_info.turn === this.my_player_number) {
-            //    payload.flippedCardArray.forEach( card => {
-            //       this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card });
-            //    });
-            // }
+            // If it's 2vs2 game,
+            if (this.room_capacity === 4) {
+               if (this.room_turn === this.my_player_number && !payload.dontEnableTurn) { // If it's my turn, add card info to tracker;
+                  payload.flippedCardArray.forEach( card => { // Should really be one card;
+                     if (card.show) {
+                        this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card });
+                     }
+                  });
+               } else {
+                  this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
+               }
+               this.$store.commit('card/CARD_KEY');
+               if (payload.dontEnableTurn) return;
+            }
             this.$store.commit('card/MY_TURN_TEMP_DISABLE', false); // Enable temp turn (turn will be determined by other turn data);
+         });
+
+         window.socket.on('play-sound', payload => { // payload = { sound: String };
+            this.$store.commit('audio/PLAY_SOUND', payload.sound);
+         });
+
+         window.socket.on('room-info-update', payload => { // payload = { roomInfo: ... };
+            this.$store.commit('room/ROOM_INFO_UPDATE', payload.roomInfo);
+            if (this.room_capacity === 4) {
+               this.$store.commit('room/ROOM_CARD', payload);
+               this.$store.commit('audio/PLAY_SOUND', 'card_flip');
+               this.$store.commit('card/CARD_KEY');
+            }
          });
 
          window.socket.on('restart-countdown', payload => { // true or false;
@@ -132,10 +159,6 @@ export default {
 
          window.socket.on('countdown-paused', () => { // Pauses countdown and resets its value to default;
             this.$store.commit('card/PAUSE_COUNTDOWN');
-         });
-
-         window.socket.on('room-info-update', payload => { // payload = { roomInfo: ... };
-            this.$store.commit('room/ROOM_INFO_UPDATE', payload.roomInfo);
          });
 
          window.socket.on('game-ended', payload => { // payload = { winner: {...}, losers: [{...}, {...}], draws: [{...}, {...}] };

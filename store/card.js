@@ -50,7 +50,6 @@ export const actions = {
    countdown_function({ commit, state }, restart) {
       commit('PAUSE_COUNTDOWN');
       if (restart) { // If trigger is true,
-         console.log('working');
          if (state.countdown_interval_id) { // If there is an exisiting interval,
             clearInterval(state.countdown_interval_id); // Terminate existing interval;
             commit('COUNTDOWN_INTERVAL_ID', null); // Clear exisitin interval id;
@@ -64,7 +63,7 @@ export const actions = {
                commit('MY_TURN_TEMP_DISABLE', true); // Disable my turn;
                clearInterval(state.countdown_interval_id);
 
-               commit('FLIPPED_TRACKER', { action: 'clear' }); // Clear flipped tracker;
+               // commit('FLIPPED_TRACKER', { action: 'clear' }); // Clear flipped tracker;
                
                if (this.state.room.room_info.players[this.state.room.room_info.turn].displayName === this.state.general.my_display_name) {
                   setTimeout( () => { // Change turn after some delay;
@@ -72,11 +71,10 @@ export const actions = {
                         current: this.state.room.room_info.turn, 
                         roomNumber: this.state.room.room_info.room_number,
                         roomCapacity: this.state.room.room_info.capacity,
-                        // flippedCardArray: state.flipped_tracker
+                        flippedCardArray: state.flipped_tracker,
+                        playerTimedOut: true
                      });
-                     // this.flipped_tracker = [];
-                     // commit('FLIPPED_TRACKER', { action: 'clear' });
-
+                     commit('FLIPPED_TRACKER', { action: 'clear' });
                   }, 1500);
                }
                return 

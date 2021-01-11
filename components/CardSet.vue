@@ -27,7 +27,7 @@
             :key="all + ind"
             :width="card_size"
             :height="card_size"
-            @click="room_capacity === 2 ? card_flip(all, ind) : team_card_flip(all, ind)"
+            @click="room_capacity === 2 ? card_flip(all, ind) : card_flip_two_vs_two(all, ind)"
             :disabled="!my_turn || my_turn_temp_disable"
             color="deep-purple accent-5"
          >
@@ -80,7 +80,7 @@
                v-for="(all, ind) in card_array"
                :key="all + ind"
                color="primary"
-               @click="room_capacity === 2 ? card_flip(all, ind) : team_card_flip(all, ind)"
+               @click="room_capacity === 2 ? card_flip(all, ind) : card_flip_two_vs_two(all, ind)"
                :disabled="!my_turn || my_turn_temp_disable"
             >
                <transition name="flip" class="d-flex flex-wrap" tag="div" :key="card_key" mode="out-in">
@@ -326,11 +326,46 @@ export default {
          }
 **/
       },
-      team_card_flip(card, ind) {
-         if (this.flipped_tracker.length === 1 && this.room_capacity === 4) { // I'm not a finisher for the team;
-            this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn (ensures quick disabling);
+      card_flip_two_vs_two(card, ind) {
+/**** 2VS2 (onclick) ****/
+         if (card.show) return;
+         console.log('card_flip_two_vs_two()');
+         this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn (ensures quick disabling);
+         window.socket.emit('pause-countdown', this.room_number); // Request pause countdown for all clients;
 
-            setTimeout( () => { // Change turn after some delay;
+         let changed_card = {
+            ...card,
+            show: true
+         }
+
+         this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: changed_card });
+
+   /**** 2VS2 FLIPPED 1 ****/
+         if (this.flipped_tracker.length === 1 && this.room_capacity === 4) { // If I'm a start for the team,
+            window.socket.emit('change-turn', { 
+               current: this.current_turn_player, 
+               roomNumber: this.room_number,
+               roomCapacity: this.$store.state.room.room_info.capacity,
+               flippedCardArray: this.flipped_tracker
+            });
+            this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
+         }
+         
+   /**** 2VS2 FLIPPED 2 ****/
+         if (this.flipped_tracker.length === 2 && this.room_capacity === 4) { // If I'm a finisher for the team,
+            console.warn('finisher triggered!');
+            if (this.flipped_tracker[0].card_id === this.flipped_tracker[1].card_id) { // If team found matching card for 2vs2,
+               window.socket.emit('room-player-update', {
+                  action: 'add-score',
+                  currentPlayer: this.current_turn_player, 
+                  roomNumber: this.room_number,
+                  cardMatch: this.flipped_tracker,
+                  roomCapacity: this.room_capacity,
+                  flippedCardArray: this.flipped_tracker
+               });
+               this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
+
+            } else { // If cards are not matching for 2vs2,
                window.socket.emit('change-turn', { 
                   current: this.current_turn_player, 
                   roomNumber: this.room_number,
@@ -338,38 +373,40 @@ export default {
                   flippedCardArray: this.flipped_tracker
                });
 
-               this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
+               let hideCardArray = [];
 
-            }, 1500);
-         }
-/**** 2VS2 FLIPPED 2 ****/
-         if (this.flipped_tracker.length === 2 && this.room_capacity === 4) { // If I'm a finisher for the team,
-            this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn (ensures quick disabling);
-            // window.socket.emit('pause-countdown', this.room_number); // Request pause countdown for all clients;
-
-            if (this.flipped_tracker[0].card_id === this.flipped_tracker[1].card_id) { // If team found matching card for 2vs2,
-               window.socket.emit('room-player-update', {
-                  action: 'add-score',
-                  currentPlayer: this.current_turn_player, 
-                  roomNumber: this.room_number,
-                  cardMatch: this.flipped_tracker,
-                  roomCapacity: this.room_capacity
+               this.flipped_tracker.forEach( cardInfo => {
+                  hideCardArray.push({
+                     ...cardInfo,
+                     show: false
+                  });
                });
 
-               this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
-
-            } else { // If cards are not matching for 2vs2,
-               // window.socket.emit('pause-countdown', this.room_number); // Request pause countdown for all clients;
-               this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' }); // Clear cards tracker;
-
-               setTimeout( () => { // Change turn after some delay;
-                  window.socket.emit('change-turn', { 
+               setTimeout( () => {
+                  window.socket.emit('change-turn', {
                      current: this.current_turn_player, 
                      roomNumber: this.room_number,
                      roomCapacity: this.$store.state.room.room_info.capacity,
-                     flippedCardArray: this.flipped_tracker
+                     flippedCardArray: hideCardArray
                   });
+                  this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
                }, 1500);
+
+               // ( async () => {
+               //    await ( () => {
+               //       return new Promise( (res, rej) => {
+               //          setTimeout( () => {
+               //             window.socket.emit('change-turn', {
+               //                current: this.current_turn_player, 
+               //                roomNumber: this.room_number,
+               //                roomCapacity: this.$store.state.room.room_info.capacity,
+               //                flippedCardArray: hideCardArray
+               //             });
+               //          }, 1500);
+               //       });
+               //    } )();
+               // } )();
+
             }
 
          }
@@ -380,7 +417,8 @@ export default {
          let card_array_length = this.card_array.length; // Flipped card length in array;
          let time_delay = 0; // Initial loading setInterval time delay;
          
-         if (val && this.room_capacity !== 4) { // If game_started value is true in store and not 2vs2,
+         // if (val && this.room_capacity !== 4) { // If game_started value is true in store and not 2vs2,
+         if (val) {
             this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn;
             this.show_loading = true; // Show loading component;
 
@@ -401,10 +439,12 @@ export default {
                   time_delay = time_delay + 200;
                }
             }, 1000);
-         } else if (val && this.room_capacity === 4) { // If game_started value is true and it's 2vs2,
-            this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn;
-            this.show_loading = true; // Show loading component;
          }
+         
+         // if (val && this.room_capacity === 4) { // If game_started value is true and it's 2vs2,
+         //    this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn;
+         //    this.show_loading = true; // Show loading component;
+         // }
       },
       my_turn_temp_disable(val) { // Watching this value (only at start);
          this.starter_track++;

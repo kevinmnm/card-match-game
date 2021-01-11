@@ -112,6 +112,8 @@ export default {
             } else {
                clearInterval(this.interval_id);
                this.game_start_countdown = 5;
+               this.ready_button_disabled = false;
+               this.start_button_loading = false;
             }
          },
          immediate: true

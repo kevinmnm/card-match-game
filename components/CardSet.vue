@@ -37,8 +37,8 @@
                   :key="all.show"
                >
                </v-img> -->
-               <v-img v-if="all.show" :src="require(`~/assets/img/card/cover/default_white.png`)" :key="all.show" eager></v-img>
-               <v-img v-else :src="require(`~/assets/img/card/classic/${all.card_id}.png`)" :key="all.show" eager></v-img>
+               <v-img v-if="!all.show" :src="require(`~/assets/img/card/cover_low/default_white.png`)" :key="all.show" eager></v-img>
+               <v-img v-else :src="require(`~/assets/img/card/classic_low/${all.card_id}.png`)" :key="all.show" eager></v-img>
             </transition>
 
          </v-card>
@@ -84,8 +84,8 @@
                :disabled="!my_turn || my_turn_temp_disable"
             >
                <transition name="flip" class="d-flex flex-wrap" tag="div" :key="card_key" mode="out-in">
-                  <v-img v-if="all.show" :src="require(`@/assets/img/card/cover/default_white.png`)" :key="all.show" eager></v-img>
-                  <v-img v-else :src="require(`@/assets/img/card/${game_theme}/${all.card_id}.png`)" :key="all.show" eager></v-img>
+                  <v-img v-if="!all.show" :src="require(`@/assets/img/card/cover_low/default_white.png`)" :key="all.show" eager></v-img>
+                  <v-img v-else :src="require(`@/assets/img/card/${game_theme}_low/${all.card_id}.png`)" :key="all.show" eager></v-img>
                </transition>
             </v-card>
          </v-responsive>

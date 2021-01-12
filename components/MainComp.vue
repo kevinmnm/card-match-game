@@ -12,6 +12,7 @@
                   autocomplete="off"
                   v-model="login_id"
                   @keydown.space="($event) => $event.preventDefault()"
+                  @input="remember_username = false"
                   dense
                   filled
                   hide-details
@@ -35,7 +36,7 @@
                <v-checkbox
                   class="ma-2 pa-0"
                   v-model="remember_username"
-                  label="Remeber Email/Username"
+                  label="Remember Email/Username"
                   dense
                   hide-details
                ></v-checkbox>

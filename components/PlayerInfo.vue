@@ -1,5 +1,5 @@
 <template>
-   <v-sheet class="d-flex align-self-center flex-column">
+   <v-sheet class="d-flex align-self-center flex-column" style="position: relative;" height="100%">
       <Loading
          v-if="playerInfoLoading"
          class="ma-auto"
@@ -18,7 +18,8 @@
                      <v-img :src="require(`@/assets/img/rank/${player_info.rank}.png`)"></v-img>
                   </v-card>
                </template>
-               <span>{{ (player_info.guest ? player_info.rank : `${player_info.rank} ${player_info.tier}`).toUpperCase() }}</span>
+               <span>{{ (player_info.guest ? player_info.rank : `${player_info.rank}`).toUpperCase() }}</span>
+               <!-- <span>{{ (player_info.guest ? player_info.rank : `${player_info.rank} ${player_info.tier}`).toUpperCase() }}</span> -->
             </v-tooltip>
             <div
                class="d-flex flex-column flex-grow-1 justify-center text-center pa-0 ma-0"
@@ -55,15 +56,15 @@
             <tbody v-if="!player_info.guest">
                <tr>
                   <td>WINS</td>
-                  <td>{{ player_info.win }}</td>
+                  <td>{{ player_info.rankWin }}</td>
                </tr>
                <tr>
                   <td>LOSSES</td>
-                  <td>{{ player_info.loss }}</td>
+                  <td>{{ player_info.rankLoss }}</td>
                </tr>
                <tr>
                   <td>DRAWS</td>
-                  <td>{{ player_info.draw }}</td>
+                  <td>{{ player_info.rankDraws }}</td>
                </tr>
                <tr>
                   <td>SCORE</td>
@@ -101,16 +102,14 @@
             </tbody>
          </v-simple-table>
       </div>
-      <v-hover v-slot="{ hover }">
          <v-btn
-            :class="{ 'on-hover': hover }"
-            :dark="hover ? true : false"
             color="error"
             @click="$emit('player-info-dialog-close')"
+            width="100%"
+            tile
          >
             close
          </v-btn>
-      </v-hover>
    </v-sheet>
 </template>
 

@@ -32,24 +32,6 @@
                         required
                      ></v-text-field>
                   </v-col>
-                  <v-col cols="12" sm="8" md="9">
-                     <v-text-field
-                        class="ma-0 pa-0"
-                        v-model="dob"
-                        label="Date of Birth"
-                        require
-                        type="Date"
-                        placeholder="mm/dd/yyyy"
-                     ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="8" md="9">
-                     <v-select
-                        v-model="gender"
-                        label="Gender"
-                        :items="['Male', 'Female']"
-                        dense
-                     ></v-select>
-                  </v-col>
                   <v-col cols="12">
                      <v-text-field
                         class="ma-0 pa-0"
@@ -59,6 +41,38 @@
                         required
                         @keydown.space="($event) => $event.preventDefault()"
                      ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="8" md="9">
+                     <v-text-field
+                        class="ma-0 pa-0"
+                        v-model="dob"
+                        :error-messages="dob_error_msg"
+                        label="Date of Birth"
+                        require
+                        type="Date"
+                        placeholder="mm/dd/yyyy"
+                        :rules="dobRules"
+                     ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="8" md="9">
+                     <v-select
+                        v-model="gender"
+                        label="Gender"
+                        :items="['Male', 'Female']"
+                        :rules="[rules.required]"
+                        require
+                        dense
+                     ></v-select>
+                  </v-col>
+                  <v-col cols="12" sm="8" md="9">
+                     <v-select
+                        v-model="region"
+                        label="Region"
+                        :items="['Asia', 'Africa', 'Europe', 'North America', 'South America', 'Oceania']"
+                        :rules="[rules.required]"
+                        require
+                        dense
+                     ></v-select>
                   </v-col>
                   <v-col cols="8" md="9">
                      <v-text-field
@@ -224,6 +238,11 @@ export default {
       firstName: "",
       lastName: "",
       dob: "",
+      dobRules: [
+         v => !!v || "Required",
+         v => /^([0-9]{4})-([0-9]{2})-([0-9]{2})$/.test(v) || "Invalid format"
+      ],
+      dob_error_msg: "",
       gender: "",
       email: "",
       password: "",
@@ -232,10 +251,10 @@ export default {
          (v) => !!v || "Required",
          (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
       ],
-
+      region: "",
       show1: false,
       rules: {
-         required: (value) => !!value || "Required.",
+         required: (value) => !!value || "Required",
          min: (v) => (v && v.length >= 8) || "Min 8 characters",
          idMin: (val) => (val && val.length >= 3) || "Min 3 characters",
       },
@@ -244,6 +263,12 @@ export default {
       account_created_dialog: false,
    }),
    methods: {
+      validate_dob_format() {
+         let dob_format = /^([0-9]{4})-([0-9]{2})-([0-9]{2})$/;
+         if (!dob_format.test(this.dob)) {
+            this.dob_error_msg = "Invalid Format!"
+         }
+      },
       extra_verifier() {
          this.id_verified &&
          this.available_message &&
@@ -284,7 +309,7 @@ export default {
          this.signup_loading = true;
          if (!this.$refs.registerForm.validate() || !this.id_verified) {
             this.signup_loading = false;
-            return alert("Please review your information.");
+            return alert("Please review and provide all information.");
          }
 
          const response = await fetch(window.server_url + "/pending", {

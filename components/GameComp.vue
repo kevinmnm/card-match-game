@@ -35,7 +35,7 @@
                      <template v-slot:activator="{ on, attrs }">
                         <v-icon v-bind="attrs" v-on="on" style="position:absolute; left:0; cursor:pointer; height:100%; background:transparent;" color="#404040">mdi-cog</v-icon>
                      </template>
-                     <v-sheet class="d-flex flex-column justify-space-between pa-3">
+                     <!-- <v-sheet class="d-flex flex-column justify-space-between pa-3">
                         <v-card>
                            <v-card-text>Sound</v-card-text>
                            <v-slider></v-slider>
@@ -43,6 +43,9 @@
                         <v-card class="ma-auto">
                            <v-card-text>Music</v-card-text>
                         </v-card>
+                     </v-sheet> -->
+                     <v-sheet class="d-flex flex-column justify-space-between pa-3">
+                        <AudioControl />
                      </v-sheet>
                   </v-menu>
 
@@ -151,7 +154,7 @@
 
          </v-sheet>
       </v-img>
-      <v-dialog v-model="player_info_dialog" class="pa-0 ma-0" overlay-opacity="0.8" :width="window_inner_width <= 600 ? '100%' : '60%'">
+      <v-dialog v-model="player_info_dialog" class="pa-0 ma-0" overlay-opacity="0.9" :width="window_inner_width <= 600 ? '100%' : '60%'">
          <PlayerInfo v-if="player_info_dialog" :player-info="player_info_prop" :img-size="card_size" @player-info-dialog-close="player_info_dialog = false" />
       </v-dialog>
       <BottomSheet :show-comp="leave_confirm" @closeSheet="leave_confirm = false;" />
@@ -163,10 +166,11 @@ import BottomSheet from "@/components/BottomSheet.vue";
 import CardOverlay from "@/components/CardOverlay.vue";
 import CardSet from "@/components/CardSet.vue";
 import PlayerInfo from "@/components/PlayerInfo.vue";
+import AudioControl from "@/components/AudioControl.vue"
 
 export default {
    name: "GameComp",
-   components: { BottomSheet, CardOverlay, CardSet, PlayerInfo },
+   components: { BottomSheet, CardOverlay, CardSet, PlayerInfo, AudioControl },
    data() {
       return {
          chat_max_height_updater: 0,

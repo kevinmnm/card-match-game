@@ -37,8 +37,9 @@
                   :key="all.show"
                >
                </v-img> -->
-               <v-img v-if="!all.show" :src="require(`~/assets/img/card/cover_low/default_white.png`)" :key="all.show" eager></v-img>
-               <v-img v-else :src="require(`~/assets/img/card/classic_low/${all.card_id}.png`)" :key="all.show" eager></v-img>
+               <!-- <v-img v-if="!all.show" :src="require(`~/assets/img/card/${window_width > 600 ? 'cover' : 'cover_low'}/default_white.png`)" :key="all.show" eager style="z-index: 1;"></v-img> -->
+               <v-img v-if="(dev_env) ? all.show : !all.show" :src="require(`~/assets/img/card/${window_width > 600 ? 'cover' : 'cover_low'}/default_white.png`)" :key="all.show" eager style="z-index: 1;"></v-img>
+               <v-img v-else :src="require(`~/assets/img/card/${window_width > 600 ? 'classic' : 'classic_low'}/${all.card_id}.png`)" :key="all.show"></v-img>
             </transition>
 
          </v-card>
@@ -84,8 +85,8 @@
                :disabled="!my_turn || my_turn_temp_disable"
             >
                <transition name="flip" class="d-flex flex-wrap" tag="div" :key="card_key" mode="out-in">
-                  <v-img v-if="!all.show" :src="require(`@/assets/img/card/cover_low/default_white.png`)" :key="all.show" eager></v-img>
-                  <v-img v-else :src="require(`@/assets/img/card/${game_theme}_low/${all.card_id}.png`)" :key="all.show" eager></v-img>
+                  <v-img v-if="(dev_env) ? all.show :!all.show" :src="require(`@/assets/img/card/cover_low/default_white.png`)" :key="all.show" style="z-index: 1;" eager></v-img>
+                  <v-img v-else :src="require(`@/assets/img/card/${game_theme}_low/${all.card_id}.png`)" :key="all.show"></v-img>
                </transition>
             </v-card>
          </v-responsive>
@@ -109,7 +110,8 @@ export default {
          show_loading: false,
          // flipped_tracker: [],
          turnStyle: 'box-shadow: 0 0 10px yellow, 0 0 10px yellow,0 0 10px yellow;',
-         starter_track: 0
+         starter_track: 0,
+         dev_env: false
       }
    },
    computed: {
@@ -329,7 +331,6 @@ export default {
       card_flip_two_vs_two(card, ind) {
 /**** 2VS2 (onclick) ****/
          if (card.show) return;
-         console.log('card_flip_two_vs_two()');
          this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn (ensures quick disabling);
          window.socket.emit('pause-countdown', this.room_number); // Request pause countdown for all clients;
 
@@ -353,7 +354,6 @@ export default {
          
    /**** 2VS2 FLIPPED 2 ****/
          if (this.flipped_tracker.length === 2 && this.room_capacity === 4) { // If I'm a finisher for the team,
-            console.warn('finisher triggered!');
             if (this.flipped_tracker[0].card_id === this.flipped_tracker[1].card_id) { // If team found matching card for 2vs2,
                window.socket.emit('room-player-update', {
                   action: 'add-score',
@@ -455,6 +455,9 @@ export default {
    },
    mounted() {
       this.$store.commit('card/COUNTDOWN', this.default_countdown); // Set room countdown value;
+      (process.env.NODE_ENV === 'development')
+         ? this.dev_env = true
+         : this.dev_env = false;
    },
    destroyed() {
       this.$store.commit('card/COUNTDOWN', null);
@@ -475,7 +478,8 @@ export default {
 }
 
 .flip-enter-active {
-   transition: all 0.1s;
+   // transition: all 0.1s;
+   transition: transform 0.1s;
    // box-shadow: -20px 0 20px black;
    box-shadow: -10px 0 10px black;
 
@@ -490,8 +494,8 @@ export default {
    transition: all 0.1s;
    position: absolute;
    transform: rotateY(86deg);
-   // box-shadow: 20px 0 5px black;
-   box-shadow: 10px 0 5px black;
+   // box-shadow: 10px 0 5px black;
+   box-shadow: 5px 0 5px black;
 }
 
 .flip-leave-to {

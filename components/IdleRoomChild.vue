@@ -75,7 +75,7 @@
          width="100%"
          ref="child_volume"
       >
-         <v-tooltip top>
+         <!-- <v-tooltip top>
             <template v-slot:activator="{on, attrs}">
                <v-btn @click="bgm_setter()" class="flex-grow-2" v-bind="attrs" v-on="on" small>
                   <v-icon>{{
@@ -95,7 +95,9 @@
                </v-btn>
             </template>
             <span>{{ sound_muted_status ? "Play Sound" : "Mute Sound" }}</span>
-         </v-tooltip>
+         </v-tooltip> -->
+
+         <AudioControl />
 
          <v-tooltip top>
             <template v-slot:activator="{ on, attrs }">
@@ -183,6 +185,7 @@ import Loading from "@/components/Loading.vue";
 import MyInfo from "@/components/MyInfo.vue";
 import CreateRoom from "@/components/CreateRoom.vue";
 import RoomList from "@/components/RoomList.vue";
+import AudioControl from "@/components/AudioControl.vue";
 
 export default {
    name: "IdleRoomChild",
@@ -192,6 +195,7 @@ export default {
       MyInfo,
       CreateRoom,
       RoomList,
+      AudioControl
    },
    data() {
       return {
@@ -226,12 +230,12 @@ export default {
       all_global_chats() {
          return this.$store.state.chat.global_chat; // []
       },
-      bgm_muted_status() {
-         return this.$store.state.audio.bgm_muted;
-      },
-      sound_muted_status() {
-         return this.$store.state.audio.sound_muted;
-      },
+      // bgm_muted_status() {
+      //    return this.$store.state.audio.bgm_muted;
+      // },
+      // sound_muted_status() {
+      //    return this.$store.state.audio.sound_muted;
+      // },
       my_chat_style() {
          return this.$store.state.chat.my_chat_style;
       },
@@ -243,22 +247,22 @@ export default {
       open_custom_dialog() {
          this.$store.dispatch('custom/fetch_custom_room_list');
       },
-      bgm_setter() {
-         if (!this.bgm_muted_status) {
-            // If bgm is not muted,
-            this.$store.dispatch("audio/bgm_setting", false); // Mute all bgm;
-         } else {
-            // If bgm is muted,
-            this.$store.dispatch("audio/bgm_setting", true); // Unmute all bgm and play default bgm;
-         }
-      },
-      sound_setter() {
-         if (!this.sound_muted_status) {
-            this.$store.dispatch("audio/sound_setting", true);
-         } else {
-            this.$store.dispatch("audio/sound_setting", false);
-         }
-      },
+      // bgm_setter() {
+      //    if (!this.bgm_muted_status) {
+      //       // If bgm is not muted,
+      //       this.$store.dispatch("audio/bgm_setting", false); // Mute all bgm;
+      //    } else {
+      //       // If bgm is muted,
+      //       this.$store.dispatch("audio/bgm_setting", true); // Unmute all bgm and play default bgm;
+      //    }
+      // },
+      // sound_setter() {
+      //    if (!this.sound_muted_status) {
+      //       this.$store.dispatch("audio/sound_setting", true);
+      //    } else {
+      //       this.$store.dispatch("audio/sound_setting", false);
+      //    }
+      // },
       quickGame() {
          this.loading_comp = true;
          this.$store.commit('room/ROOM_TYPE', 'quick');

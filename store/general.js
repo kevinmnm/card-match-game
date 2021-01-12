@@ -28,12 +28,12 @@ export const mutations = {
          if (Array.isArray(payload.winner)) { // If it's 2vs2,
             payload.winner.forEach( win => {
                if (win.displayName === state.my_display_name) {
-                  return state.end_game_message = 'VICTORY';
+                  state.end_game_message = 'VICTORY';
                }
             });
          } else { // If it's not 2vs2,
             if (payload.winner.displayName === state.my_display_name) {
-               return state.end_game_message = 'VICTORY';
+               state.end_game_message = 'VICTORY';
             }
          }
       }
@@ -41,7 +41,7 @@ export const mutations = {
       if (payload.losers) {
          payload.losers.forEach( loser => {
             if (loser.displayName === state.my_display_name) {
-               return state.end_game_message = 'DEFEAT';
+               state.end_game_message = 'DEFEAT';
             }
          });
       }
@@ -49,7 +49,7 @@ export const mutations = {
       if (payload.draws) {
          payload.draws.forEach( draw => {
             if (draw.displayName === state.my_display_name) {
-               return state.end_game_message = 'DRAW';
+               state.end_game_message = 'DRAW';
             }
          });
       }

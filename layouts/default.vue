@@ -126,11 +126,15 @@ export default {
             // If it's 2vs2 game,
             if (this.room_capacity === 4) {
                if (this.room_turn === this.my_player_number && !payload.dontEnableTurn) { // If it's my turn, add card info to tracker;
-                  payload.flippedCardArray.forEach( card => { // Should really be one card;
-                     if (card.show) {
-                        this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card });
-                     }
-                  });
+                  if (payload.flippedCardArray) { // If other team's cards weren't matching,
+                     payload.flippedCardArray.forEach( card => { // Should really be one card;
+                        if (card.show) {
+                           this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card });
+                        }
+                     });
+                  } else { // If other team timed out,
+                     this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' }); // Should already be empty but for safety;
+                  }
                } else {
                   this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
                }

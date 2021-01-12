@@ -88,15 +88,6 @@
                      <th>TIER</th>
                      <td>{{ my_info.guest ? 'N/A' : my_info.tier }}</td>
                   </tr>
-                  <v-tooltip bottom>
-                     <template v-slot:activator="{ on, attrs }">
-                        <tr class="text-left" v-bind="attrs" v-on="on">
-                           <th>EXP</th>
-                           <td>{{ my_info.guest ? 'N/A' : `${my_info.totalScore} / ${exp_needed}` }}</td>
-                        </tr>
-                     </template>
-                     <div>{{my_info.tier === 'III' ? 'Until Next Rank' : 'Until Next Tier'}}</div>
-                  </v-tooltip>
                   <tr class="text-left">
                      <th>WIN</th>
                      <td>{{ my_info.win }}</td>
@@ -109,6 +100,15 @@
                      <th>DRAW</th>
                      <td>{{ my_info.draw }}</td>
                   </tr>
+                  <v-tooltip bottom>
+                     <template v-slot:activator="{ on, attrs }">
+                        <tr class="text-left" v-bind="attrs" v-on="on">
+                           <th>EXP</th>
+                           <td>{{ my_info.guest ? 'N/A' : `${my_info.totalScore} / ${exp_needed}` }}</td>
+                        </tr>
+                     </template>
+                     <div>{{my_info.tier === 'III' ? 'Until Next Rank' : 'Until Next Tier'}}</div>
+                  </v-tooltip>
                   <tr class="text-left">
                      <th>JOINED</th>
                      <td>{{ my_info.guest ? 'N/A' : my_info.joinedOn }}</td>

@@ -277,6 +277,7 @@ export default {
          this.lastName &&
          this.email &&
          this.verify &&
+         this.region && 
          this.password === this.verify
             ? true
             : false;
@@ -285,6 +286,16 @@ export default {
          if (this.username.toLowerCase().includes('guest')) {
             return this.unavailable_message ="Cannot contain the word 'guest'"
          }
+         let special_char = '`~!@#$%^&*()-_=+/>.|\\';
+         let spec_char = 0;
+         [...special_char].forEach( spec => {
+            [...this.username].forEach( user => {
+               if (spec === user) { spec_char++; }
+            });
+         });
+         if (spec_char > 0) return alert('Cannot include special character');
+
+
          const response = await fetch(window.server_url + "/username", {
             headers: { "Content-Type": "application/json" },
             method: "POST",
@@ -323,6 +334,7 @@ export default {
                password: this.password,
                dob: this.dob,
                gender: this.gender,
+               region: this.region,
             }),
          });
 

@@ -21,40 +21,63 @@
          >
             <!-- Title Bar -->
             <v-card 
-               class="pa-0 ma-0 d-flex flex-row text-center flex-wrap"
-               style="font-size:16px;"
+               class=" purple-theme pa-0 ma-0 d-flex flex-row text-center flex-wrap"
+               style="font-size:19px;"
                :width="room_title_width"
                height="25px"
+               hover
                flat
                tile
             >
+               <v-sheet class="d-flex flex-row align-center transparent" width="100%" height="100%">
 
-               <v-card width="80%" class="pa-0 ma-0" flat tile color="red">
+                  <v-card class="font-weight-bold d-flex align-center text-center" color="transparent" tile flat height="100%" width="30px" style="font-size:19px; color:#f3ff6b;">
+                     <div class="ma-auto" style="height:100%; width:100%; cursor:default; border:1px solid purple; font-size:19px; box-sizing:border-box;">{{ countdown_time }}</div>
+                  </v-card>
 
-                  <v-menu v-if="!room_info.start" :close-on-content-click="false" min-width="30px" transition="fab-transition" auto offset-y>
+                  <v-card class="transparent" width="30px" height="100%" tile> 
+                     <v-menu :close-on-content-click="false" transition="fab-transition" auto offset-y>
+                        <template v-slot:activator="{ on, attrs }">
+                           <v-icon class="cog-icon" v-bind="attrs" v-on="on" color="#A9A9A9" style="font-size:18px; padding-bottom:5px;">mdi-cog</v-icon>
+                        </template>
+                        <v-sheet class="d-flex flex-column justify-space-between pa-3">
+                           <AudioControl />
+                        </v-sheet>
+                     </v-menu>
+                  </v-card>
+
+                  <v-card flat tile height="100%" class="font-weight-bold flex-grow-1 align-center purple-theme" style="color:#D8D8D8; cursor:default;">
+                     <div>QUICK GAME</div>
+                  </v-card>
+
+                  <v-btn class='leave-button' width="20%" tile style="font-size:15px;" height="100%" @click="confirm_leave()" color="transparent ">
+                     <span v-if="window_inner_width > 320" class="font-weight-bold pt-1" style="color: #D8D8D8;">leave</span>
+                     <v-icon v-else color="#D8D8D8">mdi-exit-to-app</v-icon>
+                  </v-btn>
+
+               </v-sheet>
+               <!-- <v-card class="pa-0 ma-0 flex-grow-1" flat tile color="red" height="100%;">
+
+                  <v-menu :close-on-content-click="false" min-width="30px" transition="fab-transition" auto offset-y>
                      <template v-slot:activator="{ on, attrs }">
-                        <v-icon v-bind="attrs" v-on="on" style="position:absolute; left:0; cursor:pointer; height:100%; background:transparent;" color="#404040">mdi-cog</v-icon>
+                        <v-btn width="30px;">
+                           <v-icon v-bind="attrs" v-on="on"  color="#404040">mdi-cog</v-icon>
+                        </v-btn>
                      </template>
-                     <!-- <v-sheet class="d-flex flex-column justify-space-between pa-3">
-                        <v-card>
-                           <v-card-text>Sound</v-card-text>
-                           <v-slider></v-slider>
-                        </v-card>
-                        <v-card class="ma-auto">
-                           <v-card-text>Music</v-card-text>
-                        </v-card>
-                     </v-sheet> -->
                      <v-sheet class="d-flex flex-column justify-space-between pa-3">
                         <AudioControl />
                      </v-sheet>
                   </v-menu>
 
-                  <v-card v-else class="font-weight-bold" color="yellow" style="position:absolute; left:0;" width="30px" height="100%">{{ countdown_time }}</v-card>
+                  <v-card class="font-weight-bold" color="yellow" style="position:absolute; left:0;" width="30px" height="100%">{{ countdown_time }}</v-card>
 
                   <div>{{ room_number }}</div>
 
                </v-card>
-               <v-btn width="20%" tile style="font-size:16px;" height="100%" @click="confirm_leave()">leave</v-btn>
+               <v-btn width="20%" tile style="font-size:15px;" height="100%" @click="confirm_leave()">
+                  <span v-if="window_inner_width > 320">leave</span>
+                  <v-icon v-else>mdi-exit-to-app</v-icon>
+               </v-btn> -->
 
             </v-card>
 
@@ -183,12 +206,14 @@ export default {
    },
    computed: {
       window_inner_height() {
-         this.chat_max_height_updater;
-         return window.innerHeight;
+         // this.chat_max_height_updater;
+         // return window.innerHeight;
+         return this.$vuetify.breakpoint.height;
       },
       window_inner_width() {
-         this.chat_max_height_updater;
-         return window.innerWidth;
+         // this.chat_max_height_updater;
+         // return window.innerWidth;
+         return this.$vuetify.breakpoint.width;
       },
       my_turn() {
          if (this.room_info.start) { // If game started and server assigned turn to player_1;
@@ -371,7 +396,22 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss">
+
+.cog-icon {
+   &:hover {
+      text-shadow: 0 0 1px white;
+   }
+}
+
+.leave-button {
+   color: #D8D8D8;
+   background: transparent;
+   &:hover {
+      color: white !important;
+      background: darkRed !important;
+   }
+}
 
 .text-shadow {
    text-shadow: 0 0 3px white;

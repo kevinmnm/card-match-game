@@ -1,5 +1,5 @@
 <template>
-   <v-sheet>
+   <v-sheet :class="(customGame)?'d-flex flex-row':null" :width="(customGame)?'100%':'auto'">
       <v-tooltip top>
          <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -8,6 +8,7 @@
                v-bind="attrs"
                v-on="on"
                small
+               :width="(customGame)?'50%':'auto'"
             >
                <v-icon>{{
                   bgm_muted_status ? "mdi-music-off" : "mdi-music"
@@ -25,6 +26,7 @@
                v-on="on"
                v-bind="attrs"
                small
+               :width="(customGame)?'50%':'auto'"
             >
                <v-icon>{{
                   sound_muted_status ? "mdi-volume-mute" : "mdi-volume-high"
@@ -39,7 +41,12 @@
 <script>
 export default {
    name: "AudioControlComp",
+   props: ["customGame"],
    computed: {
+      custom_game() {
+         if (this.customGame) return this.customGame;
+         else return false;
+      },
       bgm_muted_status() {
          return this.$store.state.audio.bgm_muted;
       },

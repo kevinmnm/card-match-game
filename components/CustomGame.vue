@@ -8,12 +8,29 @@
                class="ma-0 pa-0 d-flex flex-row"
                style="background: red; height: 40px"
             >
-               <v-col cols="5" class="ma-0 pa-0">{{ room_info.title }}</v-col>
-               <v-col cols="2" class="ma-0 pa-0" style="background: green"
-                  >{{ countdown_time }}</v-col
+               <v-menu
+                  v-model="room_info_menu"
+                  bottom
+                  offset-y
+                  :close-on-content-click="false"
+                  :close-on-click="false"
+                  transition="scale-y-transition"
+                  :min-width="(window_width < 500) ? '100%' : 'auto'"
                >
-               <v-col cols="5" class="ma-0 pa-0">
-                  <v-btn @click="confirm_leave()">Leave</v-btn>
+                  <template v-slot:activator="{ on, attrs }">
+                     <v-col cols="5" class="ma-0 blue pa-0 text-truncate d-flex align-center cursor-pointer" v-on="on" v-bind="attrs">
+                        <div class="ma-auto text-truncate" style="box-sizing:border-box;">{{ room_info.title }}</div>
+                     </v-col>
+                  </template>
+                     <RoomInfo @room-info-menu="(eve) => room_info_menu = eve" />
+               </v-menu>
+               
+               <v-col cols="2" class="ma-0 pa-0 d-flex align-center font-weight-bold" style="background: green;">
+                  <div class="ma-auto" style="font-size:25px; box-sizing:border-box;">{{ countdown_time }}</div>
+               </v-col>
+               <v-col cols="5" class="ma-0 pa-0 d-flex flex-row">
+                  <v-card class="flex-grow-1" tile flat color="transparent"></v-card>
+                  <v-btn @click="confirm_leave()" tile height="100%" color="error">Leave</v-btn>
                </v-col>
             </v-col>
          </v-sheet>
@@ -189,7 +206,7 @@
                </v-sheet>
                <v-sheet width="50%">
                   <v-card>{{ score_2 }}</v-card>
-                  <v-sheet class="d-flex flex-row">
+                  <v-sheet class="d-flex" :class="(window_width < 600) ? 'flex-column' : 'flex-row'">
 
                      <v-card v-if="room_info.players.player_3" :width="(window_width < 600) ? '100%' : '50%'" class="d-flex flex-row">
                         <v-responsive v-if="window_width >= 600" :aspect-ratio="1/1" width="100%" max-width="50px" max-height="50px" class="ma-auto">
@@ -294,10 +311,11 @@ import BottomSheet from "@/components/BottomSheet.vue";
 import PlayerInfo from "@/components/PlayerInfo.vue";
 import EndGameScreen from "@/components/EndGameScreen.vue";
 import DisplayNameIcon from "@/components/DisplayNameIcon.vue";
+import RoomInfo from "@/components/RoomInfo.vue";
 
 export default {
    name: "CustomGame",
-   components: { BottomSheet, CardSet, PlayerInfo, EndGameScreen, DisplayNameIcon },
+   components: { BottomSheet, CardSet, PlayerInfo, EndGameScreen, DisplayNameIcon, RoomInfo },
    data: () => ({
       leave_confirm: false,
       chat_value: '',
@@ -306,7 +324,8 @@ export default {
       player_info_prop: null,
       isMounted: false,
       player_info_dialog: false,
-      player_info_prop: null
+      player_info_prop: null,
+      room_info_menu: false,
    }),
    computed: {
       score_1() {
@@ -431,6 +450,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.cursor-pointer {
+   cursor: pointer;
+}
 
 .display-name {
    cursor: pointer;

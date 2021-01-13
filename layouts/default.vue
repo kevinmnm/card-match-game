@@ -204,6 +204,11 @@ export default {
 </script>
 
 <style>
+.purple-theme {
+   background: rgb(128,0,128);
+   background: linear-gradient(198deg, rgba(128,0,128,1) 0%, rgba(128,0,56,1) 100%);
+}
+
 /* width */
 ::-webkit-scrollbar {
    width: 5px;

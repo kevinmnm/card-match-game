@@ -129,6 +129,7 @@
                   autocomplete="off"
                   style="border-radius: 0"
                   placeholder="Room Title"
+                  maxlength="25"
                >
                </v-text-field>
             </v-col>

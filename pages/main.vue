@@ -1,5 +1,5 @@
 <template>
-   <v-container fluid class="pa-0 ma-0" style="height:100%;">
+   <v-container ref="main" fluid class="pa-0 ma-0" style="height:100%;">
       <MainComp v-if="!signed_in" />
       <IdleRoom v-else />
       <AudioComp />
@@ -23,5 +23,15 @@ export default {
          return this.$store.state.general.signed_in;
       }
    },
+   mounted() {
+      if (process.env.NODE_ENV === 'production') {
+         this.$refs.main.addEventListener('contextmenu', event => event.preventDefault());
+      }
+   },
+   destroyed() {
+      if (process.env.NODE_ENV === 'production') {
+         this.$refs.main.removeEventListener('contextmenu', event => event.preventDefault());
+      }
+   }
 };
 </script>

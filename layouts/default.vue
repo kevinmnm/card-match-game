@@ -144,15 +144,16 @@ export default {
             this.$store.commit('card/MY_TURN_TEMP_DISABLE', false); // Enable temp turn (turn will be determined by other turn data);
          });
 
-         window.socket.on('play-sound', payload => { // payload = { sound: String };
-            this.$store.commit('audio/PLAY_SOUND', payload.sound);
+         window.socket.on('play-sound', payload => { // payload = String;
+            this.$store.commit('audio/PLAY_SOUND', payload);
+            // this.$store.commit('audio/PLAY_SOUND', payload.sound);
          });
 
          window.socket.on('room-info-update', payload => { // payload = { roomInfo: ... };
             this.$store.commit('room/ROOM_INFO_UPDATE', payload.roomInfo);
             if (this.room_capacity === 4) {
                this.$store.commit('room/ROOM_CARD', payload);
-               this.$store.commit('audio/PLAY_SOUND', 'card_flip');
+               // this.$store.commit('audio/PLAY_SOUND', 'card_flip');
                this.$store.commit('card/CARD_KEY');
             }
          });
@@ -177,6 +178,15 @@ export default {
 
          window.socket.on('custom-game-start', () => {
             this.$store.commit('room/GAME_STARTING', true); 
+         });
+
+         window.socket.on('global-loading', payload => {
+            this.$store.commit('general/GLOBAL_LOADING', payload);
+         });
+
+         window.socket.on('position-changed', payload => {
+            this.$store.commit('room/POSITION_CHANGED', payload);
+            this.$store.commit('custom/CUSTOM_ROOM_KEY');
          });
       },
    },

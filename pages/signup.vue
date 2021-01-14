@@ -113,7 +113,7 @@
                         :type="show1 ? 'text' : 'password'"
                         name="input-10-1"
                         label="Password"
-                        hint="At least 8 characters"
+                        hint="At least 6 characters"
                         counter
                         @click:append="show1 = !show1"
                         @keydown.space="($event) => $event.preventDefault()"
@@ -255,7 +255,7 @@ export default {
       show1: false,
       rules: {
          required: (value) => !!value || "Required",
-         min: (v) => (v && v.length >= 8) || "Min 8 characters",
+         min: (v) => (v && v.length >= 6) || "Min 6 characters",
          idMin: (val) => (val && val.length >= 3) || "Min 3 characters",
       },
       verification_code_dialog: false,
@@ -358,8 +358,8 @@ export default {
             headers: { "Content-Type": "application/json" },
             method: "POST",
             body: JSON.stringify({
-               displayName: this.username,
                verificationCode: this.verification_code,
+               email: this.email
             }),
          });
 

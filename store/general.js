@@ -4,7 +4,8 @@ export const state = () => ({
    connect_socket: false,
    my_display_name: '',
    end_game_screen: false,
-   end_game_message: ''
+   end_game_message: '',
+   global_loading: false,
 })
 
 export const mutations = {
@@ -53,5 +54,8 @@ export const mutations = {
             }
          });
       }
+   },
+   GLOBAL_LOADING(state, payload) {
+      state.global_loading = payload;
    }
 }

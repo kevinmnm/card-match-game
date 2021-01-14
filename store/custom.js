@@ -17,7 +17,7 @@ export const mutations = {
    },
    SHOW_CUSTOM_DIALOG(state, payload) {
       state.show_custom_dialog = payload;
-   }
+   },
 }
 
 export const actions = {

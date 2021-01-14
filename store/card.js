@@ -59,6 +59,10 @@ export const actions = {
             let newTime = state.countdown - 1; // -1 every second;
             commit('COUNTDOWN', newTime); // Post new time;
 
+            if (state.countdown === 3 || state.countdown === 2 || state.countdown === 1) {
+               this.commit('audio/PLAY_SOUND', 'ingame_countdown');
+            }
+
             if (state.countdown === 0) { // If countdown is done;
                commit('MY_TURN_TEMP_DISABLE', true); // Disable my turn;
                clearInterval(state.countdown_interval_id);

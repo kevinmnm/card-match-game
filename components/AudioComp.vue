@@ -111,7 +111,13 @@ export default {
    },
    mounted() {
       Object.keys(this.$refs).forEach( ref => {
-         this.$refs[ref].volume = 0.7;
+         if (ref === 'joined_room' || ref === 'win' || ref === 'quickWind') {
+            this.$refs[ref].volume = 0.3;
+         } else if (ref === 'victory') {
+            this.$refs[ref].volume = 0.5;
+         } else {
+            this.$refs[ref].volume = 0.6;
+         }
       });
    }
 };

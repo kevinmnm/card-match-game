@@ -114,6 +114,9 @@ export const mutations = {
          // }
          this.state.card.my_turn_temp_disable = false;
       }
+   },
+   POSITION_CHANGED(state, payload) {
+      state.room_info.players = payload.new_players;
    }
 }
 

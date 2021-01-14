@@ -85,7 +85,7 @@
                :disabled="!my_turn || my_turn_temp_disable"
             >
                <transition name="flip" class="d-flex flex-wrap" tag="div" :key="card_key" mode="out-in">
-                  <v-img v-if="(dev_env) ? all.show :!all.show" :src="require(`@/assets/img/card/cover_low/default_white.png`)" :key="all.show" style="z-index: 1;" eager></v-img>
+                  <v-img v-if="(dev_env) ? all.show : !all.show" :src="require(`@/assets/img/card/cover_low/default_white.png`)" :key="all.show" style="z-index: 1;" eager></v-img>
                   <v-img v-else :src="require(`@/assets/img/card/${game_theme}_low/${all.card_id}.png`)" :key="all.show"></v-img>
                </transition>
             </v-card>
@@ -414,11 +414,10 @@ export default {
    },
    watch: {
       game_started(val) {
-         let card_array_length = this.card_array.length; // Flipped card length in array;
-         let time_delay = 0; // Initial loading setInterval time delay;
-         
          // if (val && this.room_capacity !== 4) { // If game_started value is true in store and not 2vs2,
          if (val) {
+            let card_array_length = this.card_array.length; // Flipped card length in array;
+            let time_delay = 0; // Initial loading setInterval time delay;
             this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn;
             this.show_loading = true; // Show loading component;
 

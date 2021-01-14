@@ -98,7 +98,6 @@ export default {
          return this.$store.state.room.room_info.players;
       },
       im_master() {
-         console.log((this.$store.state.general.my_display_name === this.room_info.room_master.displayName));
          if (this.$store.state.general.my_display_name === this.room_info.room_master.displayName) {
             return true;
          } else {

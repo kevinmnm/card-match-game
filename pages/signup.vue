@@ -284,7 +284,13 @@ export default {
       },
       async verify_username() {
          if (this.username.toLowerCase().includes('guest')) {
-            return this.unavailable_message ="Cannot contain the word 'guest'"
+            return this.unavailable_message = "Cannot contain the word 'guest'";
+         }
+         if (this.username.toLowerCase().includes('custom')) {
+            return this.unavailable_message = "Cannot contain the word 'custom'";
+         }
+         if (this.ussername.toLowerCase().includes('quick')) {
+            return this.unavailable_message = "Cannot contain the word 'quick'";
          }
          let special_char = '`~!@#$%^&*()-_=+/>.|\\';
          let spec_char = 0;

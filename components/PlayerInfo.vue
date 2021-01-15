@@ -45,6 +45,45 @@
             </div>
          </div>
       </div>
+      <v-card class="d-flex flex-row justify-space-around mt-1" width="100%" flat :key="buttons_key">
+
+         <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+               <v-btn
+                  v-if="show_add_friend_button"
+                  v-on="on"
+                  v-bind="attrs"
+                  fab
+                  x-small
+                  shaped
+                  depressed
+                  @click="send_friend_request()"
+                  :disabled="disable_friend_request"
+               >
+                  <v-icon color="primary">mdi-account-plus</v-icon>
+               </v-btn>
+            </template>
+            <span>Send Friend Request</span>
+         </v-tooltip>
+
+         <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+               <v-btn
+                  v-if="show_add_friend_button"
+                  v-on="on"
+                  v-bind="attrs"
+                  fab
+                  x-small
+                  shaped
+                  depressed
+               >
+                  <v-icon color="error">mdi-alert-octagon</v-icon>
+               </v-btn>
+            </template>
+            <span>Report This User</span>
+         </v-tooltip>
+         
+      </v-card>
       <div v-if="!playerInfoLoading">
          <v-simple-table class="text-center">
 
@@ -124,6 +163,9 @@ export default {
       return {
          playerInfoLoading: true,
          player_info: null,
+         show_add_friend_button: false,
+         buttons_key: 0,
+         disable_friend_request: false,
       };
    },
    computed: {
@@ -135,6 +177,15 @@ export default {
       },
    },
    methods: {
+      send_friend_request() {
+         window.socket.emit('friend-request', {
+            requesterDisplayName: this.$store.state.general.my_display_name,
+            playerInfo: this.player_info,
+            action: "request"
+         });
+
+         this.disable_friend_request = true;
+      },
       async get_guest_info() {
          this.playerInfoLoading = true;
          const response = await fetch(window.server_url + "/guest", {
@@ -164,6 +215,51 @@ export default {
          const res = await response.json();
          this.player_info = res.foundUser;
 
+         this.friend_check();
+      },
+      friend_check() {
+         if (
+            this.player_info &&  // Player info has been loaded;
+            !this.player_info.guest &&  // Player is not a guest;
+            !this.$store.state.general.my_display_name.toLowerCase().includes('guest') // I'm not a guest;
+         ) {
+            if (this.$store.state.general.my_display_name === this.player_info.displayName) { // It's not my own info;
+               this.show_add_friend_button = false;
+               this.buttons_key++;
+               return this.playerInfoLoading = false;
+            }
+            let my_friend_list = this.$store.state.user.user_info.friend; // Get my friend list array;
+            let my_friend_list_pending = this.$store.state.user.user_info.friend_pending; // Get my friend requested pending array;
+            if (my_friend_list.length >= 15) return alert('Your friends list is full.');
+            if (this.player_info.friend.length >= 15) return alert('Player\'s friends list is full.');
+            if (my_friend_list.length === 0 && my_friend_list_pending.length === 0) {
+               this.show_add_friend_button = true;
+               this.buttons_key++;
+               return this.playerInfoLoading = false;
+            }
+            for (let i=0; i<my_friend_list.length; i++) { // check if already in my friend list
+               if (this.player_info.displayName === my_friend_list[i].displayName) {
+                  this.show_add_friend_button = true;
+                  this.playerInfoLoading = false;
+                  this.buttons_key++;
+                  break;
+               }
+            }
+
+            for (let i=0; i<my_friend_list_pending.length; i++) {
+               if (my_friend_list_pending.displayName === this.player_info.displayName) {
+                  this.show_add_friend_button = true;
+                  this.playerInfoLoading = false;
+                  this.buttons_key++;
+                  break;
+               }
+            }
+            this.show_add_friend_button = true;
+            this.buttons_key++;
+         } else {
+            this.show_add_friend_button = false;
+            this.buttons_key++;
+         }
          this.playerInfoLoading = false;
       }
    },

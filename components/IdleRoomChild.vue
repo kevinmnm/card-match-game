@@ -1,50 +1,126 @@
 <template>
    <v-container class="text-center pa-0 d-flex flex-column" fluid style="height: 100%">
       <!-- <v-img class="d-lg-none" width="100%" contain :src="require('@/assets/img/main/theme.gif')" max-height="50%"></v-img> -->
-      <v-img
+      <!-- <v-img
          width="100%"
          contain
          :src="require('@/assets/img/main/theme.gif')"
          max-height="25%"
          class="mb-2"
          ref="child_img"
-      ></v-img>
-      <v-sheet ref="child_button" width="100%">
-         <v-row>
-            <v-col cols="6" class="col-sm-3">
-               <v-btn width="140px" disabled>ranked game</v-btn>
-            </v-col>
-            <v-col cols="6" class="col-sm-3">
+      ></v-img> -->
+
+      <v-sheet width="100%" height="20%" color="primary">
+
+      </v-sheet>
+
+      <v-sheet class="d-flex flex-row" width="100%" height="calc(80% - 230px)">
+         <v-sheet width="35%" color="red">
+
+         </v-sheet>
+         <v-sheet class="flex-grow-1 d-flex flex-column align-center justify-space-around" width="30%">
+
+            <v-sheet class="flex-grow-1" width="100%">
+               <v-btn width="100%" :small="window_width < 400" disabled>ranked</v-btn>
+            </v-sheet>
+            
+            <v-sheet class="flex-grow-1" width="100%">
                <v-dialog v-model="create_room_dialog">
                   <template v-slot:activator="{ on, attrs }">
                      <v-btn 
                         v-bind="attrs"
                         v-on="on"
-                        width="140px" 
+                        width="100%" 
                         @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')"
+                        :small="window_width < 400"
                      >
-                        create game
+                        create
                      </v-btn>
                   </template>
                   <CreateRoom @close-create-room-dialog="create_room_dialog = false, create_room_key++" :key="create_room_key" />
                </v-dialog>
-            </v-col>
-            <v-col cols="6" class="col-sm-3">
-               <v-btn width="140px" @click="open_custom_dialog()" :loading="$store.state.custom.loading" @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')">join game</v-btn>
-            </v-col>
-            <v-col cols="6" class="col-sm-3">
+            </v-sheet>
+            
+            <v-sheet class="flex-grow-1" width="100%">
+               <v-btn width="100%" @click="open_custom_dialog()" :loading="$store.state.custom.loading" @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')" :small="window_width < 400">join</v-btn>
+            </v-sheet>
+
+            <v-sheet class="flex-grow-1" width="100%">
                <v-btn
-                  width="140px"
+                  width="100%"
                   @click="quickGame()"
                   @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')"
                   :disabled="loading_comp"
-                  plain
+                  :small="window_width < 400"
                >
-                  quick game
+                  quick
                </v-btn>
-            </v-col>
-         </v-row>
+
+            </v-sheet>
+
+         </v-sheet>
+         <v-sheet width="35%" color="red">
+            <RankList />
+         </v-sheet>
       </v-sheet>
+
+
+
+       <!-- <v-row>
+         <v-col cols="6" class="col-sm-3">
+            <v-btn width="100%" disabled>ranked</v-btn>
+         </v-col>
+         <v-col cols="6" class="col-sm-3">
+            <v-dialog v-model="create_room_dialog">
+               <template v-slot:activator="{ on, attrs }">
+                  <v-btn 
+                     v-bind="attrs"
+                     v-on="on"
+                     width="100%" 
+                     @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')"
+                  >
+                     create
+                  </v-btn>
+               </template>
+               <CreateRoom @close-create-room-dialog="create_room_dialog = false, create_room_key++" :key="create_room_key" />
+            </v-dialog>
+         </v-col>
+         <v-col cols="6" class="col-sm-3">
+            <v-btn width="100%" @click="open_custom_dialog()" :loading="$store.state.custom.loading" @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')">join</v-btn>
+         </v-col>
+         <v-col cols="6" class="col-sm-3">
+            <v-btn
+               width="100%"
+               @click="quickGame()"
+               @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')"
+               :disabled="loading_comp"
+               plain
+            >
+               quick
+            </v-btn>
+         </v-col>
+      </v-row> -->
+
+
+      <!-- <v-sheet class="" width="100%" height="20%" color="primary">
+
+      </v-sheet>
+      <v-sheet class="d-flex flex-row flex-wrap justify-center" width="100%">
+         <v-sheet width="35%" height="100%" color="grey">
+
+         </v-sheet>
+         <v-sheet width="30%">
+            <v-sheet class="d-flex flex-row flex-wrap" width="100%" height="100%" color="red">
+               <v-btn width="100%">ranked</v-btn>
+               <v-btn width="100%">ranked</v-btn>
+               <v-btn width="100%">ranked</v-btn>
+               <v-btn width="100%">ranked</v-btn>
+            </v-sheet>
+         </v-sheet>
+         <v-sheet width="35%" height="100%" color="green">
+
+         </v-sheet> 
+      </v-sheet>-->
       <Loading v-show="loading_comp">
          <template v-slot:text>
             {{ loading_text }}
@@ -68,35 +144,13 @@
          <RoomList @update-room-list-comp="$store.commit('custom/SHOW_CUSTOM_DIALOG', false)" />
       </div>
 
-<!-- VOLUME/SOUND BAR -->
+   <!-- VOLUME/SOUND BAR -->
       <v-card
          class="d-flex flex-row"
          style="position: absolute; right: 0; bottom: 201px"
          width="100%"
          ref="child_volume"
       >
-         <!-- <v-tooltip top>
-            <template v-slot:activator="{on, attrs}">
-               <v-btn @click="bgm_setter()" class="flex-grow-2" v-bind="attrs" v-on="on" small>
-                  <v-icon>{{
-                     bgm_muted_status ? "mdi-music-off" : "mdi-music"
-                  }}</v-icon>
-               </v-btn>
-            </template>
-            <span>{{ bgm_muted_status ? "Play Music" : "Mute Music" }}</span>
-         </v-tooltip>
-
-         <v-tooltip top>
-            <template v-slot:activator="{on, attrs}">
-               <v-btn @click="sound_setter()" class="flex-grow-2" v-on="on" v-bind="attrs" small>
-                  <v-icon>{{
-                     sound_muted_status ? "mdi-volume-mute" : "mdi-volume-high"
-                  }}</v-icon>
-               </v-btn>
-            </template>
-            <span>{{ sound_muted_status ? "Play Sound" : "Mute Sound" }}</span>
-         </v-tooltip> -->
-
          <AudioControl />
 
          <v-tooltip top>
@@ -115,13 +169,13 @@
       </v-dialog>
 
 <!-- GLOBAL CHAT -->
-      <v-sheet ref="child_chat" class="all-chat-wrapper">
+      <v-sheet ref="child_chat" class="all-chat-wrapper ma-auto" width="100%">
          <div class="all-chat-title">
             <div
-               class="text-left"
+               class="text-left pl-1 pr-1"
                style="block-size: min-content; height: 100%; background: red"
             >
-               GLOBAL CHAT
+               LOBBY
             </div>
             <div class="text-center flex-grow-1">
                <v-dialog width="60%">
@@ -134,11 +188,11 @@
                         text
                         tile
                      >
-                        ONLINE: {{ global_room_clients.length }}
+                        LOBBY: {{ global_room_clients.length }}
                      </v-btn>
                   </template>
                   <v-card>
-                     <div class="text-center">GLOBAL CHAT</div>
+                     <div class="text-center">LOBBY</div>
                      <hr />
                      {{ global_room_clients }}
                   </v-card>
@@ -186,6 +240,7 @@ import MyInfo from "@/components/MyInfo.vue";
 import CreateRoom from "@/components/CreateRoom.vue";
 import RoomList from "@/components/RoomList.vue";
 import AudioControl from "@/components/AudioControl.vue";
+import RankList from "@/components/RankList.vue"
 
 export default {
    name: "IdleRoomChild",
@@ -195,7 +250,8 @@ export default {
       MyInfo,
       CreateRoom,
       RoomList,
-      AudioControl
+      AudioControl,
+      RankList
    },
    data() {
       return {
@@ -211,16 +267,12 @@ export default {
       };
    },
    computed: {
-      // room_list_height() {
-      //    if (!this.comp_mounted) {return;}
-      //    let window_height = this.$vuetify.breakpoint.height;
-      //    let ref_keys = Object.keys(this.$refs);
-      //    this.$refs.child_img.$el.clientHeight;
-      //    ref_keys.forEach( key => {
-      //       window_height -= this.$refs[key].$el.clientHeight;
-      //    });
-      //    return window_height;
-      // },
+      window_width() {
+         return this.$vuetify.breakpoint.width;
+      },
+      window_height() {
+         return this.$vuetify.breakpoint.height;
+      },
       global_room_clients() {
          return this.$store.state.chat.global_room_clients;
       },
@@ -230,12 +282,6 @@ export default {
       all_global_chats() {
          return this.$store.state.chat.global_chat; // []
       },
-      // bgm_muted_status() {
-      //    return this.$store.state.audio.bgm_muted;
-      // },
-      // sound_muted_status() {
-      //    return this.$store.state.audio.sound_muted;
-      // },
       my_chat_style() {
          return this.$store.state.chat.my_chat_style;
       },
@@ -247,22 +293,6 @@ export default {
       open_custom_dialog() {
          this.$store.dispatch('custom/fetch_custom_room_list');
       },
-      // bgm_setter() {
-      //    if (!this.bgm_muted_status) {
-      //       // If bgm is not muted,
-      //       this.$store.dispatch("audio/bgm_setting", false); // Mute all bgm;
-      //    } else {
-      //       // If bgm is muted,
-      //       this.$store.dispatch("audio/bgm_setting", true); // Unmute all bgm and play default bgm;
-      //    }
-      // },
-      // sound_setter() {
-      //    if (!this.sound_muted_status) {
-      //       this.$store.dispatch("audio/sound_setting", true);
-      //    } else {
-      //       this.$store.dispatch("audio/sound_setting", false);
-      //    }
-      // },
       quickGame() {
          this.loading_comp = true;
          this.$store.commit('room/ROOM_TYPE', 'quick');
@@ -321,6 +351,10 @@ export default {
       }
 
       this.comp_mounted = true;
+
+      if (!this.my_display_name.toLowerCase().includes('guest-')) {
+         this.$store.dispatch('user/fetch_user_info');
+      }
    },
    destroyed() {
       window.socket.emit("leave-global-room");
@@ -346,7 +380,6 @@ $text-field-border-radius: 0;
    position: absolute;
    left: 0;
    bottom: 0;
-   width: 100%;
    box-sizing: border-box;
    min-height: 200px;
    background: green;

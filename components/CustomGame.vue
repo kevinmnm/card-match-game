@@ -5,8 +5,8 @@
          <v-sheet ref="top_wrapper" class="top-wrapper ma-0 pa-0 d-flex flex-row" width="100%" height="max-content">
             <v-col
                cols="12"
-               class="ma-0 pa-0 d-flex flex-row"
-               style="background: red; height: 40px"
+               class="classic_background ma-0 pa-0 d-flex flex-row"
+               style="height: 40px;"
             >
                <v-menu
                   v-model="room_info_menu"
@@ -18,24 +18,67 @@
                   :min-width="(window_width < 500) ? '100%' : 'auto'"
                >
                   <template v-slot:activator="{ on, attrs }">
-                     <v-col cols="5" class="ma-0 blue pa-0 text-truncate d-flex align-center cursor-pointer" v-on="on" v-bind="attrs">
-                        <div class="ma-auto text-truncate" style="box-sizing:border-box;">{{ room_info.title }}</div>
+                     <v-col cols="5" class="ma-0 pa-0 text-truncate d-flex align-center cursor-pointer transparent" v-on="on" v-bind="attrs">
+                        <v-tooltip bottom>
+                           <template v-slot:activator="{ on, attrs }">
+                              <div class="ma-auto text-truncate" style="box-sizing:border-box;" v-on="on" v-bind="attrs">
+                                 {{ room_info.title }}
+                              </div>
+                           </template>
+                           <span>Room Info</span>
+                        </v-tooltip>
                      </v-col>
                   </template>
                      <RoomInfo @room-info-menu="(eve) => room_info_menu = eve" />
                </v-menu>
                
-               <v-col cols="2" class="ma-0 pa-0 d-flex align-center font-weight-bold" style="background: green;">
-                  <div class="ma-auto" style="font-size:25px; box-sizing:border-box;">{{ countdown_time }}</div>
+               <v-col cols="2" class="ma-0 pa-0 d-flex align-center text-center font-weight-bold transparent">
+                  <div 
+                     class="countdown-timer ma-auto animate__faster animate__animated" 
+                     :class="(countdown_time < 4) ? 'animate__pulse' : null"
+                     :style="
+                        (countdown_time < 4)
+                           ? `border: 2px solid #ff5c5c; color: #ff5c5c;`
+                           : 'border: 2px solid yellow; color: yellow;'
+                     "
+                     :key="countdown_key"
+                  >
+                     {{ countdown_time }}
+                  </div>
                </v-col>
-               <v-col cols="5" class="ma-0 pa-0 d-flex flex-row">
-                  <v-card class="flex-grow-1" tile flat color="transparent"></v-card>
-                  <v-btn @click="confirm_leave()" tile height="100%" color="error">Leave</v-btn>
+               <v-col cols="5" class="ma-0 pa-0 d-flex flex-row align-center">
+                  <v-tooltip bottom> 
+                     <template v-slot:activator="{ on, attrs }">
+                        <v-card class="flex-grow-1 text-center" tile flat color="transparent" v-bind="attrs" v-on="on">
+                           <span v-if="!beginning_preview_flipping && room_info.start" class="text-truncate font-weight-bold orange--text">
+                              {{ 
+                                 (my_turn) ? 'YOU' : room_info.players[room_info.turn].displayName
+                              }}
+                           </span>
+                        </v-card>
+                     </template>
+                     <span>Turn</span>
+                  </v-tooltip>
+                  <v-hover v-slot="{ hover }">
+                     <v-btn 
+                        @click="confirm_leave()" 
+                        height="100%" 
+                        :text="!hover"
+                        tile 
+                        :depressed="!hover" 
+                        :outlined="!hover"
+                        :color="hover ? 'error' : '#F5F5F5'"
+                        :class="hover ? 'error' : 'transparent'"
+                     >
+                        <v-icon v-if="window_width < 350">mdi-exit-to-app</v-icon>
+                        <span v-else>Leave</span>
+                     </v-btn>
+                  </v-hover>
                </v-col>
             </v-col>
          </v-sheet>
 
-         <v-sheet ref="middle_wrapper" class="middle-wrapper d-flex flex-wrap"   width="100%" :height="screen_layout === 'vertical' ? 'auto' : '70%'" color="primary" :class="screen_layout === 'vertical' ? 'flex-column' : 'flex-row'">
+         <v-sheet ref="middle_wrapper" class="middle-wrapper d-flex flex-wrap"   width="100%" :height="screen_layout === 'vertical' ? 'auto' : '70%'" :class="screen_layout === 'vertical' ? 'flex-column' : 'flex-row'">
             
 <!--------------------------->
 <!-- MIDDLE FOR HORIZONTAL -->
@@ -43,18 +86,18 @@
             <v-sheet width="100%" :height="screen_layout === 'vertical' ? 'auto' : '100%'" :class="screen_layout === 'vertical' ? 'ma-0' : 'd-flex flex-row'">
 
                <v-sheet class="d-flex flex-column flex-grow-1 text-center" v-if="screen_layout === 'horizontal' && room_info.capacity === 4">
-                  <v-card width="100%">{{ score_1 }}</v-card>
+                  <v-card tile flat width="100%">{{ score_1 }}</v-card>
    <!-- HORIZONTAL && CAPACITY === 4 (2vs2) -->
                   <v-sheet class="flex-grow-1">
                      <v-sheet v-if="all_players.player_1" class="d-flex flex-column">
-                        <v-card class="flex-grow-1 d-flex flex-column text-center" height="50%">
+                        <v-card tile flat class="flex-grow-1 d-flex flex-column text-center" height="50%">
                            <v-responsive :aspect-ratio="1/1" width="100%" max-width="100px" max-height="100px" class="ma-auto red">
                               <v-img :src="require(`@/assets/img/rank/${all_players.player_1.rank}.png`)"></v-img>
                            </v-responsive>
                         </v-card>
                         <v-tooltip bottom>
                            <template v-slot:activator="{ on, attrs }">
-                              <v-card class="display-name text-truncate d-flex flex-row justify-center" v-on="on" v-bind="attrs" @click="open_player_info(all_players.player_1)">
+                              <v-card class="display-name text-truncate d-flex flex-row justify-center" tile flat v-on="on" v-bind="attrs" @click="open_player_info(all_players.player_1)">
                                  {{ all_players.player_1.displayName }}
                                  <DisplayNameIcon :player-prop="all_players.player_1" />
                               </v-card>
@@ -63,14 +106,14 @@
                         </v-tooltip>
                      </v-sheet>
                      <v-sheet v-if="all_players.player_2" class="d-flex flex-column">
-                        <v-card class="flex-grow-1 d-flex flex-column text-center" height="50%">
+                        <v-card class="flex-grow-1 d-flex flex-column text-center" height="50%" tile flat>
                            <v-responsive :aspect-ratio="1/1" width="100%" max-width="100px" max-height="100px" class="ma-auto red">
                               <v-img :src="require(`@/assets/img/rank/${all_players.player_2.rank}.png`)"></v-img>
                            </v-responsive>
                         </v-card>
                         <v-tooltip bottom>
                            <template v-slot:activator="{ on, attrs }">
-                              <v-card class="display-name text-truncate d-flex flex-row justify-center" v-on="on" v-bind="attrs" @click="open_player_info(all_players.player_2)">
+                              <v-card class="display-name text-truncate d-flex flex-row justify-center" v-on="on" v-bind="attrs" @click="open_player_info(all_players.player_2)" tile flat>
                                  {{ all_players.player_2.displayName }}
                                  <DisplayNameIcon :player-prop="all_players.player_2" />
                               </v-card>
@@ -83,7 +126,7 @@
                
    <!-- HORIZONTAL && CAPACITY === 2 (1vs1) <player_1> -->
                <v-sheet class="d-flex flex-column flex-grow-1 text-center" :height="card_size_horizontal*6+'px'" v-if="screen_layout === 'horizontal' && room_info.capacity === 2 && all_players.player_1" :max-width="(window_width - card_size_horizontal*6) / 2">
-                  <v-card width="100%" height="max-content">{{ all_players.player_1.score }}</v-card>
+                  <v-card width="100%" height="max-content" tile flat>{{ all_players.player_1.score }}</v-card>
                   <v-sheet class="d-flex flex-column flex-grow-1" width="100%" color="primary">
                      <v-sheet class="mt-2 mb-2" height="40%">
                         <v-responsive height="100%" :aspect-ratio="1/1" class="red">
@@ -93,7 +136,7 @@
                      <v-sheet class="d-flex flex-column flex-grow-1" width="100%" color="primary">
                         <v-tooltip bottom>
                            <template v-slot:activator="{ on, attrs }">
-                              <v-card class="display-name text-truncate d-flex flex-row justify-center" style="font-size: 18px;" v-on="on" v-bind="attrs" @click="open_player_info(all_players.player_1)">
+                              <v-card class="display-name text-truncate d-flex flex-row justify-center" style="font-size: 18px;" v-on="on" v-bind="attrs" @click="open_player_info(all_players.player_1)" tile flat>
                                  {{ all_players.player_1.displayName }}
                                  <DisplayNameIcon :player-prop="all_players.player_1" />
                               </v-card>
@@ -108,7 +151,7 @@
 
    <!-- HORIZONTAL && CAPACITY === 2 (1vs1) <player_2> -->
                <v-sheet class="d-flex flex-column flex-grow-1 text-center" :height="card_size_horizontal*6+'px'" v-if="screen_layout === 'horizontal' && room_info.capacity === 2 && all_players.player_2" :max-width="(window_width - card_size_horizontal*6) / 2">
-                  <v-card width="100%" height="max-content">{{ all_players.player_2.score }}</v-card>
+                  <v-card width="100%" height="max-content" tile flat>{{ all_players.player_2.score }}</v-card>
                   <v-sheet class="d-flex flex-column flex-grow-1" width="100%" color="primary">
                      <v-sheet class="mt-2 mb-2" height="40%">
                         <v-responsive height="100%" :aspect-ratio="1/1" class="red">
@@ -118,7 +161,7 @@
                      <v-sheet class="d-flex flex-column flex-grow-1" width="100%" color="primary">
                         <v-tooltip bottom>
                            <template v-slot:activator="{ on, attrs }">
-                              <v-card class="display-name text-truncate d-flex flex-row justify-center" style="font-size: 18px;" v-on="on" v-bind="attrs" @click="open_player_info(all_players.player_2)">
+                              <v-card class="display-name text-truncate d-flex flex-row justify-center" style="font-size: 18px;" v-on="on" v-bind="attrs" @click="open_player_info(all_players.player_2)" tile flat>
                                  {{ all_players.player_2.displayName }}
                                  <DisplayNameIcon :player-prop="all_players.player_2" />
                               </v-card>
@@ -131,17 +174,17 @@
                
    <!-- HORIZONTAL && CAPACITY === 4 (2vs2) -->
                <v-sheet class="d-flex flex-column flex-grow-1 text-center" v-if="screen_layout === 'horizontal' && room_info.capacity === 4">
-                  <v-card width="100%">{{ score_2 }}</v-card>
+                  <v-card width="100%" tile flat>{{ score_2 }}</v-card>
                   <v-sheet class="flex-grow-1">
                      <v-sheet v-if="all_players.player_3" class="d-flex flex-column">
-                        <v-card class="flex-grow-1 d-flex flex-column text-center" height="50%">
+                        <v-card class="flex-grow-1 d-flex flex-column text-center" height="50%" tile flat>
                            <v-responsive :aspect-ratio="1/1" width="100%" max-width="100px" max-height="100px" class="ma-auto red">
                               <v-img :src="require(`@/assets/img/rank/${all_players.player_3.rank}.png`)"></v-img>
                            </v-responsive>
                         </v-card>
                         <v-tooltip bottom>
                            <template v-slot:activator="{ on, attrs }">
-                              <v-card class="display-name text-truncate d-flex flex-row justify-center" v-on="on" v-bind="attrs" @click="open_player_info(all_players.player_3)">
+                              <v-card class="display-name text-truncate d-flex flex-row justify-center" v-on="on" v-bind="attrs" @click="open_player_info(all_players.player_3)" tile flat>
                                  {{ all_players.player_3.displayName }} <DisplayNameIcon :player-prop="all_players.player_3" />
                               </v-card>
                            </template>
@@ -149,14 +192,14 @@
                         </v-tooltip>
                      </v-sheet>
                      <v-sheet v-if="all_players.player_4" class="d-flex flex-column">
-                        <v-card class="flex-grow-1 d-flex flex-column text-center" height="50%">
+                        <v-card class="flex-grow-1 d-flex flex-column text-center" height="50%" tile flat>
                            <v-responsive :aspect-ratio="1/1" width="100%" max-width="100px" max-height="100px" class="ma-auto red">
                               <v-img :src="require(`@/assets/img/rank/${all_players.player_4.rank}.png`)"></v-img>
                            </v-responsive>
                         </v-card>
                         <v-tooltip bottom>
                            <template v-slot:activator="{ on, attrs }">
-                              <v-card class="display-name text-truncate d-flex flex-row justify-center" v-on="on" v-bind="attrs" @click="open_player_info(all_players.player_4)">
+                              <v-card class="display-name text-truncate d-flex flex-row justify-center" v-on="on" v-bind="attrs" @click="open_player_info(all_players.player_4)" tile flat>
                                  {{ all_players.player_4.displayName }} <DisplayNameIcon :player-prop="all_players.player_4" />
                               </v-card>
                            </template>
@@ -175,10 +218,10 @@
    <!-- VERTICAL && CAPACITY === 4 (2vs2) -->
             <v-sheet class="ma-0 pa-0 d-flex flex-row text-center" width="100%" height="max-content" color="green" v-if="screen_layout == 'vertical' && room_info.capacity === 4">
                <v-sheet width="50%">
-                  <v-card>{{ score_1 }}</v-card>
+                  <v-card tile flat>{{ score_1 }}</v-card>
                   <v-sheet class="d-flex" :class="(window_width < 600) ? 'flex-column' : 'flex-row'">
 
-                     <v-card v-if="room_info.players.player_1" :width="(window_width < 600) ? '100%' : '50%'" class="d-flex flex-row">
+                     <v-card v-if="room_info.players.player_1" :width="(window_width < 600) ? '100%' : '50%'" class="d-flex flex-row" tile flat>
                         <v-responsive v-if="window_width >= 600" :aspect-ratio="1/1" width="100%" max-width="50px" max-height="50px" class="ma-auto">
                            <v-img :src="require(`@/assets/img/rank/${all_players.player_1.rank}.png`)"></v-img>
                         </v-responsive>
@@ -190,13 +233,13 @@
                         </v-tooltip>
                      </v-card>
 
-                     <v-card v-if="room_info.players.player_2" :width="(window_width < 600) ? '100%' : '50%'" class="d-flex flex-row">
+                     <v-card v-if="room_info.players.player_2" :width="(window_width < 600) ? '100%' : '50%'" class="d-flex flex-row" tile flat>
                         <v-responsive v-if="window_width >= 600" :aspect-ratio="1/1" width="100%" max-width="50px" max-height="50px" class="ma-auto">
                            <v-img :src="require(`@/assets/img/rank/${all_players.player_2.rank}.png`)"></v-img>
                         </v-responsive>
                         <v-tooltip bottom>
                            <template v-slot:activator="{ on, attrs }">
-                              <v-card class="display-name text-truncate d-flex flex-row justify-center" width="100%" v-bind="attrs" v-on="on" @click="open_player_info(all_players.player_2)">{{ all_players.player_2.displayName }} <DisplayNameIcon :player-prop="all_players.player_2" /></v-card>
+                              <v-card class="display-name text-truncate d-flex flex-row justify-center" width="100%" v-bind="attrs" v-on="on" @click="open_player_info(all_players.player_2)" tile flat>{{ all_players.player_2.displayName }} <DisplayNameIcon :player-prop="all_players.player_2" /></v-card>
                            </template>
                            <span>{{ all_players.player_2.displayName }}</span>
                         </v-tooltip>
@@ -205,28 +248,28 @@
                   </v-sheet>
                </v-sheet>
                <v-sheet width="50%">
-                  <v-card>{{ score_2 }}</v-card>
+                  <v-card tile flat>{{ score_2 }}</v-card>
                   <v-sheet class="d-flex" :class="(window_width < 600) ? 'flex-column' : 'flex-row'">
 
-                     <v-card v-if="room_info.players.player_3" :width="(window_width < 600) ? '100%' : '50%'" class="d-flex flex-row">
+                     <v-card v-if="room_info.players.player_3" :width="(window_width < 600) ? '100%' : '50%'" class="d-flex flex-row" tile flat>
                         <v-responsive v-if="window_width >= 600" :aspect-ratio="1/1" width="100%" max-width="50px" max-height="50px" class="ma-auto">
                            <v-img :src="require(`@/assets/img/rank/${all_players.player_3.rank}.png`)"></v-img>
                         </v-responsive>
                         <v-tooltip bottom>
                            <template v-slot:activator="{ on, attrs }">
-                              <v-card class="display-name text-truncate d-flex flex-row justify-center" width="100%" v-bind="attrs" v-on="on" @click="open_player_info(all_players.player_3)">{{ all_players.player_3.displayName }} <DisplayNameIcon :player-prop="all_players.player_3" /></v-card>
+                              <v-card class="display-name text-truncate d-flex flex-row justify-center" width="100%" v-bind="attrs" v-on="on" @click="open_player_info(all_players.player_3)" tile flat>{{ all_players.player_3.displayName }} <DisplayNameIcon :player-prop="all_players.player_3" /></v-card>
                            </template>
                            <span>{{ all_players.player_3.displayName }}</span>
                         </v-tooltip>
                      </v-card>
 
-                     <v-card v-if="room_info.players.player_4" :width="(window_width < 600) ? '100%' : '50%'" class="d-flex flex-row">
+                     <v-card v-if="room_info.players.player_4" :width="(window_width < 600) ? '100%' : '50%'" class="d-flex flex-row" tile flat>
                         <v-responsive v-if="window_width >= 600" :aspect-ratio="1/1" width="100%" max-width="50px" max-height="50px" class="ma-auto">
                            <v-img :src="require(`@/assets/img/rank/${all_players.player_4.rank}.png`)"></v-img>
                         </v-responsive>
                         <v-tooltip bottom>
                            <template v-slot:activator="{ on, attrs }">
-                              <v-card class="display-name text-truncate d-flex flex-row justify-center" width="100%" v-bind="attrs" v-on="on" @click="open_player_info(all_players.player_4)">{{ all_players.player_4.displayName }} <DisplayNameIcon :player-prop="all_players.player_4" /></v-card>
+                              <v-card class="display-name text-truncate d-flex flex-row justify-center" width="100%" v-bind="attrs" v-on="on" @click="open_player_info(all_players.player_4)" tile flat>{{ all_players.player_4.displayName }} <DisplayNameIcon :player-prop="all_players.player_4" /></v-card>
                            </template>
                            <span>{{ all_players.player_4.displayName }}</span>
                         </v-tooltip>
@@ -236,44 +279,44 @@
                </v-sheet>
             </v-sheet>
    <!-- VERTICAL && CAPACITY === 2 (1vs1) -->
-            <v-sheet class="ma-0 pa-0 d-flex flex-row text-center" width="100%" color="green" v-if="screen_layout == 'vertical' && room_info.capacity === 2">
+            <v-sheet class="ma-0 pa-0 d-flex flex-row text-center" width="100%" v-if="screen_layout == 'vertical' && room_info.capacity === 2">
       <!-- player_1 -->
                <v-sheet width="50%" v-if="all_players.player_1">
-                  <v-sheet class="d-flex flex-row" height="100%">
-                     <v-responsive max-width="60px" :aspect-ratio="1/1">
+                  <v-sheet class="d-flex flex-row" height="100%" outlined>
+                     <v-responsive v-if="window_width > 350" max-width="60px" :aspect-ratio="1/1">
                         <v-img :src="require(`@/assets/img/rank/${all_players.player_1.rank}.png`)"></v-img>
                      </v-responsive>
-                     <v-sheet class="d-flex flex-column" height="100%" width="100%" color="primary">
+                     <v-sheet class="d-flex flex-column" height="100%" width="100%">
                         <v-tooltip bottom>
                            <template v-slot:activator="{ on, attrs }">
-                              <v-card height="50%" class="display-name text-truncate d-flex flex-row justify-center" style="font-size: 18px;" v-on="on" v-bind="attrs" @click="open_player_info(all_players.player_1)">
+                              <v-card height="50%" class="display-name text-truncate d-flex flex-row justify-center" style="font-size: 18px;" v-on="on" v-bind="attrs" @click="open_player_info(all_players.player_1)" tile flat outlined>
                                  {{ all_players.player_1.displayName }}
                                  <DisplayNameIcon :player-prop="all_players.player_1" />
                               </v-card>
                            </template>
                            <span>{{ all_players.player_1.displayName }}</span>
                         </v-tooltip>
-                        <v-card height="50%">{{ all_players.player_1.score }}</v-card>
+                        <v-card height="50%" tile flat outlined>{{ all_players.player_1.score }}</v-card>
                      </v-sheet>
                   </v-sheet>
                </v-sheet>
       <!-- player_2 -->
                <v-sheet width="50%" v-if="all_players.player_2">
-                  <v-sheet class="d-flex flex-row" height="100%">
-                     <v-responsive max-width="60px" :aspect-ratio="1/1">
+                  <v-sheet class="d-flex flex-row" height="100%" outlined>
+                     <v-responsive v-if="window_width > 350" max-width="60px" :aspect-ratio="1/1">
                         <v-img :src="require(`@/assets/img/rank/${all_players.player_2.rank}.png`)"></v-img>
                      </v-responsive>
                      <v-sheet class="d-flex flex-column" height="100%" width="100%" color="primary">
                         <v-tooltip bottom>
                            <template v-slot:activator="{ on, attrs }">
-                              <v-card height="50%" class="display-name text-truncate d-flex flex-row justify-center" style="font-size: 18px;" v-on="on" v-bind="attrs" @click="open_player_info(all_players.player_2)">
+                              <v-card height="50%" class="display-name text-truncate d-flex flex-row justify-center" style="font-size: 18px;" v-on="on" v-bind="attrs" @click="open_player_info(all_players.player_2)" tile flat outlined>
                                  {{ all_players.player_2.displayName }}
                                  <DisplayNameIcon :player-prop="all_players.player_2" />
                               </v-card>
                            </template>
                            <span>{{ all_players.player_2.displayName }}</span>
                         </v-tooltip>
-                        <v-card height="50%">{{ all_players.player_2.score }}</v-card>
+                        <v-card height="50%" tile flat outlined>{{ all_players.player_2.score }}</v-card>
                      </v-sheet>
                   </v-sheet>
                </v-sheet>
@@ -326,6 +369,7 @@ export default {
       player_info_dialog: false,
       player_info_prop: null,
       room_info_menu: false,
+      countdown_key: 0,
    }),
    computed: {
       score_1() {
@@ -386,7 +430,8 @@ export default {
       all_players() { // Object;
          return this.$store.state.room.room_info.players;
       },
-      countdown_time() {
+      countdown_time(val) {
+         if (this.$store.state.card.countdown < 4 && this.$store.state.card.countdown !== 0) {this.countdown_key++;}
          return this.$store.state.card.countdown;
       },
       game_started() {
@@ -395,6 +440,9 @@ export default {
       show_endGameScreen() {
          return this.$store.state.general.end_game_screen;
       },
+      beginning_preview_flipping() {
+         return this.$store.state.room.beginning_preview_flipping;
+      }
    },
    methods: {
       open_player_info(player) {
@@ -450,6 +498,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.countdown-timer {
+   font-size: 25px;
+   box-sizing: border-box;
+   // color: #ebdb34;
+   // border: 2px solid #ebdb34;
+   width: 40px;
+   cursor: default;
+   --animate-duration: 0.5s;
+}
+
+.classic_background {
+   background: rgb(128,0,128);
+   background: -moz-linear-gradient(180deg, rgba(128,0,128,1) 0%, rgba(128,0,56,1) 100%);
+   background: -webkit-linear-gradient(180deg, rgba(128,0,128,1) 0%, rgba(128,0,56,1) 100%);
+   background: linear-gradient(180deg, rgba(128,0,128,1) 0%, rgba(128,0,56,1) 100%);
+   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#800080",endColorstr="#800038",GradientType=1);
+   color: white;
+}
 
 .cursor-pointer {
    cursor: pointer;

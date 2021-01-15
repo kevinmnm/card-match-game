@@ -3,7 +3,8 @@ export const state = () => ({
    show_room: false,
    room_info: null,
    room_chat: [],
-   game_starting: false
+   game_starting: false,
+   beginning_preview_flipping: false,
 })
 
 export const mutations = {
@@ -17,6 +18,9 @@ export const mutations = {
          state.room_info.players[key].score = 0;
          // console.warn(`Players score: ${state.room_info.players[key].score}`);
       });
+   },
+   BEGINNING_PREVIEW_FLIPPING(state, payload) {
+      state.beginning_preview_flipping = payload;
    },
    SHOW_ROOM(state, payload) {
       state.show_room = payload;
@@ -45,10 +49,6 @@ export const mutations = {
          } else {
             state.game_starting = false;
          }
-
-         // if (state.room_type === 'custom' && payload.room_info.terminate) {
-
-         // }
       }
    },
    SET_ROOM_CHAT(state, payload) {
@@ -78,10 +78,6 @@ export const mutations = {
       if (payload.chat_type === 'yellow') {
          state.room_chat.push(
             {
-               // chat_val: payload.chat_value + ' has joined the room.',
-               // chat_val: ( () => (payload.join) ? 
-               //    payload.chat_value + ' has joined the room.' : 
-               //    payload.chat_value )(),
                chat_val: ( () => {
                   if (payload.join) {
                      return payload.chat_value + ' has joined the room';
@@ -108,15 +104,24 @@ export const mutations = {
       state.room_info.cardSet[payload.card_index].show = payload.show_card;
 
       if (payload.card_index === state.room_info.cardSet.length - 1 && !payload.show_card) {
-         // if (state.room_info.capacity === 4) { // If it's 2vs2,
-         //    const enable = () => this.state.card.my_turn_temp_disable = false;
-         //    return setTimeout( enable, 300);
-         // }
          this.state.card.my_turn_temp_disable = false;
+         state.beginning_preview_flipping = false;
+         if (state.room_info.capacity === 2 && state.room_type === 'custom') {
+            this.dispatch('card/countdown_function', true);
+         }
       }
    },
    POSITION_CHANGED(state, payload) {
       state.room_info.players = payload.new_players;
+   },
+   UPDATE_OPPONENT_FRIEND_PENDING_LIST(state, payload) {
+      console.log('UPDATE_OPPONENT_FRIEND_pending_LIST');
+      console.log(payload);
+      Object.keys(state.room_info.players).forEach( playerNum => {
+         if (state.room_info.players[playerNum].displayName === payload.displayName) {
+            state.room_info.players[playerNum].friend_pending = payload.friend_pending;
+         }
+      });
    }
 }
 

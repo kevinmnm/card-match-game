@@ -36,6 +36,7 @@
                <v-card>MOVE TO</v-card>
                <v-btn @click="move_position({current: 'player_2', to: 'player_3'})">Position 3</v-btn>
                <v-btn @click="move_position({current: 'player_2', to: 'player_4'})">Position 4</v-btn>
+               <v-btn @click="kick_player('player_2')" color="error">Kick</v-btn>
             </v-sheet>
          </v-menu>
 
@@ -58,6 +59,7 @@
                <v-card>MOVE TO</v-card>
                <v-btn @click="move_position({current: 'player_3', to: 'player_2' })">Position 2</v-btn>
                <v-btn @click="move_position({current: 'player_3', to: 'player_4'})">Position 4</v-btn>
+               <v-btn @click="kick_player('player_3')" color="error">Kick</v-btn>
             </v-sheet>
          </v-menu>
 <!--Player 4 -->
@@ -75,6 +77,7 @@
                <v-card>MOVE TO</v-card>
                <v-btn @click="move_position({current: 'player_4', to: 'player_2' })">Position 2</v-btn>
                <v-btn @click="move_position({current: 'player_4', to: 'player_3'})">Position 3</v-btn>
+               <v-btn @click="kick_player('player_4')" color="error">Kick</v-btn>
             </v-sheet>
          </v-menu>
       </v-sheet>
@@ -92,11 +95,13 @@ export default {
    methods: {
       move_position(obj) {
          this.$store.commit('general/GLOBAL_LOADING', true);
-
          window.socket.emit('change-position', { 
             roomNumber: this.$store.state.room.room_info.room_number,
             changeInfo: obj,
          });
+      },
+      kick_player(playerNumber) {
+         alert('Under development');
       }
    }
 };

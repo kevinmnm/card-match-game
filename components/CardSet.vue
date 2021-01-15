@@ -1,16 +1,11 @@
 <template>
-   <v-sheet class="pa-0 ma-0 d-flex flex-wrap" :style="(my_turn && !my_turn_temp_disable) ? turnStyle : null">
+   <!-- <v-sheet class="pa-0 ma-0 d-flex flex-wrap" :style="(my_turn && !my_turn_temp_disable) ? turnStyle : null"> -->
+   <v-sheet class="pa-0 ma-0 d-flex flex-wrap">
       <v-overlay absolute z-index="1" class="text-center" opacity="0.6" v-if="show_loading">
          <span>Loading...</span>
          <Loading />
       </v-overlay>
 
-      <!-- <v-overlay z-index="2" color="blue" class="text-center" opacity="1" v-if="show_endGameScreen">
-         <EndGameScreen />
-      </v-overlay> -->
-      <!-- <div style="position:absolute; z-index:2; width:100%; height:100%;" v-if="show_endGameScreen">
-         <EndGameScreen />
-      </div> -->
 <!-- IF QUICK GAME -->
       <v-sheet v-if="room_type === 'quick'" class="card-set-wrapper pa-0 ma-0 d-flex flex-wrap" width="100%" height="100%">
 
@@ -29,7 +24,8 @@
             :height="card_size"
             @click="room_capacity === 2 ? card_flip(all, ind) : card_flip_two_vs_two(all, ind)"
             :disabled="!my_turn || my_turn_temp_disable"
-            color="deep-purple accent-5"
+            :style="(all.card_matched) ? 'opacity:0.8;' : 'opacity:1;'"
+            color="classic"
          >
             <transition name="flip" class="d-flex flex-wrap" tag="div" :key="card_key" mode="out-in">
                <!-- <v-img
@@ -44,17 +40,6 @@
 
          </v-card>
       </v-sheet>
-
-      <!-- <v-sheet v-if="room_type === 'custom'" class="pa-0 ma-0" width="100%" height="100%">
-         <v-card
-            class="ma-0 pa-0"
-            :width="screen_layout === 'horizontal' ? card_size_horizontal : $vuetify.breakpoint.width / 6 + 'px'"
-            :height="screen_layout === 'horizontal' ? card_size_horizontal : $vuetify.breakpoint.width / 6 + 'px'"
-            v-for="all in 36" :key="all"
-         >
-            {{all}}
-         </v-card>
-      </v-sheet> -->
 
 <!-- IF CUSTOM GAME -->
       <v-sheet v-if="room_type === 'custom'">
@@ -80,13 +65,14 @@
                tile
                v-for="(all, ind) in card_array"
                :key="all + ind"
-               color="primary"
+               :color="game_theme"
                @click="room_capacity === 2 ? card_flip(all, ind) : card_flip_two_vs_two(all, ind)"
                :disabled="!my_turn || my_turn_temp_disable"
+               :style="(all.card_matched) ? 'opacity:0.8;' : 'opacity:1;'"
             >
                <transition name="flip" class="d-flex flex-wrap" tag="div" :key="card_key" mode="out-in">
-                  <v-img v-if="(dev_env) ? all.show : !all.show" :src="require(`@/assets/img/card/cover_low/default_white.png`)" :key="all.show" style="z-index: 1;" eager></v-img>
-                  <v-img v-else :src="require(`@/assets/img/card/${game_theme}_low/${all.card_id}.png`)" :key="all.show"></v-img>
+                  <v-img v-if="(dev_env) ? all.show : !all.show" :src="require(`@/assets/img/card/cover${card_quality}/${card_cover}.png`)" :key="all.show" style="z-index: 1;" eager></v-img>
+                  <v-img v-else :src="require(`@/assets/img/card/${game_theme}${card_quality}/${all.card_id}.png`)" :key="all.show"></v-img>
                </transition>
             </v-card>
          </v-responsive>
@@ -109,9 +95,9 @@ export default {
       return {
          show_loading: false,
          // flipped_tracker: [],
-         turnStyle: 'box-shadow: 0 0 10px yellow, 0 0 10px yellow,0 0 10px yellow;',
+         // turnStyle: 'box-shadow: 0 0 10px yellow, 0 0 10px yellow,0 0 10px yellow;',
          starter_track: 0,
-         dev_env: false
+         dev_env: false,
       }
    },
    computed: {
@@ -188,9 +174,30 @@ export default {
       game_theme() {
          return this.$store.state.room.room_info.theme;
       },
+      card_cover() {
+         if (this.game_theme === 'lovely') {
+            return 'lovely_cover';
+         } else {
+            return 'default_white';
+         }
+      },
+      card_quality() {
+         if (this.window_width < 500) return '_low';
+         else return '';
+      },
       room_capacity() {
          return this.$store.state.room.room_info.capacity;
       },
+      beginning_preview_flipping() {
+         return this.$store.state.room.beginning_preview_flipping;
+      },
+      play_myturn_sound() {
+         if (this.my_turn && !this.beginning_preview_flipping) {
+            return true;
+         } else {
+            return false;
+         }
+      }
    },
    methods: {
       card_flip(card, ind) {
@@ -420,6 +427,7 @@ export default {
             let time_delay = 0; // Initial loading setInterval time delay;
             this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn;
             this.show_loading = true; // Show loading component;
+            this.$store.commit('room/BEGINNING_PREVIEW_FLIPPING', true);
 
             let id_1 = setTimeout( () => {
                this.show_loading = false;
@@ -438,17 +446,19 @@ export default {
                   time_delay = time_delay + 200;
                }
             }, 1000);
+         } else {
+            this.$store.commit('room/BEGINNING_PREVIEW_FLIPPING', false);
          }
-         
-         // if (val && this.room_capacity === 4) { // If game_started value is true and it's 2vs2,
-         //    this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn;
-         //    this.show_loading = true; // Show loading component;
-         // }
       },
       my_turn_temp_disable(val) { // Watching this value (only at start);
          this.starter_track++;
          if (this.starter_track === 1) {
             this.$store.dispatch('card/countdown_function', true); // Trigger countdown;
+         }
+      },
+      play_myturn_sound(val) {
+         if (val) {
+            this.$store.commit('audio/PLAY_SOUND', 'confirmation');
          }
       }
    },

@@ -186,7 +186,14 @@ export default {
 
          window.socket.on('position-changed', payload => {
             this.$store.commit('room/POSITION_CHANGED', payload);
-            this.$store.commit('custom/CUSTOM_ROOM_KEY');
+         });
+
+         window.socket.on('update-my-info', payload => { // For users only;
+            this.$store.commit("user/USER_INFO", payload);
+         });
+
+         window.socket.on('personal-alert', payload => {
+            this.$store.commit('alert/SHOW_ALERT', payload);
          });
       },
    },

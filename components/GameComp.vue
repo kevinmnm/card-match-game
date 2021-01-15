@@ -29,7 +29,13 @@
                flat
                tile
             >
-               <v-sheet class="d-flex flex-row align-center transparent" width="100%" height="100%">
+               <v-sheet 
+                  class="d-flex flex-row align-center transparent" 
+                  width="100%" 
+                  height="100%" 
+                  style="position:relative;"
+                  :style="(my_turn && !beginning_preview_flipping) ? turnStyle : ''"
+               >
 
                   <v-card class="font-weight-bold d-flex align-center text-center" color="transparent" tile flat height="100%" width="30px" style="font-size:19px; color:#f3ff6b;">
                      <div class="ma-auto" style="height:100%; width:100%; cursor:default; border:1px solid purple; font-size:19px; box-sizing:border-box;">{{ countdown_time }}</div>
@@ -51,33 +57,11 @@
                   </v-card>
 
                   <v-btn class='leave-button' width="20%" tile style="font-size:15px;" height="100%" @click="confirm_leave()" color="transparent ">
-                     <span v-if="window_inner_width > 320" class="font-weight-bold pt-1" style="color: #D8D8D8;">leave</span>
+                     <span v-if="window_inner_width > 350" class="font-weight-bold pt-1" style="color: #D8D8D8;">leave</span>
                      <v-icon v-else color="#D8D8D8">mdi-exit-to-app</v-icon>
                   </v-btn>
 
                </v-sheet>
-               <!-- <v-card class="pa-0 ma-0 flex-grow-1" flat tile color="red" height="100%;">
-
-                  <v-menu :close-on-content-click="false" min-width="30px" transition="fab-transition" auto offset-y>
-                     <template v-slot:activator="{ on, attrs }">
-                        <v-btn width="30px;">
-                           <v-icon v-bind="attrs" v-on="on"  color="#404040">mdi-cog</v-icon>
-                        </v-btn>
-                     </template>
-                     <v-sheet class="d-flex flex-column justify-space-between pa-3">
-                        <AudioControl />
-                     </v-sheet>
-                  </v-menu>
-
-                  <v-card class="font-weight-bold" color="yellow" style="position:absolute; left:0;" width="30px" height="100%">{{ countdown_time }}</v-card>
-
-                  <div>{{ room_number }}</div>
-
-               </v-card>
-               <v-btn width="20%" tile style="font-size:15px;" height="100%" @click="confirm_leave()">
-                  <span v-if="window_inner_width > 320">leave</span>
-                  <v-icon v-else>mdi-exit-to-app</v-icon>
-               </v-btn> -->
 
             </v-card>
 
@@ -94,7 +78,7 @@
                   :width="board_card_size"
                   :height="board_card_size"
                   class="pa-0 ma-0 d-flex flex-wrap"
-                  style="position:relative;"
+                  :style="(my_turn && !beginning_preview_flipping) ? turnStyle : 'position:relative;'"
                >
                   
                   <CardSet :my-turn="my_turn" />
@@ -201,7 +185,8 @@ export default {
          chat_value: '',
          chat_button_disabled: false,
          player_info_dialog: false,
-         player_info_prop: null
+         player_info_prop: null,
+         turnStyle: "box-shadow: 0 0 20px yellow;"
       }
    },
    computed: {
@@ -224,6 +209,9 @@ export default {
          } else { // If game ended or not started;
             return false;
          }
+      },
+      beginning_preview_flipping() {
+         return this.$store.state.room.beginning_preview_flipping;
       },
       my_display_name(){
          return this.$store.state.general.my_display_name; 

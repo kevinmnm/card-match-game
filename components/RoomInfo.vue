@@ -6,6 +6,7 @@
                <AudioControl :custom-game="true" />
             </v-sheet>
             <v-sheet
+               v-if="room_info.capacity === 4"
                class="d-flex flex-column ma-auto text-center mb-2"
                height="100%"
                width="50%"

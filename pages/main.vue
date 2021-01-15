@@ -3,7 +3,8 @@
       <MainComp v-if="!signed_in" />
       <IdleRoom v-else />
       <AudioComp />
-      <DevSoundTest v-if="development" />
+      <PeronalAlert />
+      <!-- <DevSoundTest v-if="development" /> -->
    </v-container>
 </template>
 
@@ -12,6 +13,7 @@ import MainComp from "@/components/MainComp.vue";
 import IdleRoom from "@/components/IdleRoom.vue";
 import AudioComp from "@/components/AudioComp.vue";
 import DevSoundTest from "@/components/devOnly/DevSoundTest.vue";
+import PeronalAlert from "@/components/PersonalAlert.vue";
 
 export default {
    name: "Main",
@@ -19,7 +21,8 @@ export default {
       MainComp,
       IdleRoom,
       AudioComp,
-      DevSoundTest
+      DevSoundTest,
+      PeronalAlert
    },
    data: () => ({
       development: false,

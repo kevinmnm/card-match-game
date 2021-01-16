@@ -1,6 +1,6 @@
 <template>
-   <v-row>
-      <v-col cols="12" class="text-center">
+   <v-row class="pa-0 ma-0">
+      <v-col cols="12" class="pa-0 ma-0 text-center">
          <v-progress-circular
             :size="size"
             :width="width"

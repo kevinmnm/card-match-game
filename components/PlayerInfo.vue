@@ -57,7 +57,7 @@
          </div>
 
    <!-- ICONS -->
-         <v-card v-if="!is_my_info && !player_info_prop.guest" class="d-flex flex-row justify-space-around pa-1" width="100%" flat :key="buttons_key" outlined>
+         <v-card v-if="!is_my_info && !player_info_prop.guest && !playerInfoLoading" class="d-flex flex-row justify-space-around pa-1" width="100%" flat :key="buttons_key" outlined>
 
             <v-tooltip bottom>
                <template v-slot:activator="{ on, attrs }">
@@ -95,12 +95,15 @@
             <v-tooltip bottom>
                <template v-slot:activator="{ on, attrs }">
                   <v-btn
+                     v-if="!hide_button"
                      v-on="on"
                      v-bind="attrs"
                      fab
                      x-small
                      shaped
                      depressed
+                     :disabled="disable_popularity_vote"
+                     @click="popularity_vote('like')"
                   >
                      <v-icon>mdi-thumb-up</v-icon>
                   </v-btn>
@@ -111,12 +114,15 @@
             <v-tooltip bottom>
                <template v-slot:activator="{ on, attrs }">
                   <v-btn
+                     v-if="!hide_button"
                      v-on="on"
                      v-bind="attrs"
                      fab
                      x-small
                      shaped
                      depressed
+                     :disabled="disable_popularity_vote"
+                     @click="popularity_vote('dislike')"
                   >
                      <v-icon>mdi-thumb-down</v-icon>
                   </v-btn>
@@ -201,7 +207,7 @@
             width="100%"
             tile
          >
-            close
+            Close
          </v-btn>
       </v-sheet>
    </v-sheet>
@@ -212,7 +218,7 @@ import Loading from "@/components/Loading.vue";
 
 export default {
    name: "PlayerInfoComp",
-   props: ["playerInfo", "imgSize"],
+   props: ["playerInfo", "imgSize", "hideButton"],
    components: { Loading },
    data() {
       return {
@@ -222,9 +228,14 @@ export default {
          buttons_key: 0,
          disable_friend_request: false,
          show_friend_icon: false,
+         disable_popularity_vote: false,
       };
    },
    computed: {
+      hide_button() {
+         if (this.hideButton) return true;
+         else return false;
+      },
       player_info_prop() {
          return this.playerInfo;
       },
@@ -243,8 +254,19 @@ export default {
       }
    },
    methods: {
+      popularity_vote(type) { // 'like' || 'dislike';
+         this.disable_popularity_vote = true;
+
+         window.socket.emit('popularity-vote', {
+            playerInfo: this.player_info,
+            myInfo: this.$store.state.user.user_info,
+            type,
+         });
+
+         this.player_info[type]++;
+      },
       send_friend_request() {
-         this.playerInfoLoading = true;
+         // this.playerInfoLoading = true;
          let my_friend_list = this.$store.state.user.user_info.friend;
          if (my_friend_list.length >= 10 ) {
             this.playerInfoLoading = false;

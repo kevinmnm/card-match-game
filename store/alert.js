@@ -31,7 +31,6 @@ export const mutations = {
       state.alert_from = "";
    },
    SHOW_ALERT(state, payload) {
-      console.log(payload);
       state.alert_msg = payload.msg;
       state.alert_buttons = payload.buttons;
       state.alert_html = payload.html;

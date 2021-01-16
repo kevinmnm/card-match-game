@@ -10,15 +10,18 @@
          ref="child_img"
       ></v-img> -->
 
+<!-- TOP -->
       <v-sheet width="100%" height="20%" color="primary">
 
       </v-sheet>
 
+<!-- MIDDLE -->
       <v-sheet class="d-flex flex-row" width="100%" height="calc(80% - 230px)">
-         <v-sheet width="35%">
-            <FriendList v-if="(!my_display_name.toLowerCase().includes('guest')) ? true : false" />
+         <v-sheet width="40%">
+            <FriendList v-if="(!my_display_name.toLowerCase().includes('guest')) ? true : false"  :key="refresh_friend_list"/>
+            <v-sheet v-else></v-sheet>
          </v-sheet>
-         <v-sheet class="flex-grow-1 d-flex flex-column align-center justify-space-around" width="30%">
+         <v-sheet class="d-flex flex-column align-center justify-space-around" width="20%">
 
             <v-sheet class="flex-grow-1" width="100%">
                <v-btn width="100%" :small="window_width < 400" disabled>ranked</v-btn>
@@ -59,8 +62,8 @@
             </v-sheet>
 
          </v-sheet>
-         <v-sheet width="35%" color="red">
-            <RankList v-if="false" />
+         <v-sheet width="40%">
+            <RankList />
          </v-sheet>
       </v-sheet>
 
@@ -289,6 +292,9 @@ export default {
       },
       custom_dialog() {
          return this.$store.state.custom.show_custom_dialog;
+      },
+      refresh_friend_list() { // FriendList component key;
+         return this.$store.state.user.refresh_friend_list;
       }
    },
    methods: {

@@ -77,7 +77,6 @@ export default {
    },
    methods: {
       click_action(action) {
-         console.log(action);
          if (action === 'reset_alert') {
             this.$store.commit('alert/RESET_ALERT');
          }

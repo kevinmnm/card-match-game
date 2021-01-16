@@ -1,6 +1,7 @@
 export const state = () => ({
    user_display_name: '',
-   user_info: null
+   user_info: null,
+   refresh_friend_list: 0,
 })
 
 export const mutations = {
@@ -9,6 +10,9 @@ export const mutations = {
    },
    USER_INFO(state, payload) {
       state.user_info = payload;
+   },
+   REFRESH_FRIEND_LIST(state) {
+      state.refresh_friend_list++;
    }
 }
 
@@ -24,6 +28,7 @@ export const actions = {
 
       const res = await response.json();
       commit('USER_INFO', res.foundUser);
+      commit('REFRESH_FRIEND_LIST');
 
       if (state.user_info.friend_pending.length === 1) {
          this.commit('alert/SHOW_ALERT', {

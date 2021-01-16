@@ -114,25 +114,4 @@ export const mutations = {
    POSITION_CHANGED(state, payload) {
       state.room_info.players = payload.new_players;
    },
-   UPDATE_OPPONENT_FRIEND_PENDING_LIST(state, payload) {
-      console.log('UPDATE_OPPONENT_FRIEND_pending_LIST');
-      console.log(payload);
-      Object.keys(state.room_info.players).forEach( playerNum => {
-         if (state.room_info.players[playerNum].displayName === payload.displayName) {
-            state.room_info.players[playerNum].friend_pending = payload.friend_pending;
-         }
-      });
-   }
 }
-
-// export const actions = {
-//    initial_card_show_trigger({ state, commit }, payload) {
-//       commit('INITIAL_CARD_SHOW_TRIGGER', payload);
-
-//       if (payload.card_index === state.room_info.cardSet.length - 1 && !payload.show_card) {
-//          setTimeout( () => {
-//             state.card.my_turn_temp_disable = false;
-//          }, 3000);
-//       }
-//    }
-// }

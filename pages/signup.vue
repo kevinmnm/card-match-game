@@ -99,6 +99,7 @@
                         small
                         @click="verify_username()"
                         :disabled="!enable_verify"
+                        :loading="verify_loading"
                         color="deep-purple accent-4"
                         width="100%"
                         >verify</v-btn
@@ -230,6 +231,7 @@ export default {
       valid: true,
       id_verified: false,
       enable_verify: false,
+      verify_loading: false,
       available_message: "",
       unavailable_message: "",
       signup_loading: false,
@@ -261,6 +263,9 @@ export default {
       verification_code_dialog: false,
       verification_code: null,
       account_created_dialog: false,
+      blocked_words: [
+         'quick','custom','admin','guest','user','bitch','fuck','ass','shit','dick','rape','cunt','monstermatch','1vs1','2vs2','3vs3','1vs1vs1','cum'
+      ]
    }),
    methods: {
       validate_dob_format() {
@@ -283,15 +288,33 @@ export default {
             : false;
       },
       async verify_username() {
-         if (this.username.toLowerCase().includes('guest')) {
-            return this.unavailable_message = "Cannot contain the word 'guest'";
+         this.verify_loading = true;
+         // if (this.username.toLowerCase().includes('guest')) {
+         //    this.verify_loading = false;
+         //    return this.unavailable_message = "Cannot contain the word 'guest'";
+         // }
+         // if ((this.username.toLowerCase()).includes('custom')) {
+         //    this.verify_loading = false;
+         //    return this.unavailable_message = "Cannot contain the word 'custom'";
+         // }
+         // if ((this.username.toLowerCase()).includes('quick')) {
+         //    this.verify_loading = false;
+         //    return this.unavailable_message = "Cannot contain the word 'quick'";
+         // }
+         let stop = false;
+         for (let i=0; i<this.blocked_words.length; i++) {
+            if (this.username.toLowerCase().includes(this.blocked_words[i])) {
+               this.unavailable_message = `Cannot contain the word "${this.blocked_words[i]}"`;
+               stop = true;
+               break;
+            }
          }
-         if (this.username.toLowerCase().includes('custom')) {
-            return this.unavailable_message = "Cannot contain the word 'custom'";
+
+         if (stop) {
+            this.verify_loading = false;
+            return;
          }
-         if (this.ussername.toLowerCase().includes('quick')) {
-            return this.unavailable_message = "Cannot contain the word 'quick'";
-         }
+
          let special_char = '`~!@#$%^&*()-_=+/>.|\\';
          let spec_char = 0;
          [...special_char].forEach( spec => {
@@ -299,7 +322,10 @@ export default {
                if (spec === user) { spec_char++; }
             });
          });
-         if (spec_char > 0) return alert('Cannot include special character');
+         if (spec_char > 0) {
+            this.verify_loading = false;
+            return alert('Cannot include special character');
+         }
 
 
          const response = await fetch(window.server_url + "/username", {
@@ -321,6 +347,7 @@ export default {
             this.available_message = "";
             this.unavailable_message = "Username taken";
          }
+         this.verify_loading = false;
       },
       async signup_pending() {
          this.signup_loading = true;

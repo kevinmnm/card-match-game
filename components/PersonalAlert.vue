@@ -30,7 +30,7 @@
                v-for="(all, ind) in alert_buttons"
                :key="all + ind"
                :color="all.color"
-               @click="all.action($store)"
+               @click="(alert_from === 'server') ? click_action(all.action) : all.action($store);"
                :disabled="!alert_show"
             >
                {{ all.text }}
@@ -59,6 +59,9 @@ export default {
    // },
    name: "PersonalAlert",
    computed: {
+      alert_from() {
+         return this.$store.state.alert.alert_from; // String;
+      },
       alert_show() {
          return this.$store.state.alert.alert_show; // Boolean;
       },
@@ -72,6 +75,14 @@ export default {
          return this.$store.state.alert.alert_html;
       },
    },
+   methods: {
+      click_action(action) {
+         console.log(action);
+         if (action === 'reset_alert') {
+            this.$store.commit('alert/RESET_ALERT');
+         }
+      }
+   }
 };
 </script>
 

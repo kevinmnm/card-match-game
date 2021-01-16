@@ -189,6 +189,7 @@ export default {
          });
 
          window.socket.on('update-my-info', payload => { // For users only;
+            console.log(payload);
             this.$store.commit("user/USER_INFO", payload);
          });
 

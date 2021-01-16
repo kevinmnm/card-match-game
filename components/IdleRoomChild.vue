@@ -15,8 +15,8 @@
       </v-sheet>
 
       <v-sheet class="d-flex flex-row" width="100%" height="calc(80% - 230px)">
-         <v-sheet width="35%" color="red">
-
+         <v-sheet width="35%">
+            <FriendList v-if="(!my_display_name.toLowerCase().includes('guest')) ? true : false" />
          </v-sheet>
          <v-sheet class="flex-grow-1 d-flex flex-column align-center justify-space-around" width="30%">
 
@@ -60,7 +60,7 @@
 
          </v-sheet>
          <v-sheet width="35%" color="red">
-            <RankList />
+            <RankList v-if="false" />
          </v-sheet>
       </v-sheet>
 
@@ -240,7 +240,8 @@ import MyInfo from "@/components/MyInfo.vue";
 import CreateRoom from "@/components/CreateRoom.vue";
 import RoomList from "@/components/RoomList.vue";
 import AudioControl from "@/components/AudioControl.vue";
-import RankList from "@/components/RankList.vue"
+import RankList from "@/components/RankList.vue";
+import FriendList from "@/components/FriendList.vue";
 
 export default {
    name: "IdleRoomChild",
@@ -251,7 +252,8 @@ export default {
       CreateRoom,
       RoomList,
       AudioControl,
-      RankList
+      RankList,
+      FriendList,
    },
    data() {
       return {

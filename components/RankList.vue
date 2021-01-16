@@ -41,7 +41,7 @@ export default {
    data: () => ({
       loading_data: false,
       tabs: null
-   })
+   }),
 };
 </script>
 

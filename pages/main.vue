@@ -32,16 +32,22 @@ export default {
          return this.$store.state.general.signed_in;
       }
    },
+   methods: {
+      prevent_default(event) {
+         event.preventDefault();
+      }
+   },
    mounted() {
       if (process.env.NODE_ENV === 'production') {
-         this.$refs.main.addEventListener('contextmenu', event => event.preventDefault());
+         this.$refs.main.addEventListener('contextmenu', event => event.preventDefault(), true);
       } else {
          this.development = true;
       }
+
    },
-   destroyed() {
+   beforeDestroy() {
       if (process.env.NODE_ENV === 'production') {
-         this.$refs.main.removeEventListener('contextmenu', event => event.preventDefault());
+         this.$refs.main.removeEventListener('contextmenu', event => event.preventDefault(), true);
       }
    }
 };

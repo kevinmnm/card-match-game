@@ -47,22 +47,20 @@
          </v-sheet> -->
       </v-sheet>
 
-      <v-sheet width="100%" height="100%">
-         <v-dialog 
-            v-model="player_info_dialog" 
-            class="pa-0 ma-0" 
-            overlay-opacity="0.9" 
-            :width="window_width <= 600 ? '100%' : '60%'"
-         >
-            <PlayerInfo 
-               v-if="player_info_dialog" 
-               :player-info="show_player_info" 
-               :img-size="window_width / 6 + 'px'" 
-               @player-info-dialog-close="player_info_dialog = false" 
-               :hide-button="true"
-            />
-         </v-dialog>
-      </v-sheet>
+      <v-dialog 
+         v-model="player_info_dialog" 
+         class="pa-0 ma-0" 
+         overlay-opacity="0.9" 
+         :width="window_width <= 600 ? '100%' : '60%'"
+      >
+         <PlayerInfo 
+            v-if="player_info_dialog" 
+            :player-info="show_player_info" 
+            :img-size="window_width / 6 + 'px'" 
+            @player-info-dialog-close="player_info_dialog = false" 
+            :hide-thumbs="true"
+         />
+      </v-dialog>
 
    </v-sheet>
 </template>

@@ -1,6 +1,26 @@
 <template>
-   <v-sheet class="d-flex flex-column text-center">
+   <v-sheet ref="myinfo" class="d-flex flex-column text-center">
       <v-card class="mb-1 font-weight-bold" style="font-size:16px;">
+         <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+               <v-btn 
+                  v-if="user_info && user_info.friend_pending.length > 0"
+                  @click="show_friend_pending = true"
+                  absolute 
+                  text 
+                  style="top:0; left:0;" 
+                  height="100%" 
+                  width="50px" 
+                  v-on="on" 
+                  v-bind="attrs"
+               >
+                  <v-badge :content="user_info.friend_pending.length" offset-x="-5" offset-y="22">
+                     <v-icon color="info">mdi-account-group</v-icon>
+                  </v-badge>
+               </v-btn>
+            </template>
+            <span>Friend Requests</span>
+         </v-tooltip>
          {{ my_display_name }}
          <v-menu offset-y>
             <template v-slot:activator="{ on, attrs }">
@@ -73,12 +93,14 @@
       </v-dialog>
       
       <Loading v-if="loader_show" />
-      <v-sheet v-else class="d-flex justify-center" :class="$vuetify.breakpoint.name === 'xs' ? 'flex-column' : 'flex-row'">
-         <v-card flat tile height="100%" width="50%" min-width="240px" class="ma-auto">
+      <!-- <v-sheet v-else class="d-flex justify-center" :class="$vuetify.breakpoint.name === 'xs' ? 'flex-column' : 'flex-row'"> -->
+      <v-sheet v-else class="d-flex" :class="($vuetify.breakpoint.width < $vuetify.breakpoint.height) ? 'flex-column' : 'flex-row'">
+         <!-- <v-card flat tile height="100%" width="50%" min-width="240px" class="ma-auto"> -->
+         <v-card flat tile height="100%" width="50%" max-width="240px" class="ma-auto">
             <v-img height="100%" :src="require(`@/assets/img/rank/${my_info.rank}.png`)"></v-img>
          </v-card>
          <v-sheet class="d-flex flex-column ma-auto" height="100%" width="50%" min-width="240px">
-            <v-simple-table>
+            <v-simple-table dense>
                <tbody>
                   <tr class="text-left">
                      <th>RANK</th>
@@ -118,6 +140,41 @@
          </v-sheet>
       </v-sheet>
       <v-btn color="error" @click="$emit('hide-my-info')">Close</v-btn>
+
+<!-- FRIEND PENDING DIALOG -->
+      <v-dialog v-model="show_friend_pending" :fullscreen="($vuetify.breakpoint.width < 500) ? true : false" persistent>
+
+         <v-sheet width="100%" height="100%" style="font-size: 20px;">
+            <v-sheet width="100%" height="calc(100% - 35px)">
+               <v-card class="text-center" flat tile>Pending Friend Requests</v-card>
+               <v-card
+                  v-for="(pend,ind) in my_info.friend_pending"
+                  :key="pend+ind"
+                  color="classic"
+                  class="d-flex flex-column justify-center align-center mb-3 ma-auto pa-2"
+                  :width="($vuetify.breakpoint.width < 500) ? '100%' : '60%'"
+                  :tile="($vuetify.breakpoint.width < 500) ? true : false"
+               >
+                  <v-card class="text-center" color="white--text transparent" flat>
+                     <span style="font-weight:bold; color:orange;">{{pend.displayName}} </span>
+                     <span>wants to be your friend.</span>
+                  </v-card>
+         
+                  <v-sheet color="transparent" width="100%" class="d-flex flex-row flex-wrap justify-space-around">
+                     <v-btn width="35%" color="success" @click="friend_request_handler('accept', pend.displayName)">Accept</v-btn>
+                     <v-btn width="35%" color="error" @click="friend_request_handler('reject', pend.displayName)">Reject</v-btn>
+                  </v-sheet>
+               </v-card>
+            </v-sheet>
+
+            <v-sheet width="100%" height="35px">
+               <v-btn @click="show_friend_pending = false;" height="35px" width="100%" color="error" tile depressed>
+                  Close
+               </v-btn>
+            </v-sheet>
+         </v-sheet>
+
+      </v-dialog>
    </v-sheet>
 </template>
 
@@ -129,6 +186,7 @@ export default {
    components: { Loading },
    data() {
       return {
+         show_friend_pending: false,
          loader_show: true,
          show_change_cred: false,
          cred_action: '',
@@ -180,6 +238,13 @@ export default {
    methods: {
       comming_soon(){
          alert('Comming Soon');
+      },
+      friend_request_handler(action, displayName) {
+         window.socket.emit("friend-request", {
+            action,
+            requesterDisplayName: displayName,
+            playerInfo: this.user_info,
+         });
       },
       reset_change_cred() {
          this.new_pw = '';

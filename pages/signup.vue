@@ -289,18 +289,6 @@ export default {
       },
       async verify_username() {
          this.verify_loading = true;
-         // if (this.username.toLowerCase().includes('guest')) {
-         //    this.verify_loading = false;
-         //    return this.unavailable_message = "Cannot contain the word 'guest'";
-         // }
-         // if ((this.username.toLowerCase()).includes('custom')) {
-         //    this.verify_loading = false;
-         //    return this.unavailable_message = "Cannot contain the word 'custom'";
-         // }
-         // if ((this.username.toLowerCase()).includes('quick')) {
-         //    this.verify_loading = false;
-         //    return this.unavailable_message = "Cannot contain the word 'quick'";
-         // }
          let stop = false;
          for (let i=0; i<this.blocked_words.length; i++) {
             if (this.username.toLowerCase().includes(this.blocked_words[i])) {

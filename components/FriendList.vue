@@ -56,7 +56,7 @@
                >
                   {{ friend.displayName }}
                   <template v-slot:actions>
-                     <v-icon x-small :color="(friend.logg) ? 'success' : 'grey'">mdi-circle</v-icon>
+                     <v-icon x-small :color="(friend.logged) ? 'success' : 'grey'">mdi-circle</v-icon>
                   </template>
                </v-expansion-panel-header>
                <v-expansion-panel-content>

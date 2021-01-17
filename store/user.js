@@ -62,11 +62,11 @@ export const actions = {
          });
       } else if (state.user_info.friend_pending.length > 1) {
          this.commit('alert/SHOW_ALERT', {
-            msg: `You have ${state.user_info.friend_pending.length} new frield requests. Please go to your user information to view them.`,
+            msg: `You have ${state.user_info.friend_pending.length} new friend requests. Please go to your user information to view them.`,
             buttons: [
                { 
                   text: "Ok", 
-                  action: ($store) => { $store.state.commit('alert/RESET_ALERT'); },
+                  action: ($store) => { $store.commit('alert/RESET_ALERT'); },
                   color: "primary"  
                }
             ]

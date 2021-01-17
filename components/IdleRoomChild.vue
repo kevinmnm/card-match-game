@@ -17,9 +17,11 @@
 
 <!-- MIDDLE -->
       <v-sheet class="d-flex flex-row" width="100%" height="calc(80% - 230px)">
-         <v-sheet width="40%">
-            <FriendList v-if="(!my_display_name.toLowerCase().includes('guest')) ? true : false"  :key="refresh_friend_list"/>
-            <v-sheet v-else></v-sheet>
+         <v-sheet v-if="!my_display_name.toLowerCase().includes('guest') && my_friend_array.length > 0" width="40%">
+            <FriendList :key="refresh_friend_list"/>
+         </v-sheet>
+         <v-sheet v-else width="40%" outlined>
+            EMPTY
          </v-sheet>
          <v-sheet class="d-flex flex-column align-center justify-space-around" width="20%">
 
@@ -295,6 +297,9 @@ export default {
       },
       refresh_friend_list() { // FriendList component key;
          return this.$store.state.user.refresh_friend_list;
+      },
+      my_friend_array() {
+         return this.$store.state.user.user_info.friend;
       }
    },
    methods: {

@@ -51,7 +51,7 @@
             <div class="text-left">
                <v-dialog v-model="show_forgot" :width="$vuetify.breakpoint.width <= 600 ? '100%' : $vuetify.breakpoint.width < 1000 ? '50%' : '40%'">
                   <template v-slot:activator="{ on, attrs }">
-                     <span v-bind="attrs" v-on="on" class="forgot-credentials text-caption">Forgot Username/Password</span>
+                     <span v-bind="attrs" v-on="on" class="forgot-credentials text-caption">Forgot Password</span>
                   </template>
                   <v-sheet>
                      <v-col>

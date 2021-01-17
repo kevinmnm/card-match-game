@@ -56,97 +56,15 @@
             </div>
          </div>
 
-   <!-- ICONS -->
-         <v-card v-if="!is_my_info && !player_info_prop.guest && !playerInfoLoading" class="d-flex flex-row justify-space-around pa-1" width="100%" flat :key="buttons_key" outlined>
+         <PlayerInfoIcon 
+            v-if="!playerInfoLoading"
+            :is-my-info="is_my_info" 
+            :is-guest="is_guest" 
+            :player-info="player_info" 
+            :hide-thumbs="hideThumbs" 
+            @trigger-get-user-info="get_user_info()"
+         />
 
-            <v-tooltip bottom>
-               <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                     v-if="show_add_friend_button"
-                     v-on="on"
-                     v-bind="attrs"
-                     fab
-                     x-small
-                     shaped
-                     depressed
-                     @click="send_friend_request()"
-                     :disabled="disable_friend_request"
-                  >
-                     <v-icon color="primary">mdi-account-plus</v-icon>
-                  </v-btn>
-               </template>
-               <span>Send Friend Request</span>
-            </v-tooltip>
-
-            <v-tooltip bottom>
-               <template v-slot:activator="{ on, attrs }">
-                  <v-icon
-                     v-if="show_friend_icon"
-                     v-on="on"
-                     v-bind="attrs"
-                     dense
-                     fab
-                     color="success"
-                  >mdi-account-check</v-icon>
-               </template>
-               <span>Friend</span>
-            </v-tooltip>
-
-            <v-tooltip bottom>
-               <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                     v-if="!hide_button"
-                     v-on="on"
-                     v-bind="attrs"
-                     fab
-                     x-small
-                     shaped
-                     depressed
-                     :disabled="disable_popularity_vote"
-                     @click="popularity_vote('like')"
-                  >
-                     <v-icon>mdi-thumb-up</v-icon>
-                  </v-btn>
-               </template>
-               <span>Like This User</span>
-            </v-tooltip>
-
-            <v-tooltip bottom>
-               <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                     v-if="!hide_button"
-                     v-on="on"
-                     v-bind="attrs"
-                     fab
-                     x-small
-                     shaped
-                     depressed
-                     :disabled="disable_popularity_vote"
-                     @click="popularity_vote('dislike')"
-                  >
-                     <v-icon>mdi-thumb-down</v-icon>
-                  </v-btn>
-               </template>
-               <span>Dislike This User</span>
-            </v-tooltip>
-
-            <v-tooltip bottom>
-               <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                     v-on="on"
-                     v-bind="attrs"
-                     fab
-                     x-small
-                     shaped
-                     depressed
-                  >
-                     <v-icon color="error">mdi-alert-octagon</v-icon>
-                  </v-btn>
-               </template>
-               <span>Report This User</span>
-            </v-tooltip>
-            
-         </v-card>
 
          <div v-if="!playerInfoLoading" class="mt-2">
             <v-simple-table class="text-center" dense>
@@ -215,74 +133,39 @@
 
 <script>
 import Loading from "@/components/Loading.vue";
+import PlayerInfoIcon from "@/components/PlayerInfoIcon.vue";
 
 export default {
    name: "PlayerInfoComp",
-   props: ["playerInfo", "imgSize", "hideButton"],
-   components: { Loading },
+   props: ["playerInfo", "imgSize", "hideButton", "hideThumbs"],
+   components: { Loading, PlayerInfoIcon },
    data() {
       return {
          playerInfoLoading: true,
-         player_info: null, // Freshest data, use this instead of props;
-         show_add_friend_button: false,
-         buttons_key: 0,
-         disable_friend_request: false,
-         show_friend_icon: false,
-         disable_popularity_vote: false,
+         player_info: null,
       };
    },
    computed: {
-      hide_button() {
-         if (this.hideButton) return true;
-         else return false;
-      },
       player_info_prop() {
+         this.player_info = this.playerInfo;
          return this.playerInfo;
       },
       img_size() {
          return this.imgSize;
       },
       is_my_info() { // Check if I'm viewing my own info;
-         if (
-            this.$store.state.user.user_info && 
-            this.playerInfo.displayName === this.$store.state.user.user_info.displayName
-         ) {
+         if (this.player_info.displayName === this.$store.state.general.my_display_name) {
             return true;
          } else {
             return false;
          }
+      },
+      is_guest() {
+         if (this.playerInfo.guest) return true;
+         else return false;
       }
    },
    methods: {
-      popularity_vote(type) { // 'like' || 'dislike';
-         this.disable_popularity_vote = true;
-
-         window.socket.emit('popularity-vote', {
-            playerInfo: this.player_info,
-            myInfo: this.$store.state.user.user_info,
-            type,
-         });
-
-         this.player_info[type]++;
-      },
-      send_friend_request() {
-         // this.playerInfoLoading = true;
-         let my_friend_list = this.$store.state.user.user_info.friend;
-         if (my_friend_list.length >= 10 ) {
-            this.playerInfoLoading = false;
-            return alert('Your friends list is full');
-         }
-
-         this.get_user_info
-
-         window.socket.emit('friend-request', {
-            requesterDisplayName: this.$store.state.general.my_display_name,
-            playerInfo: this.player_info,
-            action: "request"
-         });
-
-         this.disable_friend_request = true;
-      },
       async get_guest_info() {
          this.playerInfoLoading = true;
          const response = await fetch(window.server_url + "/guest", {
@@ -299,7 +182,8 @@ export default {
 
          this.playerInfoLoading = false;
       },
-      async get_user_info() {
+      async get_user_info() { // May not be my user info!
+         console.log('get_user_info() triggered');
          this.playerInfoLoading = true;
          const response = await fetch(window.server_url + "/user", {
             headers: { "Content-Type": "application/json" },
@@ -312,60 +196,15 @@ export default {
          const res = await response.json();
          this.player_info = res.foundUser;
 
-         this.friend_check();
-      },
-      friend_check() {
-         let stop = false;
-         if (
-            this.player_info &&  // Player info has been loaded (extra safety..?);
-            !this.player_info.guest &&  // Player is not a guest;
-            !this.$store.state.general.my_display_name.toLowerCase().includes('guest') // I'm not a guest;
-         ) {
-            if (this.$store.state.general.my_display_name === this.player_info.displayName) { // If it's my own info;
-               this.show_add_friend_button = false;
-               this.buttons_key++;
-               return this.playerInfoLoading = false;
-            }
-            let my_friend_list = this.$store.state.user.user_info.friend; // Get my friend list array;
-            let my_friend_list_pending = this.$store.state.user.user_info.friend_pending; // Get my friend requested pending array;
-            if (my_friend_list.length === 0 && my_friend_list_pending.length === 0) {
-               this.show_add_friend_button = true;
-               this.buttons_key++;
-               return this.playerInfoLoading = false;
-            }
-            for (let i=0; i<my_friend_list.length; i++) { // check if already in my friend list
-               if (this.player_info.displayName === my_friend_list[i].displayName) {
-                  this.show_friend_icon = true;
-                  this.show_add_friend_button = false;
-                  this.playerInfoLoading = false;
-                  this.buttons_key++;
-                  stop = true;
-                  break;
-               }
-            }
-
-            if (stop) return;
-
-            for (let i=0; i<my_friend_list_pending.length; i++) {
-               if (my_friend_list_pending.displayName === this.player_info.displayName) {
-                  this.show_add_friend_button = true;
-                  this.playerInfoLoading = false;
-                  this.buttons_key++;
-                  stop = true;
-                  break;
-               }
-            }
-
-            if (stop) return;
-
-            this.show_add_friend_button = true;
-            this.buttons_key++;
+         if (this.player_info.voteGranted === 0) {
+            this.disable_popularity_vote = true;
          } else {
-            this.show_add_friend_button = false;
-            this.buttons_key++;
+            this.disable_popularity_vote = false;
          }
+
          this.playerInfoLoading = false;
-      }
+
+      },
    },
    created() {
       if (this.playerInfo.guest) { // If clicked player is a guest,

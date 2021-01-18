@@ -75,19 +75,35 @@ export const mutations = {
       );
    },
    SYSTEM_ROOM_CHAT(state, payload) { // payload = {chat_value: 'chat', chat_type: 'blue || red || yellow', join: true || false};
-      if (payload.chat_type === 'yellow') {
+      if (payload.chat_type === 'yellow') { // Chat yellow;
          state.room_chat.push(
             {
                chat_val: ( () => {
-                  if (payload.join) {
+                  if (payload.join === true) {
                      return payload.chat_value + ' has joined the room';
-                  } else {
+                  } else if (payload.join === false) {
                      return payload.chat_value + ' has left the room';
+                  } else if (payload.kicked === true) {
+                     return payload.chat_value + ' has been kicked from room'
                   }
                } )(),
-               chat_style: "text-align:center; color:#FFFF00; font-size: 16px; background: #000000;"
+               chat_style: "text-align:center; color:#FFFF00; font-size: 16px; background: #000000; margin-bottom:2px;"
             }
          )
+      } else if (payload.chat_type === 'red') { // Chat red;
+         state.room_chat.push(
+            {
+               chat_val: payload.chat_value,
+               chat_style: "text-align:center; color:#FF0000; font-size: 16px; background: #000000; margin-bottom:2px;"
+            }
+         );
+      } else if (payload.chat_type === 'green') { // Chat green;
+         state.room_chat.push( 
+            {
+               chat_val: payload.chat_value,
+               chat_style: "text-align:center; color:#90EE90; font-size:16px; background:#000000; margin-bottom:2px;"
+            }
+         );
       }
    },
    GAME_STARTING(state, payload) {
@@ -114,4 +130,9 @@ export const mutations = {
    POSITION_CHANGED(state, payload) {
       state.room_info.players = payload.new_players;
    },
+   UPDATE_ROOM_PLAYERS(state, payload) { // Updates players only;
+      state.room.room_info.players = {
+
+      }
+   }
 }

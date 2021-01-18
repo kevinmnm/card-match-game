@@ -1,30 +1,51 @@
 <template>
-   <v-sheet width="100%" height="100%" style="overflow:auto;">
-      <v-sheet v-if="loading_rank" width="100%" height="100%" class="d-flex align-center justify-center" outlined>  
+   <v-sheet width="100%" height="100%" style="overflow: auto">
+      <v-sheet
+         v-if="loading_rank"
+         width="100%"
+         height="100%"
+         class="d-flex align-center justify-center"
+         outlined
+      >
          <Loading :size="40" />
       </v-sheet>
-      <v-sheet v-else>
-         <v-sheet>
-            <v-card 
-               class="d-flex justify-center align-center text-center" 
-               style="cursor:pointer;"
+      <v-sheet v-else height="100%" class="d-flex flex-column" width="100%" color="green" outlined>
+            <v-card
+               class="d-flex justify-center align-center text-center"
+               style="cursor: pointer"
                width="100%"
+               height="35px"
+               tile
             >
                TOP 10
-            </v-card>
+         </v-card>
+         <v-sheet class="flex-grow-1 d-flex flex-column flex-wrap">
             <v-card
                v-for="(rank, ind) in rank_list"
                :key="rank + ind"
-               class="d-flex justify-center align-center"
-               @click="show_player_info = rank, player_info_dialog = true;"
+               class="d-flex flex-row flex-grow-1"
+               color="grey"
+               @click="(show_player_info = rank), (player_info_dialog = true)"
                flat
                tile
                outlined
             >
-               {{ rank.displayName }}
+               <v-card
+                  class="d-flex align-center justify-center"
+                  width="25px"
+                  tile
+               >
+                  {{ ind + 1 }}
+               </v-card>
+               <v-card
+                  class="flex-grow-1 d-flex align-center justify-center"
+                  tile
+               >
+                  {{ rank.displayName }}
+               </v-card>
             </v-card>
          </v-sheet>
-      
+
          <!-- <v-sheet>
             <v-tabs v-model="tabs" height="100%" background-color="red" grow>
                <v-tab>TOP 10</v-tab>
@@ -47,21 +68,20 @@
          </v-sheet> -->
       </v-sheet>
 
-      <v-dialog 
-         v-model="player_info_dialog" 
-         class="pa-0 ma-0" 
-         overlay-opacity="0.9" 
+      <v-dialog
+         v-model="player_info_dialog"
+         class="pa-0 ma-0"
+         overlay-opacity="0.9"
          :width="window_width <= 600 ? '100%' : '60%'"
       >
-         <PlayerInfo 
-            v-if="player_info_dialog" 
-            :player-info="show_player_info" 
-            :img-size="window_width / 6 + 'px'" 
-            @player-info-dialog-close="player_info_dialog = false" 
+         <PlayerInfo
+            v-if="player_info_dialog"
+            :player-info="show_player_info"
+            :img-size="window_width / 6 + 'px'"
+            @player-info-dialog-close="player_info_dialog = false"
             :hide-thumbs="true"
          />
       </v-dialog>
-
    </v-sheet>
 </template>
 
@@ -78,35 +98,34 @@ export default {
       rank_list: null, // Will be array;
       show_player_info: null,
       player_info_dialog: false,
-      
    }),
    computed: {
       window_width() {
          return this.$vuetify.breakpoint.width;
-      }
+      },
    },
    methods: {
       async get_rankings() {
          this.loading_rank = true;
 
-         const response = await fetch(window.server_url + '/ranking', {
-            headers: { 'Content-Type': 'application/json' },
-            method: 'POST',
+         const response = await fetch(window.server_url + "/ranking", {
+            headers: { "Content-Type": "application/json" },
+            method: "POST",
             body: JSON.stringify({
-               type: 'overall',
-               range: 10
-            })
+               type: "overall",
+               range: 10,
+            }),
          });
 
          let res = await response.json();
          this.rank_list = res.rankList;
 
          this.loading_rank = false;
-      }
+      },
    },
    mounted() {
       this.get_rankings();
-   }
+   },
 };
 </script>
 

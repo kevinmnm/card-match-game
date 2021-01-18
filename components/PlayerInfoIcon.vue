@@ -43,7 +43,7 @@
       <v-tooltip bottom>
          <template v-slot:activator="{ on, attrs }">
             <v-btn
-               v-if="!is_my_info && !hideThumbs"
+               v-if="!is_my_info && !hideThumbs && !is_guest"
                v-on="on"
                v-bind="attrs"
                fab
@@ -62,7 +62,7 @@
       <v-tooltip bottom>
          <template v-slot:activator="{ on, attrs }">
             <v-btn
-               v-if="!is_my_info && !hideThumbs"
+               v-if="!is_my_info && !hideThumbs && !is_guest"
                v-on="on"
                v-bind="attrs"
                fab

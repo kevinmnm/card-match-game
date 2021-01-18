@@ -65,13 +65,15 @@
                         height="100%" 
                         :text="!hover"
                         tile 
+                        small
                         :depressed="!hover" 
                         :outlined="!hover"
                         :color="hover ? 'error' : '#F5F5F5'"
                         :class="hover ? 'error' : 'transparent'"
                      >
-                        <v-icon v-if="window_width < 350">mdi-exit-to-app</v-icon>
-                        <span v-else>Leave</span>
+                        <v-icon>mdi-exit-to-app</v-icon>
+                        <!-- <v-icon v-if="window_width < 350">mdi-exit-to-app</v-icon>
+                        <span v-else>Leave</span> -->
                      </v-btn>
                   </v-hover>
                </v-col>
@@ -325,8 +327,8 @@
           
          </v-sheet>
 
-         <v-sheet ref="chat_wrapper" class="bottom-wrapper flex-grow-1 d-flex flex-column" style="overflow:auto;" :height="chat_height">
-            <v-sheet style="overflow:auto;" color="#303030" class="d-flex flex-column flex-grow-1 pa-1" v-chat-scroll="{always: false}">
+         <v-sheet ref="chat_wrapper" class="bottom-wrapper flex-grow-1 d-flex flex-column" style="overflow-y:auto;" :height="chat_height" :width="window_width">
+            <v-sheet style="overflow-y:auto;" color="#303030" class="chat-section d-flex flex-column flex-grow-1 pa-1" v-chat-scroll="{always: false}">
             <div v-for="(chat, ind) in room_chat" :style="chat.chat_style" :key="chat+ind" :height="chat_height">
                {{
                   (chat.chat_sender) ?
@@ -366,8 +368,6 @@ export default {
       player_info_dialog: false,
       player_info_prop: null,
       isMounted: false,
-      player_info_dialog: false,
-      player_info_prop: null,
       room_info_menu: false,
       countdown_key: 0,
    }),
@@ -498,6 +498,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.chat-section {
+   overflow-y: auto;
+   overflow-x: hidden;
+   word-break: break-all;
+}
 
 .countdown-timer {
    font-size: 25px;

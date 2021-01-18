@@ -264,7 +264,7 @@ export default {
       verification_code: null,
       account_created_dialog: false,
       blocked_words: [
-         'quick','custom','admin','guest','user','bitch','fuck','ass','shit','dick','rape','cunt','monstermatch','1vs1','2vs2','3vs3','1vs1vs1','cum'
+         'quick','custom','admin','guest','user','bitch','fuck','ass','shit','dick','rape','cunt','monstermatch','1vs1','2vs2','3vs3','1vs1vs1','cum', 'game', 'global', 'room'
       ]
    }),
    methods: {

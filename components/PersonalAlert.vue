@@ -88,7 +88,7 @@ export default {
 <style lang="scss">
 .personal-alert {
    position: fixed;
-   z-index: 1000;
+   z-index: 100000;
    right: 20px;
    bottom: 20px;
    width: 200px;

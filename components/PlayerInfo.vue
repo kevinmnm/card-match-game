@@ -57,7 +57,7 @@
          </div>
 
          <PlayerInfoIcon 
-            v-if="!playerInfoLoading"
+            v-if="!playerInfoLoading && !im_guest"
             :is-my-info="is_my_info" 
             :is-guest="is_guest" 
             :player-info="player_info" 
@@ -163,6 +163,13 @@ export default {
       is_guest() {
          if (this.playerInfo.guest) return true;
          else return false;
+      },
+      im_guest() {
+         if (this.$store.state.general.my_display_name.toLowerCase().includes('guest')) {
+            return true;
+         } else {
+            return false;
+         }
       }
    },
    methods: {
@@ -183,7 +190,6 @@ export default {
          this.playerInfoLoading = false;
       },
       async get_user_info() { // May not be my user info!
-         console.log('get_user_info() triggered');
          this.playerInfoLoading = true;
          const response = await fetch(window.server_url + "/user", {
             headers: { "Content-Type": "application/json" },

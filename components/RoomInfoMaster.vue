@@ -34,9 +34,9 @@
             </template>
             <v-sheet class="d-flex flex-column">
                <v-card>MOVE TO</v-card>
-               <v-btn @click="move_position({current: 'player_2', to: 'player_3'})">Position 3</v-btn>
-               <v-btn @click="move_position({current: 'player_2', to: 'player_4'})">Position 4</v-btn>
-               <v-btn @click="kick_player('player_2')" color="error">Kick</v-btn>
+               <v-btn @click="move_position({current: 'player_2', to: 'player_3'})" :disabled="game_started">Position 3</v-btn>
+               <v-btn @click="move_position({current: 'player_2', to: 'player_4'})" :disabled="game_started">Position 4</v-btn>
+               <v-btn @click="kick_player('player_2')" color="error" :disabled="game_started">Kick</v-btn>
             </v-sheet>
          </v-menu>
 
@@ -57,9 +57,9 @@
             </template>
             <v-sheet class="d-flex flex-column">
                <v-card>MOVE TO</v-card>
-               <v-btn @click="move_position({current: 'player_3', to: 'player_2' })">Position 2</v-btn>
-               <v-btn @click="move_position({current: 'player_3', to: 'player_4'})">Position 4</v-btn>
-               <v-btn @click="kick_player('player_3')" color="error">Kick</v-btn>
+               <v-btn @click="move_position({current: 'player_3', to: 'player_2' })" :disabled="game_started">Position 2</v-btn>
+               <v-btn @click="move_position({current: 'player_3', to: 'player_4'})" :disabled="game_started">Position 4</v-btn>
+               <v-btn @click="kick_player('player_3')" color="error" :disabled="game_started">Kick</v-btn>
             </v-sheet>
          </v-menu>
 <!--Player 4 -->
@@ -75,9 +75,9 @@
             </template>
             <v-sheet class="d-flex flex-column">
                <v-card>MOVE TO</v-card>
-               <v-btn @click="move_position({current: 'player_4', to: 'player_2' })">Position 2</v-btn>
-               <v-btn @click="move_position({current: 'player_4', to: 'player_3'})">Position 3</v-btn>
-               <v-btn @click="kick_player('player_4')" color="error">Kick</v-btn>
+               <v-btn @click="move_position({current: 'player_4', to: 'player_2' })" :disabled="game_started">Position 2</v-btn>
+               <v-btn @click="move_position({current: 'player_4', to: 'player_3'})" :disabled="game_started">Position 3</v-btn>
+               <v-btn @click="kick_player('player_4')" color="error" :disabled="game_started">Kick</v-btn>
             </v-sheet>
          </v-menu>
       </v-sheet>
@@ -90,10 +90,16 @@ export default {
    computed: {
       all_players() {
          return this.$store.state.room.room_info.players;
+      },
+      game_started() {
+         return this.$store.state.room.room_info.start;
       }
    },
    methods: {
       move_position(obj) {
+         if (this.game_started) {
+            return alert('Cannot move players during game');
+         }
          this.$store.commit('general/GLOBAL_LOADING', true);
          window.socket.emit('change-position', { 
             roomNumber: this.$store.state.room.room_info.room_number,
@@ -101,7 +107,14 @@ export default {
          });
       },
       kick_player(playerNumber) {
-         alert('Under development');
+         if (this.game_started) {
+            alert('You cannot kick players during game');
+            return;
+         }
+         window.socket.emit('custom-kick', {
+            playerNumber, // player_1, player_2, etc; 
+            roomNumber: this.$store.state.room.room_info.room_number,
+         });
       }
    }
 };

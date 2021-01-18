@@ -11,8 +11,9 @@
       ></v-img> -->
 
 <!-- TOP -->
-      <v-sheet width="100%" height="20%" color="primary">
-
+      <v-sheet class="main-title d-flex flex-column align-center justify-center" width="100%" height="20%" outlined>
+         <v-card class="title" flat color="transparent white--text">MONSTER MATCHES</v-card>
+         <v-card class="caption" flat color="transparent white--text">- Under Development -</v-card>
       </v-sheet>
 
 <!-- MIDDLE -->
@@ -20,26 +21,45 @@
          <v-sheet v-if="!my_display_name.toLowerCase().includes('guest') && my_friend_array.length > 0" width="40%">
             <FriendList :key="refresh_friend_list"/>
          </v-sheet>
-         <v-sheet v-else width="40%" outlined>
-            EMPTY
+         <v-sheet v-else class="caption d-flex flex-column align-center justify-center" width="40%" height="100%" outlined color="classic white--text">
+            <div class="mb-3" style="font-size:20px;">😭</div>
+            <div class="mb-3">NO FRIENDS</div>
+            <v-btn v-if="my_display_name.toLowerCase().includes('guest')" class="caption" @click="refresh_page()" color="#adff2f" x-small text>Signup</v-btn>
          </v-sheet>
          <v-sheet class="d-flex flex-column align-center justify-space-around" width="20%">
 
             <v-sheet class="flex-grow-1" width="100%">
-               <v-btn width="100%" :small="window_width < 400" disabled>ranked</v-btn>
+               <v-btn v-if="window_width > 350" width="100%" :small="window_width < 450" height="100%" tile disabled>ranked</v-btn>
+               <v-btn v-else width="100%" :small="window_width < 400" height="100%" tile disabled>
+                  <v-icon>mdi-sword-cross</v-icon>
+               </v-btn>
             </v-sheet>
             
             <v-sheet class="flex-grow-1" width="100%">
                <v-dialog v-model="create_room_dialog">
                   <template v-slot:activator="{ on, attrs }">
                      <v-btn 
+                        v-if="window_width > 350"
                         v-bind="attrs"
                         v-on="on"
                         width="100%" 
+                        height="100%"
                         @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')"
                         :small="window_width < 400"
+                        tile
                      >
                         create
+                     </v-btn>
+                     <v-btn
+                        v-else
+                        v-bind="attrs"
+                        v-on="on"
+                        width="100%"
+                        :small="window_width < 400" 
+                        height="100%"
+                        tile
+                     >
+                        <v-icon>mdi-folder-plus</v-icon>
                      </v-btn>
                   </template>
                   <CreateRoom @close-create-room-dialog="create_room_dialog = false, create_room_key++" :key="create_room_key" />
@@ -47,18 +67,51 @@
             </v-sheet>
             
             <v-sheet class="flex-grow-1" width="100%">
-               <v-btn width="100%" @click="open_custom_dialog()" :loading="$store.state.custom.loading" @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')" :small="window_width < 400">join</v-btn>
+               <v-btn 
+                  v-if="window_width > 350"
+                  width="100%" 
+                  @click="open_custom_dialog()" 
+                  :loading="$store.state.custom.loading" 
+                  @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')" 
+                  :small="window_width < 400" 
+                  height="100%"
+               >
+                  join
+               </v-btn>
+               <v-btn 
+                  v-else
+                  width="100%" 
+                  @click="open_custom_dialog()" 
+                  :loading="$store.state.custom.loading" 
+                  :small="window_width < 400" 
+                  height="100%"
+               >
+                  <v-icon>mdi-folder-search</v-icon>
+               </v-btn>
             </v-sheet>
 
             <v-sheet class="flex-grow-1" width="100%">
                <v-btn
+                  v-if="window_width > 350"
                   width="100%"
+                  height="100%"
                   @click="quickGame()"
                   @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')"
                   :disabled="loading_comp"
                   :small="window_width < 400"
                >
                   quick
+               </v-btn>
+               <v-btn
+                  v-else
+                  width="100%"
+                  height="100%"
+                  @click="quickGame()"
+                  @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')"
+                  :disabled="loading_comp"
+                  :small="window_width < 400"
+               >
+                  <v-icon>mdi-flash</v-icon>
                </v-btn>
 
             </v-sheet>
@@ -303,6 +356,9 @@ export default {
       }
    },
    methods: {
+      refresh_page() {
+         window.location.reload();
+      },
       open_custom_dialog() {
          this.$store.dispatch('custom/fetch_custom_room_list');
       },
@@ -377,6 +433,39 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.main-title {
+background: rgb(98,0,234);
+background: -moz-radial-gradient(circle, rgba(98,0,234,1) 0%, rgba(209,55,255,1) 42%);
+background: -webkit-radial-gradient(circle, rgba(98,0,234,1) 0%, rgba(209,55,255,1) 42%);
+background: radial-gradient(circle, rgba(98,0,234,1) 0%, rgba(209,55,255,1) 42%);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#6200ea",endColorstr="#d137ff",GradientType=1);
+}
+
+// .main-title {
+// background: rgb(98,0,234);
+// background: -moz-radial-gradient(circle, rgba(98,0,234,1) 76%, rgba(209,55,255,1) 100%);
+// background: -webkit-radial-gradient(circle, rgba(98,0,234,1) 76%, rgba(209,55,255,1) 100%);
+// background: radial-gradient(circle, rgba(98,0,234,1) 76%, rgba(209,55,255,1) 100%);
+// filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#6200ea",endColorstr="#d137ff",GradientType=1);
+// }
+
+// .main-title {
+// background: rgb(209,55,255);
+// background: -moz-radial-gradient(circle, rgba(209,55,255,1) 76%, rgba(59,1,27,1) 100%);
+// background: -webkit-radial-gradient(circle, rgba(209,55,255,1) 76%, rgba(59,1,27,1) 100%);
+// background: radial-gradient(circle, rgba(209,55,255,1) 76%, rgba(59,1,27,1) 100%);
+// filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#d137ff",endColorstr="#3b011b",GradientType=1);
+// }
+
+// .main-title {
+// background: rgb(128,0,128);
+// background: -moz-radial-gradient(circle, rgba(128,0,128,1) 67%, rgba(71,1,32,1) 100%);
+// background: -webkit-radial-gradient(circle, rgba(128,0,128,1) 67%, rgba(71,1,32,1) 100%);
+// background: radial-gradient(circle, rgba(128,0,128,1) 67%, rgba(71,1,32,1) 100%);
+// filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#800080",endColorstr="#470120",GradientType=1);
+// }
+
 .custom-dialog {
    position: fixed;
    top: 0;

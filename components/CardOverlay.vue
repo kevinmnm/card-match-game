@@ -28,7 +28,7 @@
          <v-btn 
             v-else
             @click="ready()"
-            :disabled="ready_button_disabled"
+            :disabled="ready_button_status"
          >
             Ready
          </v-btn>
@@ -48,6 +48,17 @@ export default {
       };
    },
    computed: {
+      ready_button_status() {
+         let all_players = this.$store.state.room.room_info.players;
+         let my_button_status;
+         for (let key in all_players) {
+            if (all_players[key].displayName === this.my_display_name) {
+               my_button_status = all_players[key].ready;
+               break;
+            }
+         }
+         return my_button_status;
+      },
       my_display_name() {
          return this.$store.state.general.my_display_name;
       },

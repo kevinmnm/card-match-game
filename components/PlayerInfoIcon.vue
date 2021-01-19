@@ -80,7 +80,7 @@
 
       <v-tooltip bottom>
          <template v-slot:activator="{ on, attrs }">
-            <v-btn v-on="on" v-bind="attrs" fab x-small shaped depressed>
+            <v-btn @click="test()" v-on="on" v-bind="attrs" fab x-small shaped depressed>
                <v-icon color="error">mdi-alert-octagon</v-icon>
             </v-btn>
          </template>
@@ -118,6 +118,21 @@ export default {
       },
    },
    methods: {
+      test() {
+         this.$store.commit('alert/SHOW_ALERT', {
+            msg: "This is a test message. Hope this works well...",
+            html: "<b>Test....</b>",
+            buttons: [
+               {
+                  text: "Ok",
+                  color: "primary",
+                  action: ($store) => {
+                     $store.commit("alert/RESET_ALERT");
+                  },
+               },
+            ],
+         });
+      },
       popularity_vote(type) { // 'like' || 'dislike';
          this.disable_popularity_vote = true;
 

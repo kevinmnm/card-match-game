@@ -9,7 +9,7 @@
       >
          <Loading :size="40" />
       </v-sheet>
-      <v-sheet v-else height="100%" class="d-flex flex-column" width="100%" color="green" outlined>
+      <v-sheet v-else height="100%" class="d-flex flex-column" width="100%" outlined>
             <v-card
                class="d-flex justify-center align-center text-center"
                style="cursor: pointer"
@@ -19,12 +19,17 @@
             >
                TOP 10
          </v-card>
-         <v-sheet class="flex-grow-1 d-flex flex-column flex-wrap">
+         <v-sheet v-if="!rank_list || rank_list.length === 0">
+            empty
+         </v-sheet>
+         <v-sheet v-else class="flex-grow-1 d-flex flex-column flex-wrap">
             <v-card
                v-for="(rank, ind) in rank_list"
                :key="rank + ind"
                class="d-flex flex-row flex-grow-1"
                color="grey"
+               style="overflow:auto;"
+               max-height="45px"
                @click="(show_player_info = rank), (player_info_dialog = true)"
                flat
                tile
@@ -32,10 +37,22 @@
             >
                <v-card
                   class="d-flex align-center justify-center"
-                  width="25px"
+                  width="45px"
                   tile
                >
-                  {{ ind + 1 }}
+
+                  <v-img
+                     v-if="ind+1===1 || ind+1===2 || ind+1===3"
+                     :aspect-ratio="1/1"
+                     height="40px"
+                     contain
+                     :src="require(`@/assets/img/rank/${ind+1}.png`)"
+                  >
+                  </v-img>
+                  <span v-else>
+                     {{ ind + 1 }}
+                  </span>
+
                </v-card>
                <v-card
                   class="flex-grow-1 d-flex align-center justify-center"

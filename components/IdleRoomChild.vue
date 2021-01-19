@@ -18,18 +18,20 @@
 
 <!-- MIDDLE -->
       <v-sheet class="d-flex flex-row" width="100%" height="calc(80% - 230px)">
-         <v-sheet v-if="!my_display_name.toLowerCase().includes('guest') && my_friend_array.length > 0" width="40%">
+         <v-sheet class="flex-grow-1" v-if="!my_display_name.toLowerCase().includes('guest') && my_friend_array && my_friend_array.length > 0" width="40%">
             <FriendList :key="refresh_friend_list"/>
          </v-sheet>
-         <v-sheet v-else class="caption d-flex flex-column align-center justify-center" width="40%" height="100%" outlined color="classic white--text">
+         <v-sheet v-else class="flex-grow-1 caption d-flex flex-column align-center justify-center" width="40%" height="100%" outlined color="classic white--text">
             <div class="mb-3" style="font-size:20px;">😭</div>
             <div class="mb-3">NO FRIENDS</div>
             <v-btn v-if="my_display_name.toLowerCase().includes('guest')" class="caption" @click="refresh_page()" color="#adff2f" x-small text>Signup</v-btn>
          </v-sheet>
-         <v-sheet class="d-flex flex-column align-center justify-space-around" width="20%">
+
+         <v-sheet class="d-flex flex-column align-center justify-space-around" width="15%">
+         <!-- <v-sheet class="d-flex flex-column align-center justify-space-around" width="20%"> -->
 
             <v-sheet class="flex-grow-1" width="100%">
-               <v-btn v-if="window_width > 350" width="100%" :small="window_width < 450" height="100%" tile disabled>ranked</v-btn>
+               <v-btn v-if="window_width > 400" width="100%" :small="window_width < 450" height="100%" tile disabled>ranked</v-btn>
                <v-btn v-else width="100%" :small="window_width < 400" height="100%" tile disabled>
                   <v-icon>mdi-sword-cross</v-icon>
                </v-btn>
@@ -39,7 +41,7 @@
                <v-dialog v-model="create_room_dialog">
                   <template v-slot:activator="{ on, attrs }">
                      <v-btn 
-                        v-if="window_width > 350"
+                        v-if="window_width > 400"
                         v-bind="attrs"
                         v-on="on"
                         width="100%" 
@@ -68,7 +70,7 @@
             
             <v-sheet class="flex-grow-1" width="100%">
                <v-btn 
-                  v-if="window_width > 350"
+                  v-if="window_width > 400"
                   width="100%" 
                   @click="open_custom_dialog()" 
                   :loading="$store.state.custom.loading" 
@@ -92,7 +94,7 @@
 
             <v-sheet class="flex-grow-1" width="100%">
                <v-btn
-                  v-if="window_width > 350"
+                  v-if="window_width > 400"
                   width="100%"
                   height="100%"
                   @click="quickGame()"
@@ -117,7 +119,7 @@
             </v-sheet>
 
          </v-sheet>
-         <v-sheet width="40%">
+         <v-sheet class="flex-grow-1" width="40%">
             <RankList />
          </v-sheet>
       </v-sheet>

@@ -5,6 +5,7 @@ export const state = () => ({
    room_chat: [],
    game_starting: false,
    beginning_preview_flipping: false,
+   ready_button_key: 0,
 })
 
 export const mutations = {
@@ -129,10 +130,11 @@ export const mutations = {
    },
    POSITION_CHANGED(state, payload) {
       state.room_info.players = payload.new_players;
+      state.ready_button_key++;
    },
-   UPDATE_ROOM_PLAYERS(state, payload) { // Updates players only;
-      state.room.room_info.players = {
+   // UPDATE_ROOM_PLAYERS(state, payload) { // Updates players only;
+   //    state.room.room_info.players = {
 
-      }
-   }
+   //    }
+   // }
 }

@@ -7,7 +7,7 @@
                <AudioControl :custom-game="true" />
             </v-sheet>
 
-            <div class="text-center subtitle-1 font-weight-bold mt-5">TEAM</div>
+            <div v-if="room_info.capacity === 4" class="text-center subtitle-1 font-weight-bold mt-5">TEAM</div>
             <v-sheet
                v-if="room_info.capacity === 4"
                class="d-flex flex-column ma-auto text-center mb-2"
@@ -94,6 +94,7 @@
                            v-bind="attrs"
                            width="100%"
                            class="text-truncate"
+                           :disabled="room_info.start"
                         >
                            {{ room_info.players.player_2.displayName }}
                         </v-btn>

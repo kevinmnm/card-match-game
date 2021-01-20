@@ -193,6 +193,10 @@ export default {
          });
 
          window.socket.on('personal-alert', payload => {
+            if (payload.type) {
+               this.$store.commit('alert/SPECIAL_ALERT', payload);
+               return;
+            }
             this.$store.commit('alert/SHOW_ALERT', payload);
          });
       },

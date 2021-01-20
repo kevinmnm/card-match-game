@@ -82,12 +82,14 @@
             </v-sheet>
 
             <div v-if="room_info.capacity === 2" class="text-center subtitle-1 font-weight-bold mt-5">PLAYERS</div>
-            <v-sheet class="d-flex flex-row" width="100%" v-if="room_info.capacity === 2" outlined>
-               <v-card width="50%" v-if="room_info.players.player_1" flat>
-                  <v-btn class="text-truncate" width="100%">{{ room_info.players.player_1.displayName }}</v-btn>
+            <v-sheet  class="d-flex flex-row ma-auto align-center justify-center text-center" width="50%" min-width="240px" v-if="room_info.capacity === 2" outlined>
+               <v-card width="50%" v-if="room_info.players.player_1" flat outlined>
+                  <v-btn v-if="im_master" class="text-truncate" width="100%">{{ room_info.players.player_1.displayName }}</v-btn>
+                  <v-card v-if="!im_master" class="text-truncate" width="100%" flat tile>{{ room_info.players.player_1.displayName }}</v-card>
                </v-card>
-               <v-card v-if="room_info.players.player_2" width="50%" flat>
-                  <v-dialog v-model="kick_player_model" persistent overlay-opacity="0.95" max-width="400px">
+            
+               <v-card v-if="room_info.players.player_2" width="50%" flat outlined>
+                  <v-dialog v-if="im_master" v-model="kick_player_model" persistent overlay-opacity="0.95" max-width="400px">
                      <template v-slot:activator="{ on, attrs }">
                         <v-btn
                            v-on="on"
@@ -107,14 +109,26 @@
                         </v-card>
                      </v-sheet>
                   </v-dialog>
+                  <v-card v-if="!im_master" class="text-truncate" width="100%" flat tile>{{ room_info.players.player_2.displayName }}</v-card>
                </v-card>
                <v-card class="d-flex align-center justify-center caption" v-else width="50%" flat>
                   empty
                </v-card>
             </v-sheet>
 
+            <v-sheet
+               v-if="im_master"
+               class="d-flex flex-column ma-auto text-center mt-5"
+               height="100%"
+               width="50%"
+               min-width="240px"
+               outlined
+            >
+               <FriendList :online-only="online_only" />
+            </v-sheet>
+
          </v-sheet>
-         <v-sheet width="100%" class="mt-3">
+         <v-sheet width="100%" class="mt-5">
             <v-btn width="100%" color="error" @click="$emit('room-info-menu', false)">Close</v-btn>
          </v-sheet>
       </v-sheet>
@@ -124,11 +138,15 @@
 <script>
 import AudioControl from "@/components/AudioControl.vue";
 import RoomInfoMaster from "@/components/RoomInfoMaster.vue";
+import FriendList from "@/components/FriendList.vue";
 
 export default {
    name: "RoomInfoComp",
-   data: () => ({ kick_player_model: false }),
-   components: { AudioControl, RoomInfoMaster },
+   data: () => ({ 
+      kick_player_model: false,
+      online_only: true, 
+   }),
+   components: { AudioControl, RoomInfoMaster, FriendList },
    computed: {
       room_info() {
          return this.$store.state.room.room_info;

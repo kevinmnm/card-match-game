@@ -44,7 +44,8 @@
                   <v-img
                      v-if="ind+1===1 || ind+1===2 || ind+1===3"
                      :aspect-ratio="1/1"
-                     height="40px"
+                     :height="(window_width > 500) ? '40px' : '30px'"
+                     :min-width="(window_width > 500) ? '40px' : '30px'"
                      contain
                      :src="require(`@/assets/img/rank/${ind+1}.png`)"
                   >
@@ -55,7 +56,7 @@
 
                </v-card>
                <v-card
-                  class="flex-grow-1 d-flex align-center justify-center"
+                  class="flex-grow-1 d-flex align-center justify-center text-truncate"
                   tile
                >
                   {{ rank.displayName }}

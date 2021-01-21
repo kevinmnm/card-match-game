@@ -35,6 +35,26 @@ export default {
    methods: {
       prevent_default(event) {
          event.preventDefault();
+      },
+      detect_ios() {
+         return [
+            'iPad Simulator',
+            'iPhone Simulator',
+            'iPod Simulator',
+            'iPad',
+            'iPhone',
+            'iPod'
+         ].includes(navigator.platform)
+         // iPad on iOS 13 detection
+         || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+      }
+   },
+   beforeMount() {
+      if (this.detect_ios()) {
+         this.$store.commit('audio/FILE_TYPE', 'mp3');
+         this.$store.commit('audio/MP3_FOLDER', 'mp3/');
+      } else {
+         this.$store.commit('audio/FILE_TYPE', 'ogg');
       }
    },
    mounted() {
@@ -43,6 +63,8 @@ export default {
       } else {
          this.development = true;
       }
+
+      // alert(this.$store.state.audio.file_type);
 
    },
    beforeDestroy() {

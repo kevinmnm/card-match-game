@@ -37,7 +37,7 @@
             >
                <v-card
                   class="d-flex align-center justify-center"
-                  width="45px"
+                  min-width="35px"
                   tile
                >
 

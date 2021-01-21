@@ -73,7 +73,7 @@
                      <v-icon v-if="!online_only" x-small :color="(friend.logged) ? 'success' : 'grey'">mdi-circle</v-icon>
                      <v-btn
                         v-if="online_only && !room_info.start && im_master"
-                        @click="invite_friend(friend._id)"
+                        @click="invite_friend(friend._id, friend.location)"
                         :disabled="disable_invite_button"
                         tile
                         text
@@ -148,7 +148,7 @@ export default {
       }
    },
    methods: {
-      invite_friend(friend_id) {
+      invite_friend(friend_id, friendLocation) {
          this.disable_invite_button = true;
          let stop = false;
          for (let player in this.all_players) {
@@ -159,6 +159,12 @@ export default {
          }
          if (stop) {
             alert('Player is in the room!');
+            this.disable_invite_button = false;
+            return;
+         }
+
+         if (friendLocation !== 'lobby') {
+            alert('Player is not in lobby');
             this.disable_invite_button = false;
             return;
          }

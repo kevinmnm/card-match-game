@@ -200,6 +200,18 @@ export default {
             this.$store.commit('alert/SHOW_ALERT', payload);
          });
       },
+      detect_ios() {
+         return [
+            'iPad Simulator',
+            'iPhone Simulator',
+            'iPod Simulator',
+            'iPad',
+            'iPhone',
+            'iPod'
+         ].includes(navigator.platform)
+         // iPad on iOS 13 detection
+         || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+      }
    },
    watch: {
       connect_socket_watch(newVal) {
@@ -219,8 +231,28 @@ export default {
          // window.server_url = this.$store.state.general.server_url;
       }
 
-
    },
+   beforeMount() {
+      localStorage.__ios = this.detect_ios();
+
+      if (this.detect_ios()) {
+         this.$store.commit('audio/FILE_TYPE', 'mp3');
+         this.$store.commit('audio/MP3_FOLDER', 'mp3/');
+      } else {
+         this.$store.commit('audio/FILE_TYPE', 'ogg');
+         this.$store.commit('audio/MP3_FOLDER', '');
+      }
+
+   }
+   // created() {
+   //    // localStorage.__ios = this.detect_ios();
+      
+   //    // if (/iPhone|iPad|iPod/i.test(navigator.userAgent)){ // If IOS device,
+   //    //    console.log(navigator.userAgent);
+   //    // } else {
+   //    //    console.log(navigator.userAgent);
+   //    // }
+   // }
 };
 </script>
 

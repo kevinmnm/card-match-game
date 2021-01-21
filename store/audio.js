@@ -1,5 +1,6 @@
-
 export const state = () => ({
+   file_type: 'mp3',
+   mp3_folder: 'mp3/',
    bgm: {  // If true, play. If false, pause;
       elinia: false,
       lith: false,
@@ -28,6 +29,12 @@ export const state = () => ({
 });
 
 export const mutations = {
+   FILE_TYPE(state, payload) {
+      state.file_type = payload;
+   },
+   MP3_FOLDER(state, payload) {
+      state.mp3_folder = payload;
+   },
    PLAY_BGM(state, bgmName) { // ex) bgmName = 'elinia';
       if (state.bgm_muted) return;
       let bgm_keys = Object.keys(state.bgm);

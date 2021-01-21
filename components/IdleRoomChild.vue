@@ -27,13 +27,13 @@
             <v-btn v-if="my_display_name.toLowerCase().includes('guest')" class="caption" @click="refresh_page()" color="#adff2f" x-small text>Signup</v-btn>
          </v-sheet>
 
-         <v-sheet class="d-flex flex-column align-center justify-space-around" width="15%">
+         <v-sheet class="d-flex flex-shrink-1 flex-column align-center justify-space-around" width="15%">
          <!-- <v-sheet class="d-flex flex-column align-center justify-space-around" width="20%"> -->
 
             <v-sheet class="flex-grow-1" width="100%">
                <v-btn v-if="window_width > 400" width="100%" :small="window_width < 450" height="100%" tile disabled>ranked</v-btn>
                <v-btn v-else width="100%" :small="window_width < 400" height="100%" tile disabled>
-                  <v-icon>mdi-sword-cross</v-icon>
+                  <v-icon :small="window_width < 400" dense>mdi-sword-cross</v-icon>
                </v-btn>
             </v-sheet>
             
@@ -56,12 +56,11 @@
                         v-else
                         v-bind="attrs"
                         v-on="on"
-                        width="100%"
-                        :small="window_width < 400" 
+                        :small="window_width < 400"
                         height="100%"
                         tile
                      >
-                        <v-icon>mdi-folder-plus</v-icon>
+                        <v-icon :small="window_width < 400" dense>mdi-folder-plus</v-icon>
                      </v-btn>
                   </template>
                   <CreateRoom @close-create-room-dialog="create_room_dialog = false, create_room_key++" :key="create_room_key" />
@@ -88,7 +87,7 @@
                   :small="window_width < 400" 
                   height="100%"
                >
-                  <v-icon>mdi-folder-search</v-icon>
+                  <v-icon :small="window_width < 400" dense>mdi-folder-search</v-icon>
                </v-btn>
             </v-sheet>
 
@@ -109,11 +108,10 @@
                   width="100%"
                   height="100%"
                   @click="quickGame()"
-                  @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')"
                   :disabled="loading_comp"
                   :small="window_width < 400"
                >
-                  <v-icon>mdi-flash</v-icon>
+                  <v-icon :small="window_width < 400" dense>mdi-flash</v-icon>
                </v-btn>
 
             </v-sheet>

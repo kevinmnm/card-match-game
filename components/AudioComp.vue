@@ -14,34 +14,33 @@
    <!----------->
 
       <!-- Card Flip -->
-      <audio ref="card_flip" :src="require('@/assets/music/sound/card_flip.ogg')" preload="auto"></audio>
-      <audio ref="cardFlip" :src="require('@/assets/music/sound/cardFlip.ogg')" preload="auto"></audio>
+      <audio ref="card_flip" :src="require(`@/assets/music/sound/${mp3_folder}card_flip.${file_type}`)" preload="auto"></audio>
+      <audio ref="cardFlip" :src="require(`@/assets/music/sound/${mp3_folder}cardFlip.${file_type}`)" preload="auto"></audio>
       <!-- Quick Wind -->
-      <audio ref="quickWind" :src="require('@/assets/music/sound/quickWind.ogg')" preload="auto"></audio>
+      <audio ref="quickWind" :src="require(`@/assets/music/sound/${mp3_folder}quickWind.${file_type}`)" preload="auto"></audio>
       <!-- Bubble Pop -->
-      <audio ref="bubble_pop" :src="require('@/assets/music/sound/bubble_pop.ogg')" preload="auto"></audio>
+      <audio ref="bubble_pop" :src="require(`@/assets/music/sound/${mp3_folder}bubble_pop.${file_type}`)" preload="auto"></audio>
       <!-- Buff Up -->
-      <audio ref="buffUp" :src="require('@/assets/music/sound/buffUp.ogg')" preload="auto"></audio>
+      <audio ref="buffUp" :src="require(`@/assets/music/sound/${mp3_folder}buffUp.${file_type}`)" preload="auto"></audio>
       <!-- Countdown -->
-      <audio ref="countdown" :src="require('@/assets/music/sound/countdown.ogg')" preload="auto"></audio>
+      <audio ref="countdown" :src="require(`@/assets/music/sound/${mp3_folder}countdown.${file_type}`)" preload="auto"></audio>
       <!-- Game Over -->
-      <audio ref="game_over_1" :src="require('@/assets/music/sound/game_over_1.wav')" preload="auto"></audio>
+      <audio ref="game_over_1" :src="require(`@/assets/music/sound/game_over_1.wav`)" preload="auto"></audio>
       <!-- Joined -->
-      <audio ref="joined" :src="require('@/assets/music/sound/joined.ogg')" preload="auto"></audio>
+      <audio ref="joined" :src="require(`@/assets/music/sound/${mp3_folder}joined.${file_type}`)" preload="auto"></audio>
       <!-- Victory -->
-      <audio ref="victory" :src="require('@/assets/music/sound/victory.ogg')" preload="auto"></audio>
-      <audio ref="win" :src="require('@/assets/music/sound/win.mp3')" preload="auto"></audio>
+      <audio ref="victory" :src="require(`@/assets/music/sound/${mp3_folder}victory.${file_type}`)" preload="auto"></audio>
+      <audio ref="win" :src="require(`@/assets/music/sound/${mp3_folder}win.mp3`)" preload="auto"></audio>
       <!-- Invite -->
-      <audio ref="invite" :src="require('@/assets/music/sound/invite.ogg')" preload="auto"></audio>
+      <audio ref="invite" :src="require(`@/assets/music/sound/${mp3_folder}invite.${file_type}`)" preload="auto"></audio>
       <!-- Add Score -->
-      <audio ref="add_score" :src="require('@/assets/music/sound/add_score.ogg')" preload="auto"></audio>
+      <audio ref="add_score" :src="require(`@/assets/music/sound/${mp3_folder}add_score.${file_type}`)" preload="auto"></audio>
       <!-- Confirmation -->
-      <audio ref="confirmation" :src="require('@/assets/music/sound/confirmation.ogg')" preload="auto"></audio>
+      <audio ref="confirmation" :src="require(`@/assets/music/sound/${mp3_folder}confirmation.${file_type}`)" preload="auto"></audio>
       <!-- Joined Room -->
-      <audio ref="joined_room" :src="require('@/assets/music/sound/joined_room.ogg')" preload="auto"></audio>
+      <audio ref="joined_room" :src="require(`@/assets/music/sound/${mp3_folder}joined_room.${file_type}`)" preload="auto"></audio>
       <!-- Ingame Countdown -->
-      <audio ref="ingame_countdown" :src="require('@/assets/music/sound/ingame_countdown.ogg')" preload="auto"></audio>
-
+      <audio ref="ingame_countdown" :src="require(`@/assets/music/sound/${mp3_folder}ingame_countdown.${file_type}`)" preload="auto"></audio>
 
    </div>
 </template>
@@ -51,7 +50,13 @@ import { mapState } from 'vuex'
 
 export default {
    name: "AudioComp",
+   data: () => ({ 
+      // file_type: '',
+      // mp3_folder: '', 
+   }),
    computed: mapState({
+      file_type: state => state.audio.file_type,
+      mp3_folder: state => state.audio.mp3_folder,
       // BGM COLLECTION (Boolean);
       lith: state => state.audio.bgm.lith,
       elinia: state => state.audio.bgm.elinia,
@@ -75,15 +80,24 @@ export default {
    }),
    methods: {
       trigger_audio(ref, playOrPause) { // ref = name, playOrPause = true || false;
-         if (playOrPause || playOrPause === undefined) { // If play, (false is pause);
-            if (this.$refs[ref].paused) {
+         if (localStorage.__ios === 'false') { // If NOT IOS device,
+            if (playOrPause || playOrPause === undefined) { // If play, (false is pause);
+               if (this.$refs[ref].paused) {
+                  this.$refs[ref].play();
+               } else {
+                  this.$refs[ref].currentTime = 0;
+               }
                this.$refs[ref].play();
-            } else {
-               this.$refs[ref].currentTime = 0;
+            } else { // If pause,
+               this.$refs[ref].pause();
             }
-            this.$refs[ref].play();
-         } else { // If pause,
-            this.$refs[ref].pause();
+         } else { // If IOS device,
+            if (playOrPause || playOrPause === undefined) { // If play, (false is pause);
+               this.$refs[ref].load();
+               this.$refs[ref].play();
+            } else { // If pause,
+               this.$refs[ref].pause();
+            }
          }
       }
    },
@@ -119,6 +133,18 @@ export default {
             this.$refs[ref].volume = 0.6;
          }
       });
-   }
+
+      console.log(this.file_type);
+      console.log(this.mp3_folder);
+   },
+   // beforeMount() {
+   //    if (localStorage.__ios === 'true') {
+   //       this.file_type = 'mp3';
+   //       this.mp3_folder = 'mp3/';
+   //    } else {
+   //       this.file_type = 'ogg';
+   //       this.mp3_folder = '';
+   //    }
+   // }
 };
 </script>

@@ -133,9 +133,6 @@ export default {
             this.$refs[ref].volume = 0.6;
          }
       });
-
-      console.log(this.file_type);
-      console.log(this.mp3_folder);
    },
    // beforeMount() {
    //    if (localStorage.__ios === 'true') {

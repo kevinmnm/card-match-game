@@ -111,7 +111,7 @@ export default {
          return this.playerInfo;
       },
       my_user_info() {
-         if (this.is_guest) {return false; }
+         if (this.isGuest) {return false; }
          else {
             return this.$store.state.user.user_info;
          }
@@ -199,7 +199,7 @@ export default {
             }
 
             for (let i=0; i<player_pending_array.length; i++) {
-               if (player_pending_array[i].displayName === my_user_info.displayName) {
+               if (player_pending_array[i].displayName === this.my_user_info.displayName) {
                   this.disable_add_friend_button = true;
                   stop = true;
                   break;

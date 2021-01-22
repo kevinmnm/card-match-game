@@ -11,11 +11,12 @@
       </v-sheet>
       <v-sheet v-else height="100%" class="d-flex flex-column" width="100%" outlined>
             <v-card
-               class="d-flex justify-center align-center text-center"
+               class="d-flex justify-center align-center subtitle-1 font-weight-bold"
                style="cursor: pointer"
                width="100%"
-               height="35px"
+               outlined
                tile
+               flat
             >
                TOP 10
          </v-card>

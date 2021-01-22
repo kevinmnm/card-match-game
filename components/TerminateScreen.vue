@@ -30,6 +30,17 @@ export default {
       room_inform() {
          return this.$store.state.room.room_info;
       },
+      im_spectator() {
+         let spectators_array = this.room_infom.spectators;
+         let imSpectator = false;
+         for (let i=0; i<spectators_array.length; i++) {
+            if (spectators_array[i].displayName === this.my_display_name) {
+               imSpectator = true;
+               break;
+            }
+         }
+         return imSpectator;
+      },
    },
    watch: {
       terminate_room: {
@@ -51,11 +62,19 @@ export default {
                            }
                         }
                      );
-                     socket.emit("leave-game", [
-                        this.room_inform.room_number,
-                        myInfo,
-                        null,
-                     ]);
+                     if (this.im_spectator) { // If I'm a spectator,
+                        socket.emit("spectate-leave",{
+                           spectatorInfo: this.$store.state.user.user_info,
+                           roomInfo: this.room_inform
+                        });
+                     } else { // If I'm not a spectator,
+                        socket.emit("leave-game", [
+                           this.room_inform.room_number,
+                           myInfo,
+                           null,
+                        ]);
+                     }
+                     
                      this.$store.commit("card/INITIAL_STATE_CARD");
                   }
                }, 1000);

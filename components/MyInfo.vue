@@ -31,6 +31,7 @@
             <v-sheet class="d-flex flex-column text-center">
                <v-btn @click="comming_soon()">Change Username</v-btn>
                <v-btn @click="show_change_cred = true;">Change Password</v-btn>
+               <v-btn @click="theme_change()">Change Theme</v-btn>
             </v-sheet>
          </v-menu>
       </v-card>
@@ -238,6 +239,9 @@ export default {
    methods: {
       comming_soon(){
          alert('Comming Soon');
+      },
+      theme_change() {
+         this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
       },
       friend_request_handler(action, displayName) {
          window.socket.emit("friend-request", {

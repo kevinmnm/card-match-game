@@ -1,8 +1,36 @@
 <template>
    <v-sheet>
-      <v-card> Create Room </v-card>
+      <!-- <v-card> Create Room </v-card> -->
+      <v-col cols="12" class="pa-0 ma-0">
+               <v-text-field
+                  v-model="room_title"
+                  dense
+                  hide-details
+                  flat
+                  single-line
+                  filled
+                  outlined
+                  autocomplete="off"
+                  style="border-radius: 0"
+                  placeholder="Room Title"
+                  maxlength="25"
+               >
+               </v-text-field>
+            </v-col>
+      <v-carousel class="ma-auto" style="width:500px" height="min-content" ref="carousel" @change="selected_theme()" show-arrows-on-hover hide-delimiter-background>
+         <v-carousel-item
+            v-for="(type) in type_list"
+            :key="type"
+            :value="type"
+         > 
+            <v-responsive :aspect-ratio="1/1">
+               <v-img max-height="500px" contain :src="require(`@/assets/img/type/${type}.png`)"></v-img>
+            </v-responsive>
+         </v-carousel-item>
+      </v-carousel>
+      <!--  
       <v-sheet class="d-flex flex-wrap justify-center" style="overflow: hidden">
-         <v-hover v-slot="{ hover }">
+         <v-hover v-slot="{ hover}">
             <v-card
                :class="{ 'on-hover': hover }"
                :width="vuetify_breakpoint === 'xs' ? '50%' : '25%'"
@@ -68,6 +96,7 @@
             </v-card>
          </v-hover>
       </v-sheet>
+   -->
       <v-sheet>
          <v-row class="ma-0">
             <v-col cols="12" class="pa-0 ma-0 text-center">
@@ -117,7 +146,7 @@
                   >
                </v-btn-toggle>
             </v-col>
-            <v-col cols="12" class="pa-0 ma-0">
+            <!-- <v-col cols="12" class="pa-0 ma-0">
                <v-text-field
                   v-model="room_title"
                   dense
@@ -132,7 +161,7 @@
                   maxlength="25"
                >
                </v-text-field>
-            </v-col>
+            </v-col> -->
             <v-col cols="12" class="pa-0 ma-0 flex-row d-flex">
                <v-btn-toggle style="width: 50%">
                   <v-btn
@@ -246,8 +275,9 @@ export default {
       room_title: "Let's play!",
       secret_key: "",
       room_type: "",
+      type_list: ['classic', 'colorless', 'lovely', 'plain'],
       show_key: false,
-      selected_type: "",
+      selected_type: "classic",
       room_capacity: null,
       allow_guest: null,
    }),
@@ -273,6 +303,10 @@ export default {
       },
    },
    methods: {
+      selected_theme() {
+         if (!this.$refs.carousel) return;
+         this.selected_type = this.$refs.carousel.selectedValues[0];
+      },
       set_room_capacity(capacity) {
          this.room_capacity = capacity;
       },

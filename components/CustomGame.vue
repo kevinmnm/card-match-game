@@ -442,7 +442,18 @@ export default {
       },
       beginning_preview_flipping() {
          return this.$store.state.room.beginning_preview_flipping;
-      }
+      },
+      im_spectator() {
+         let spectators_array = this.room_info.spectators;
+         let imSpectator = false;
+         for (let i=0; i<spectators_array.length; i++) {
+            if (spectators_array[i].displayName === this.my_display_name) {
+               imSpectator = true;
+               break;
+            }
+         }
+         return imSpectator;
+      },
    },
    methods: {
       open_player_info(player) {
@@ -469,8 +480,16 @@ export default {
          }
       },
       confirm_leave(){
-         if (this.room_info.start) {
+         if (this.room_info.start && !this.im_spectator) { // If game started and not a spectator,
             return this.leave_confirm = true;
+         }
+
+         if (this.im_spectator) { // If leaving player is a spectator,
+            window.socket.emit('spectate-leave', {
+               spectatorInfo: this.$store.state.user.user_info,
+               roomInfo: this.room_info,
+            });
+            return;
          }
 
          let myInfo;
@@ -484,7 +503,7 @@ export default {
          socket.emit('leave-game', [this.room_number, myInfo, null]);
          this.$store.commit('card/INITIAL_STATE_CARD');
 
-      }
+      },
    },
    mounted() {
       this.isMounted = true;

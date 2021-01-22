@@ -28,6 +28,7 @@
                   v-on="on"
                   v-bind="attrs"
                   flat
+                  outlined
                >
                   FRIENDS
                </v-card>
@@ -54,7 +55,7 @@
             </v-tooltip>
          </v-card>
 
-         <v-expansion-panels multiple accordion :readonly="room_info && room_info.start">
+         <v-expansion-panels tile focusable accordion :readonly="room_info && room_info.start">
             <v-expansion-panel
                v-for="(friend,ind) in detailed_friend"
                :key="ind"
@@ -83,8 +84,24 @@
                      </v-btn>
                   </template>
                </v-expansion-panel-header>
-               <v-expansion-panel-content v-if="!online_only" class="d-flex flex-row pa-0 ma-0">
-                  <v-btn>Info</v-btn>
+               <v-expansion-panel-content v-if="!online_only" class="pa-0 ma-0">
+                  <v-sheet class="d-flex flex-wrap" :class="(window_width < 500) ? 'flex-column' : 'flex-row justify-space-between'" width="100%" height="100%">
+                     <v-btn class="flex-grow-1" @click="show_friend_info(friend)" tile>
+                        <v-icon color="info">mdi-information-outline</v-icon>
+                     </v-btn>
+                     <v-btn class="flex-grow-1" tile>
+                        <v-icon color="success">mdi-chat-outline</v-icon>
+                     </v-btn>
+                     <v-btn class="flex-grow-1" @click="delete_friend(friend)" tile>
+                        <v-icon color="error">mdi-delete-outline</v-icon>
+                     </v-btn>
+                  </v-sheet>
+                  
+                  <!-- <v-btn 
+                     @click="spectate_player(friend)" 
+                     small
+                     :disabled="!friend.location.toLowerCase().includes('custom')"
+                  >Spectate</v-btn> -->
                </v-expansion-panel-content>
             </v-expansion-panel>
          </v-expansion-panels>
@@ -97,16 +114,25 @@
       >
          No Online Friends
       </v-sheet>
-
+      <v-dialog v-model="player_info_dialog" class="pa-0 ma-0" overlay-opacity="0.9" :width="window_width <= 600 ? '100%' : '60%'">
+         <PlayerInfo 
+            v-if="player_info_dialog" 
+            :player-info="player_info_prop" 
+            :img-size="window_width / 6 + 'px'" 
+            @player-info-dialog-close="player_info_dialog = false" 
+            :show-detail="true"
+         />
+      </v-dialog>
    </v-sheet>
 </template>
 
 <script>
 import Loading from "@/components/Loading.vue";
+import PlayerInfo from "@/components/PlayerInfo.vue";
 
 export default {
    name: "FriendList",
-   components: { Loading },
+   components: { Loading, PlayerInfo },
    props: ["onlineOnly"],
    data: () => ({
       show_loading: true,
@@ -114,6 +140,8 @@ export default {
       sort_friend: null,
       no_friend: false,
       disable_invite_button: false,
+      player_info_dialog: false,
+      player_info_prop: null,
    }),
    computed: {
       window_width() {
@@ -148,6 +176,13 @@ export default {
       }
    },
    methods: {
+      delete_friend(friend) {
+
+      },
+      show_friend_info(friend) {
+         this.player_info_prop = friend;
+         this.player_info_dialog = true;
+      },
       invite_friend(friend_id, friendLocation) {
          this.disable_invite_button = true;
          let stop = false;
@@ -193,10 +228,13 @@ export default {
          if (!res.friendList || res.friendList.length < 1) {
             this.show_loading = false;
             this.no_friend = true;
+            this.$store.commit('friend/FRIEND_LIST_ALL', null);
             return
          }
 
          this.detailed_friend = res.friendList;
+         this.$store.commit('friend/FRIEND_LIST_ALL', this.detailed_friend);
+         
          if (this.online_only) {
             this.sort_friend = 'online';
          } else {
@@ -218,6 +256,3 @@ export default {
    // }
 };
 </script>
-
-<style>
-</style>

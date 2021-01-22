@@ -19,3 +19,12 @@ $body-font-family: 'Nunito', sans-serif; // Re-setting default sass variable;
       flex-wrap: wrap;
    }
 }
+
+.v-expansion-panel-content__wrap {
+   padding: 0px;
+}
+
+.v-expansion-panel-header {
+   min-height: 20px;
+   padding: 5px;
+}

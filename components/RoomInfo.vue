@@ -127,6 +127,26 @@
                <FriendList :online-only="online_only" />
             </v-sheet>
 
+            <v-sheet
+               class="d-flex flex-column ma-auto text-center mt-5"
+               width="50%" 
+               min-width="240px"
+            >
+               <v-card class="text-center subtitle-1 font-weight-bold" flat tile outlined>SPECTATORS</v-card>
+               <!-- <v-card v-if="!all_spectators || all_spectators.length === 0">empty</v-card> -->
+               <v-card
+                  v-for="(spec,ind) in all_spectators"
+                  :key="spec+ind"
+                  class="d-flex flex-column justify-center align-center"
+                  flat
+                  tile
+                  width="100%"
+                  outlined
+               >
+                  {{ spec.displayName }}
+               </v-card>
+            </v-sheet>
+
          </v-sheet>
          <v-sheet width="100%" class="mt-5">
             <v-btn width="100%" color="error" @click="$emit('room-info-menu', false)">Close</v-btn>
@@ -160,6 +180,9 @@ export default {
          } else {
             return false;
          }
+      },
+      all_spectators() {
+         return this.room_info.spectators;
       }
    },
    methods: {

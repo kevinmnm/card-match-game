@@ -16,7 +16,7 @@
          </div>
       </v-card>
 
-      <v-card v-if="room_type === 'custom' && room_infor.room_master && !game_starting">
+      <v-card v-if="room_type === 'custom' && room_infor.room_master && !game_starting && !im_spectator">
          <v-btn 
             v-if="my_display_name === room_infor.room_master.displayName"
             :disabled="disable_start_button"
@@ -48,6 +48,17 @@ export default {
       };
    },
    computed: {
+      im_spectator() {
+         let spectators_array = this.room_infor.spectators;
+         let imSpectator = false;
+         for (let i=0; i<spectators_array.length; i++) {
+            if (spectators_array[i].displayName === this.my_display_name) {
+               imSpectator = true;
+               break;
+            }
+         }
+         return imSpectator;
+      },
       ready_button_status() {
          let all_players = this.$store.state.room.room_info.players;
          let my_button_status;

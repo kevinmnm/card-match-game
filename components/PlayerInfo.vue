@@ -117,6 +117,32 @@
                </tbody>
             </v-simple-table>
          </div>
+
+         <div v-if="!playerInfoLoading && show_detail" class="mt-2">
+            <v-simple-table class="text-center" dense>
+               <thead v-if="!player_info.guest && !im_guest">
+                  <tr>
+                     <th>DETAILS</th>
+                  </tr>
+               </thead>
+               <tbody v-if="!player_info.guest">
+                  <tr>
+                     <td>LOCATION</td>
+                     <td>{{ player_location }}</td>
+                     <td>
+                        <v-btn
+                           tile
+                           small
+                           outlined
+                           :disabled="player_location !== 'Room'"
+                           @click="join_spectate()"
+                        >Spectate</v-btn>
+                     </td>
+                  </tr>
+               </tbody>
+            </v-simple-table>
+         </div>
+
       </v-sheet>
       <v-sheet class="mt-2">
          <v-btn
@@ -137,7 +163,7 @@ import PlayerInfoIcon from "@/components/PlayerInfoIcon.vue";
 
 export default {
    name: "PlayerInfoComp",
-   props: ["playerInfo", "imgSize", "hideButton", "hideThumbs"],
+   props: ["playerInfo", "imgSize", "hideButton", "hideThumbs", "showDetail"],
    components: { Loading, PlayerInfoIcon },
    data() {
       return {
@@ -152,6 +178,9 @@ export default {
       },
       img_size() {
          return this.imgSize;
+      },
+      show_detail() {
+         return this.showDetail;
       },
       is_my_info() { // Check if I'm viewing my own info;
          if (this.player_info.displayName === this.$store.state.general.my_display_name) {
@@ -170,9 +199,42 @@ export default {
          } else {
             return false;
          }
+      },
+      player_location() {
+         if (this.player_info.logged) {
+            if (this.player_info.location === 'lobby') {
+               return 'Lobby';
+            } else if (this.player_info.location.toLowerCase().includes('custom')) {
+               return 'Room';
+            } else if (this.player_info.location.toLowerCase().includes('quick')) {
+               return 'Quick';
+            }
+         } else {
+            return 'Offline';
+         }
       }
    },
    methods: {
+      join_spectate() {
+         this.$store.commit('general/GLOBAL_LOADING', true);
+         
+         window.socket.emit('spectate-player', {
+            spectatorInfo: this.$store.state.user.user_info,
+            playerInfo: this.player_info,
+            roomNumber: this.player_info.location,
+         });
+
+         window.socket.on('player-spectate', payload => {
+            if (!payload.status) { // If failed to join as spectator,
+               alert(payload.msg);
+            } else { // If success,
+               this.$store.commit('room/ROOM_TYPE', 'custom');
+               this.$store.commit('room/ROOM_INFO_UPDATE', payload.roomInfo);
+               this.$store.commit('room/SHOW_ROOM', true);
+            }
+            this.$store.commit('general/GLOBAL_LOADING', false);
+         });
+      },
       async get_guest_info() {
          this.playerInfoLoading = true;
          const response = await fetch(window.server_url + "/guest", {

@@ -58,6 +58,7 @@
                         v-on="on"
                         :small="window_width < 400"
                         height="100%"
+                        width="100%"
                         tile
                      >
                         <v-icon :small="window_width < 400" dense>mdi-folder-plus</v-icon>
@@ -231,9 +232,33 @@
          <div class="all-chat-title">
             <div
                class="text-left pl-1 pr-1"
-               style="block-size: min-content; height: 100%; background: red"
+               style="block-size: min-content; height: 100%;"
             >
-               LOBBY
+               <v-menu offset-y class="pa-0">
+                  <template v-slot:activator="{ on, attrs }">
+                     <v-btn
+                        v-bind="attrs"
+                        v-on="on"
+                        width="100%"
+                        height="100%"
+                        text
+                        tile
+                     >
+                        {{ chosen_chat }}
+                     </v-btn>
+                  </template>
+                  <v-card class="d-flex flex-column" flat width="100%">
+                     <v-btn 
+                        v-for="(friend,ind) in whisper_friend_array"
+                        :key="friend+ind"
+                        @click="wisper_chat(friend)"
+                        width="100%"
+                        tile
+                     >
+                        {{ friend.displayName }}
+                     </v-btn>
+                  </v-card>
+               </v-menu>
             </div>
             <div class="text-center flex-grow-1">
                <v-dialog width="60%">
@@ -324,9 +349,13 @@ export default {
          create_room_dialog: false,
          create_room_key: 0,
          comp_mounted: false,
+         chosen_chat: "LOBBY"
       };
    },
    computed: {
+      // chosen_chat() {
+      //    // return this.$store.state.
+      // },
       window_width() {
          return this.$vuetify.breakpoint.width;
       },
@@ -353,9 +382,26 @@ export default {
       },
       my_friend_array() {
          return this.$store.state.user.user_info.friend;
+      },
+      whisper_friend_array() {
+         let lobby_array = [{displayName: 'LOBBY'}];
+         let friendList = this.$store.state.friend.friend_list_all;
+         if (friendList && friendList.length > 0) {
+            for (let i=0; i<friendList.length; i++) {
+               if (friendList[i].logged) {
+                  lobby_array.push(friendList[i]);
+               }
+            }
+            return lobby_array;
+         } else {
+            return lobby_array;
+         }
       }
    },
    methods: {
+      wisper_chat(friend) {
+         this.chosen_chat = friend.displayName;
+      },
       refresh_page() {
          window.location.reload();
       },

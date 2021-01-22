@@ -199,6 +199,11 @@ export default {
             }
             this.$store.commit('alert/SHOW_ALERT', payload);
          });
+
+         window.socket.on('update-spectators-only', payload => {
+            this.$store.commit('room/UPDATE_SPECTATORS_ONLY', payload);
+         });
+
       },
       detect_ios() {
          return [

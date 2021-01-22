@@ -105,6 +105,13 @@ export const mutations = {
                chat_style: "text-align:center; color:#90EE90; font-size:16px; background:#000000; margin-bottom:2px;"
             }
          );
+      } else if (payload.chat_type === 'sky') { // Chat sky;
+         state.room_chat.push(
+            {
+               chat_val: payload.chat_value,
+               chat_style: "text-align:center; color:#87CEFA; font-size:16px; background:#000000; margin-bottom:2px;"
+            }
+         );
       }
    },
    GAME_STARTING(state, payload) {
@@ -132,6 +139,9 @@ export const mutations = {
       state.room_info.players = payload.new_players;
       state.ready_button_key++;
    },
+   UPDATE_SPECTATORS_ONLY(state, payload) {
+      state.room_info.spectators = payload;
+   }
    // UPDATE_ROOM_PLAYERS(state, payload) { // Updates players only;
    //    state.room.room_info.players = {
 

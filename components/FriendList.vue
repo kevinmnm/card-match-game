@@ -89,12 +89,27 @@
                      <v-btn class="flex-grow-1" @click="show_friend_info(friend)" tile>
                         <v-icon color="info">mdi-information-outline</v-icon>
                      </v-btn>
-                     <v-btn class="flex-grow-1" tile>
+                     <v-btn v-if="friend.logged" @click="$emit('trigger-whisper-friend', friend)" class="flex-grow-1" tile>
                         <v-icon color="success">mdi-chat-outline</v-icon>
                      </v-btn>
-                     <v-btn class="flex-grow-1" @click="delete_friend(friend)" tile>
-                        <v-icon color="error">mdi-delete-outline</v-icon>
-                     </v-btn>
+                     
+                     <v-dialog v-model="unfriend_dialog">
+                        <template v-slot:activator="{ on, attrs }">
+                           <v-btn class="flex-grow-1" v-bind="attrs" v-on="on" tile>
+                              <v-icon color="error">mdi-delete-outline</v-icon>
+                           </v-btn>
+                        </template>
+                        <v-sheet class="d-flex flex-column">
+                           <v-card class="headline text-center" flat tile>
+                              Are you sure you want to unfriend <b v-html="friend.displayName"></b>?
+                           </v-card>
+                           <v-card class="d-flex flex-row flex-wrap" width="100%">
+                              <v-btn @click="unfriend_dialog = false" width="50%" color="success" tile>Cancel</v-btn>
+                              <v-btn @click="unfriend_func(friend)" width="50%" color="error" tile>Unfriend</v-btn>
+                           </v-card>
+                           
+                        </v-sheet>
+                     </v-dialog>
                   </v-sheet>
                   
                   <!-- <v-btn 
@@ -142,6 +157,7 @@ export default {
       disable_invite_button: false,
       player_info_dialog: false,
       player_info_prop: null,
+      unfriend_dialog: false,
    }),
    computed: {
       window_width() {
@@ -176,8 +192,13 @@ export default {
       }
    },
    methods: {
-      delete_friend(friend) {
-
+      unfriend_func(friend) {
+         this.$store.commit('general/GLOBAL_LOADING', true);
+         window.socket.emit('unfriend', {
+            playerInfo: this.my_info,
+            friendInfo: friend
+         });
+         this.unfriend_dialog = false;
       },
       show_friend_info(friend) {
          this.player_info_prop = friend;
@@ -213,6 +234,7 @@ export default {
       },
       async get_detailed_friend_list(status) { // Stores in data detailed_friend!
          this.show_loading = true;
+         if (!status) {status = false}
 
          const response = await fetch(window.server_url + '/friend', {
             headers: { 'Content-Type': 'application/json' },
@@ -234,13 +256,14 @@ export default {
 
          this.detailed_friend = res.friendList;
          this.$store.commit('friend/FRIEND_LIST_ALL', this.detailed_friend);
-         
+
          if (this.online_only) {
             this.sort_friend = 'online';
          } else {
             this.sort_friend = 'all';
          }
          this.show_loading = false;
+
       },
    },
    created() {

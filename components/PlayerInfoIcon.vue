@@ -120,7 +120,7 @@ export default {
    methods: {
       test() {
          this.$store.commit('alert/SHOW_ALERT', {
-            msg: "This is a test message. Hope this works well...",
+            msg: "This is a test message!",
             html: "<b>Test....</b>",
             buttons: [
                {

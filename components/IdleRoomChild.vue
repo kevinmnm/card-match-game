@@ -19,7 +19,7 @@
 <!-- MIDDLE -->
       <v-sheet class="d-flex flex-row" width="100%" height="calc(80% - 230px)">
          <v-sheet class="flex-grow-1" v-if="!my_display_name.toLowerCase().includes('guest') && my_friend_array && my_friend_array.length > 0" width="40%">
-            <FriendList :key="refresh_friend_list"/>
+            <FriendList @trigger-whisper-friend="(val) => whisper_chat(val)" :key="refresh_friend_list"/>
          </v-sheet>
          <v-sheet v-else class="flex-grow-1 caption d-flex flex-column align-center justify-center" width="40%" height="100%" outlined color="classic white--text">
             <div class="mb-3" style="font-size:20px;">😭</div>
@@ -122,64 +122,6 @@
             <RankList />
          </v-sheet>
       </v-sheet>
-
-
-
-       <!-- <v-row>
-         <v-col cols="6" class="col-sm-3">
-            <v-btn width="100%" disabled>ranked</v-btn>
-         </v-col>
-         <v-col cols="6" class="col-sm-3">
-            <v-dialog v-model="create_room_dialog">
-               <template v-slot:activator="{ on, attrs }">
-                  <v-btn 
-                     v-bind="attrs"
-                     v-on="on"
-                     width="100%" 
-                     @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')"
-                  >
-                     create
-                  </v-btn>
-               </template>
-               <CreateRoom @close-create-room-dialog="create_room_dialog = false, create_room_key++" :key="create_room_key" />
-            </v-dialog>
-         </v-col>
-         <v-col cols="6" class="col-sm-3">
-            <v-btn width="100%" @click="open_custom_dialog()" :loading="$store.state.custom.loading" @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')">join</v-btn>
-         </v-col>
-         <v-col cols="6" class="col-sm-3">
-            <v-btn
-               width="100%"
-               @click="quickGame()"
-               @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')"
-               :disabled="loading_comp"
-               plain
-            >
-               quick
-            </v-btn>
-         </v-col>
-      </v-row> -->
-
-
-      <!-- <v-sheet class="" width="100%" height="20%" color="primary">
-
-      </v-sheet>
-      <v-sheet class="d-flex flex-row flex-wrap justify-center" width="100%">
-         <v-sheet width="35%" height="100%" color="grey">
-
-         </v-sheet>
-         <v-sheet width="30%">
-            <v-sheet class="d-flex flex-row flex-wrap" width="100%" height="100%" color="red">
-               <v-btn width="100%">ranked</v-btn>
-               <v-btn width="100%">ranked</v-btn>
-               <v-btn width="100%">ranked</v-btn>
-               <v-btn width="100%">ranked</v-btn>
-            </v-sheet>
-         </v-sheet>
-         <v-sheet width="35%" height="100%" color="green">
-
-         </v-sheet> 
-      </v-sheet>-->
       <Loading v-show="loading_comp">
          <template v-slot:text>
             {{ loading_text }}
@@ -236,26 +178,43 @@
             >
                <v-menu offset-y class="pa-0">
                   <template v-slot:activator="{ on, attrs }">
-                     <v-btn
-                        v-bind="attrs"
-                        v-on="on"
-                        width="100%"
-                        height="100%"
-                        text
-                        tile
+                     <v-badge
+                        :value="new_whisper_badge"
+                        dot
+                        overlap
+                        color="classic"
                      >
-                        {{ chosen_chat }}
-                     </v-btn>
+                        <v-btn
+                           v-bind="attrs"
+                           v-on="on"
+                           width="100%"
+                           height="100%"
+                           text
+                           tile
+                        >
+                           {{ chosen_chat }}
+                        </v-btn>
+                     </v-badge>
                   </template>
                   <v-card class="d-flex flex-column" flat width="100%">
                      <v-btn 
                         v-for="(friend,ind) in whisper_friend_array"
                         :key="friend+ind"
-                        @click="wisper_chat(friend)"
+                        @click="whisper_chat(friend)"
                         width="100%"
                         tile
                      >
-                        {{ friend.displayName }}
+                        <v-badge
+                           dot
+                           :key="badge_key"
+                           :value="
+                              (friend.displayName !== 'LOBBY' && $store.state.chat.friend_whisper_badge[friend.displayName])
+                              ? $store.state.chat.friend_whisper_badge[friend.displayName]
+                              : false
+                           "
+                        >
+                           <v-card flat tile>{{ friend.displayName }}</v-card>
+                        </v-badge>
                      </v-btn>
                   </v-card>
                </v-menu>
@@ -282,7 +241,7 @@
                </v-dialog>
             </div>
          </div>
-         <div class="all-chat" v-chat-scroll="{ always: false }">
+         <div v-if="chosen_chat === 'LOBBY'" class="all-chat" v-chat-scroll="{ always: false }">
             <div
                v-for="(chat, ind) in all_global_chats"
                :key="chat + ind"
@@ -297,16 +256,25 @@
                </div>
             </div>
          </div>
+         <div v-if="chosen_chat !== 'LOBBY'" class="special-chat" v-chat-scroll="{ always: false }">
+            <div
+               v-for="(chat,ind) in friend_whisper"
+               :key="chat+ind"
+               :style="chat.style"
+            >
+               <div>{{ chat.chat }}</div>
+            </div>
+         </div>
          <div class="all-chat-input-wrapper">
             <!-- <v-text-field @keydown="enter_pressed($event)" class="all-chat-input ma-0 pa-0" background-color="red" height="20px" v-model="global_chat" filled outlined hide-details dense></v-text-field> -->
             <input
-               @keydown="enter_pressed($event)"
+               @keydown="(chosen_chat === 'LOBBY') ? enter_pressed($event) : whisper_enter_pressed($event)"
                v-model="global_chat"
                type="text"
                class="all-chat-input"
             />
             <button
-               @click="global_chat_enter()"
+               @click="(chosen_chat === 'LOBBY') ? global_chat_enter() : whisper_chat_enter(chosen_chat)"
                class="all-chat-enter ma-0 pa-0"
                :disabled="enter_button_disabled"
             >
@@ -349,13 +317,19 @@ export default {
          create_room_dialog: false,
          create_room_key: 0,
          comp_mounted: false,
-         chosen_chat: "LOBBY"
+         // chosen_chat: "LOBBY"
       };
    },
    computed: {
-      // chosen_chat() {
-      //    // return this.$store.state.
-      // },
+      chosen_chat() {
+         return this.$store.state.chat.chosen_chat;
+      },
+      badge_key() {
+         return this.$store.state.chat.badge_key;
+      },
+      new_whisper_badge() {
+         return this.$store.state.chat.new_whisper_badge;
+      },
       window_width() {
          return this.$vuetify.breakpoint.width;
       },
@@ -396,11 +370,32 @@ export default {
          } else {
             return lobby_array;
          }
+      },
+      friend_whisper() {
+         this.friend_whisper_key;
+         return this.$store.state.chat.friend_whisper[this.chosen_chat]; // Array;
+      },
+      friend_whisper_key() {
+         return this.$store.state.chat.friend_whisper_key;
       }
    },
    methods: {
-      wisper_chat(friend) {
-         this.chosen_chat = friend.displayName;
+      whisper_chat_enter(chosen_chat) {
+         if (!this.global_chat || this.enter_button_disabled) return;
+
+         window.socket.emit('whisper-friend', {
+            senderDisplayName: this.my_display_name,
+            receiverDisplayName: chosen_chat,
+            chatContent: this.global_chat
+         });
+
+         this.global_chat = '';
+         this.enter_button_disabled = true;
+         setTimeout(() => (this.enter_button_disabled = false), 1000);
+      },
+      whisper_chat(friend) {
+         // this.chosen_chat = friend.displayName;
+         this.$store.commit('chat/CHOSEN_CHAT', friend.displayName);
       },
       refresh_page() {
          window.location.reload();
@@ -446,6 +441,18 @@ export default {
             this.global_chat_enter();
          }
       },
+      whisper_enter_pressed(e) {
+         if (e.key === 'Enter' || e.keyCode === 13) {
+            this.whisper_chat_enter(this.chosen_chat);
+         }
+      }
+   },
+   watch: {
+      chosen_chat(val) {
+         if (val !== 'LOBBY') {
+            this.$store.commit('chat/REMOVE_FRIEND_WHISPER_BADGE', val);
+         }
+      }
    },
    mounted() {
       setTimeout(() => this.$store.commit("audio/PLAY_BGM", "elinia"), 0);
@@ -488,30 +495,6 @@ background: radial-gradient(circle, rgba(98,0,234,1) 0%, rgba(209,55,255,1) 42%)
 filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#6200ea",endColorstr="#d137ff",GradientType=1);
 }
 
-// .main-title {
-// background: rgb(98,0,234);
-// background: -moz-radial-gradient(circle, rgba(98,0,234,1) 76%, rgba(209,55,255,1) 100%);
-// background: -webkit-radial-gradient(circle, rgba(98,0,234,1) 76%, rgba(209,55,255,1) 100%);
-// background: radial-gradient(circle, rgba(98,0,234,1) 76%, rgba(209,55,255,1) 100%);
-// filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#6200ea",endColorstr="#d137ff",GradientType=1);
-// }
-
-// .main-title {
-// background: rgb(209,55,255);
-// background: -moz-radial-gradient(circle, rgba(209,55,255,1) 76%, rgba(59,1,27,1) 100%);
-// background: -webkit-radial-gradient(circle, rgba(209,55,255,1) 76%, rgba(59,1,27,1) 100%);
-// background: radial-gradient(circle, rgba(209,55,255,1) 76%, rgba(59,1,27,1) 100%);
-// filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#d137ff",endColorstr="#3b011b",GradientType=1);
-// }
-
-// .main-title {
-// background: rgb(128,0,128);
-// background: -moz-radial-gradient(circle, rgba(128,0,128,1) 67%, rgba(71,1,32,1) 100%);
-// background: -webkit-radial-gradient(circle, rgba(128,0,128,1) 67%, rgba(71,1,32,1) 100%);
-// background: radial-gradient(circle, rgba(128,0,128,1) 67%, rgba(71,1,32,1) 100%);
-// filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#800080",endColorstr="#470120",GradientType=1);
-// }
-
 .custom-dialog {
    position: fixed;
    top: 0;
@@ -530,7 +513,6 @@ $text-field-border-radius: 0;
    bottom: 0;
    box-sizing: border-box;
    min-height: 200px;
-   background: green;
 
    .all-chat-title {
       position: relative;
@@ -550,6 +532,16 @@ $text-field-border-radius: 0;
       bottom: 25px;
       word-wrap: break-word;
       overflow-x: hidden;
+   }
+
+   .special-chat {
+      position: absolute;
+      height: calc(100% - 50px);
+      width: 100%;
+      background: #202020;
+      overflow-x: hidden;
+      word-wrap: break-word;
+      bottom: 25px;
    }
 
    .all-chat-input-wrapper {

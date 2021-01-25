@@ -23,6 +23,7 @@ export const state = () => ({
       joined_room: 0,
       confirmation: 0,
       ingame_countdown: 0,
+      new_whisper: 0,
       
    },
    sound_muted: false,

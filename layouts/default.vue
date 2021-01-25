@@ -204,6 +204,15 @@ export default {
             this.$store.commit('room/UPDATE_SPECTATORS_ONLY', payload);
          });
 
+         window.socket.on('unfriended', payload => {
+            this.$store.commit('friend/FRIEND_LIST_ALL', payload.newFriendList);
+            this.$store.commit('general/GLOBAL_LOADING', false);
+         });
+
+         window.socket.on('add-whisper', payload => {
+            this.$store.commit('chat/FRIEND_WHISPER', payload);
+         });
+
       },
       detect_ios() {
          return [

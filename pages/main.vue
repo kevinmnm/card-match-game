@@ -4,7 +4,7 @@
       <IdleRoom v-else />
       <AudioComp />
       <PeronalAlert />
-      <!-- <DevSoundTest v-if="development" /> -->
+      <DevSoundTest v-if="development" />
    </v-container>
 </template>
 

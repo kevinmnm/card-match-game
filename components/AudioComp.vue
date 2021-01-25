@@ -41,6 +41,8 @@
       <audio ref="joined_room" :src="require(`@/assets/music/sound/${mp3_folder}joined_room.${file_type}`)" preload="auto"></audio>
       <!-- Ingame Countdown -->
       <audio ref="ingame_countdown" :src="require(`@/assets/music/sound/${mp3_folder}ingame_countdown.${file_type}`)" preload="auto"></audio>
+      <!-- New Whisper -->
+      <audio ref="new_whisper" :src="require(`@/assets/music/sound/new_whisper.wav`)" preload="auto"></audio>
 
    </div>
 </template>
@@ -77,6 +79,7 @@ export default {
       confirmation: state => state.audio.sound.confirmation,
       joined_room: state => state.audio.sound.joined_room,
       ingame_countdown: state => state.audio.sound.ingame_countdown,
+      new_whisper: state => state.audio.sound.new_whisper,
    }),
    methods: {
       trigger_audio(ref, playOrPause) { // ref = name, playOrPause = true || false;
@@ -122,6 +125,7 @@ export default {
       confirmation() { this.trigger_audio('confirmation') },
       joined_room() { this.trigger_audio('joined_room') },
       ingame_countdown() { this.trigger_audio('ingame_countdown') },
+      new_whisper() { this.trigger_audio('new_whisper') },
    },
    mounted() {
       Object.keys(this.$refs).forEach( ref => {

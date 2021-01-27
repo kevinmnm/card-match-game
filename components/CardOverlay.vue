@@ -22,6 +22,8 @@
             :disabled="disable_start_button"
             :loading="start_button_loading"
             @click="custom_game_start()"
+            style="font-family: 'Potta One', cursive; font-size:25px; font-weight:900;"
+            color="orange"
          >
             Start
          </v-btn>
@@ -29,6 +31,7 @@
             v-else
             @click="ready()"
             :disabled="ready_button_status"
+            style="font-family: 'Potta One', cursive; font-size:25px; font-weight:900;"
          >
             Ready
          </v-btn>

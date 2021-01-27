@@ -275,7 +275,7 @@ export default {
       room_title: "Let's play!",
       secret_key: "",
       room_type: "",
-      type_list: ['classic', 'colorless', 'lovely', 'plain'],
+      type_list: ['classic', 'colorless', 'lovely', 'plain', 'ghosty'],
       show_key: false,
       selected_type: "classic",
       room_capacity: null,

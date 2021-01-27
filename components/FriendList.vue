@@ -189,6 +189,9 @@ export default {
             return true;
          }
          return false;
+      },
+      get_detailed_friend_list_key() {
+         return this.$store.state.chat.get_detailed_friend_list_key;
       }
    },
    methods: {
@@ -265,6 +268,11 @@ export default {
          this.show_loading = false;
 
       },
+   },
+   watch: {
+      get_detailed_friend_list_key() {
+         this.get_detailed_friend_list();
+      }
    },
    created() {
       // if (this.online_only) return;

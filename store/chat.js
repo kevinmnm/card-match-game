@@ -14,6 +14,7 @@ export const state = () => ({
    friend_whisper_key: 0,
    new_whisper_badge: false,
    badge_key: 0,
+   get_detailed_friend_list_key: 0,
 });
 
 export const mutations = {
@@ -69,6 +70,7 @@ export const mutations = {
          state.friend_whisper[payload.senderDisplayName].push(chat_content);
          if (state.chosen_chat !== payload.senderDisplayName) {
             if (!state.friend_whisper_badge[payload.senderDisplayName]) {
+               state.get_detailed_friend_list_key++;
                this.commit('audio/PLAY_SOUND', 'new_whisper');
             }
             state.friend_whisper_badge[payload.senderDisplayName] = true;

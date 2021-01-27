@@ -175,8 +175,14 @@ export default {
          return this.$store.state.room.room_info.theme;
       },
       card_cover() {
-         if (this.game_theme === 'lovely') {
+         if (this.game_theme === 'classic') {
+            return 'default_white';
+         } else if (this.game_theme === 'lovely') {
             return 'lovely_cover';
+         } else if (this.game_theme === 'colorless') {
+            return 'frame_black';
+         } else if (this.game_theme === 'plain') {
+            return 'default_white';
          } else {
             return 'default_white';
          }

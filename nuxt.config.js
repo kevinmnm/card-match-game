@@ -48,7 +48,8 @@ export default {
                // lovely: colors.pink.lighten1,
                // lovely: '#FFBDE7',
                lovely: '#FFD7F0',
-               plain: colors.black,
+               plain: colors.grey.darken4,
+               ghosty: '#000000',
                colorless: colors.grey.lighten5
 
             },

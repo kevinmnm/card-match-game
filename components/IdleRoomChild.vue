@@ -9,15 +9,35 @@
          class="mb-2"
          ref="child_img"
       ></v-img> -->
+      <v-dialog v-model="create_room_dialog">
+         <CreateRoom @close-create-room-dialog="create_room_dialog = false, create_room_key++" :key="create_room_key" />
+      </v-dialog>
+
 
 <!-- TOP -->
-      <v-sheet class="main-title d-flex flex-column align-center justify-center" width="100%" height="20%" outlined>
+      <v-sheet v-if="!small_device" class="main-title d-flex flex-column align-center justify-center" width="100%" height="10%" outlined>
          <v-card class="title" flat color="transparent white--text">MONSTER MATCHES</v-card>
          <v-card class="caption" flat color="transparent white--text">- Under Development -</v-card>
       </v-sheet>
+      <v-sheet v-else class="d-flex flex-row flex-wrap align-center justify-center" width="100%" height="10%" outlined>
+         <v-btn @click="small_device_play_dialog = true;" height="100%" class="d-flex align-center justify-center flex-grow-1 font-weight-bold" color="classic white--text" tile>
+            <span style="text-shadow: 0 0 3px white, 0 0 3px white;">👾</span>
+            <span> PLAY </span>
+            <span style="text-shadow: 0 0 3px white, 0 0 3px white;">👾</span>
+         </v-btn>
+      </v-sheet>
+
+      <v-dialog v-model="small_device_play_dialog">
+         <v-sheet height="100%" class="d-flex flex-column flex-wrap">
+            <v-btn width="100%" color="red white--text">Ranked</v-btn>
+            <v-btn width="100%" color="orange white--text" @click="small_device_play_dialog = false, create_room_dialog = true" >Create</v-btn>
+            <v-btn width="100%" color="green white--text" @click="small_device_play_dialog = false, open_custom_dialog()" >Join</v-btn>
+            <v-btn width="100%" color="info" @click="small_device_play_dialog = false, quickGame()">Quick</v-btn>
+         </v-sheet>
+      </v-dialog>
 
 <!-- MIDDLE -->
-      <v-sheet class="d-flex flex-row" width="100%" height="calc(80% - 230px)">
+      <v-sheet class="d-flex flex-row" width="100%" height="calc(90% - 230px)">
          <v-sheet class="flex-grow-1" v-if="!my_display_name.toLowerCase().includes('guest') && my_friend_array && my_friend_array.length > 0" width="40%">
             <FriendList @trigger-whisper-friend="(val) => whisper_chat(val)" :key="refresh_friend_list"/>
          </v-sheet>
@@ -27,7 +47,7 @@
             <v-btn v-if="my_display_name.toLowerCase().includes('guest')" class="caption" @click="refresh_page()" color="#adff2f" x-small text>Signup</v-btn>
          </v-sheet>
 
-         <v-sheet class="d-flex flex-shrink-1 flex-column align-center justify-space-around" width="15%">
+         <v-sheet v-if="!small_device" class="d-flex flex-shrink-1 flex-column align-center justify-space-around" width="15%">
          <!-- <v-sheet class="d-flex flex-column align-center justify-space-around" width="20%"> -->
 
             <v-sheet class="flex-grow-1" width="100%">
@@ -38,6 +58,29 @@
             </v-sheet>
             
             <v-sheet class="flex-grow-1" width="100%">
+               <v-btn 
+                  v-if="window_width > 400"
+                  width="100%" 
+                  height="100%"
+                  @click="create_room_dialog = true"
+                  @mouseenter="$store.commit('audio/PLAY_SOUND', 'bubble_pop')"
+                  :small="window_width < 400"
+                  tile
+               >
+                  create
+               </v-btn>
+               <v-btn
+                  v-else
+                  :small="window_width < 400"
+                  @click="create_room_dialog = true"
+                  height="100%"
+                  width="100%"
+                  tile
+               >
+                  <v-icon :small="window_width < 400" dense>mdi-folder-plus</v-icon>
+               </v-btn>
+            </v-sheet>
+            <!-- <v-sheet class="flex-grow-1" width="100%">
                <v-dialog v-model="create_room_dialog">
                   <template v-slot:activator="{ on, attrs }">
                      <v-btn 
@@ -66,7 +109,7 @@
                   </template>
                   <CreateRoom @close-create-room-dialog="create_room_dialog = false, create_room_key++" :key="create_room_key" />
                </v-dialog>
-            </v-sheet>
+            </v-sheet> -->
             
             <v-sheet class="flex-grow-1" width="100%">
                <v-btn 
@@ -317,6 +360,7 @@ export default {
          create_room_dialog: false,
          create_room_key: 0,
          comp_mounted: false,
+         small_device_play_dialog: false,
          // chosen_chat: "LOBBY"
       };
    },
@@ -377,6 +421,10 @@ export default {
       },
       friend_whisper_key() {
          return this.$store.state.chat.friend_whisper_key;
+      },
+      small_device() {
+         if (this.window_width < 400 || this.window_height < 400) return true;
+         return false;
       }
    },
    methods: {

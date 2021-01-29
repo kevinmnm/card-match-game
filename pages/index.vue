@@ -1,16 +1,16 @@
 <template>
    <v-container class="pa-0 ma-0 text-center" fluid style="height: 100%">
-      <v-app-bar dense app>
-         <v-toolbar-title class="font-weight-bold"
+      <v-app-bar class="classic white--text" dense app>
+         <v-toolbar-title style="cursor:pointer;" class="font-weight-bold" @click="reload_page()"
             >MONSTER MATCHES</v-toolbar-title
          >
          <v-spacer></v-spacer>
          <v-toolbar-items class="hidden-xs-only">
-            <v-btn>About</v-btn>
-            <v-btn>Guide</v-btn>
-            <v-btn>Ranking</v-btn>
+            <v-btn text color="white">About</v-btn>
+            <v-btn text color="white">Guide</v-btn>
+            <v-btn text color="white">Ranking</v-btn>
          </v-toolbar-items>
-         <v-app-bar-nav-icon class="hidden-sm-and-up" @click="drawer = !drawer">
+         <v-app-bar-nav-icon class="hidden-sm-and-up white--text" @click="drawer = !drawer">
          </v-app-bar-nav-icon>
       </v-app-bar>
       <v-navigation-drawer app v-model="drawer">
@@ -33,23 +33,37 @@
             </v-list-item-group>
          </v-list>
       </v-navigation-drawer>
-      <h1>Homepage Under Development</h1>
-      <div>Click to test game</div>
-      <!-- <nuxt-link to="/main">
-         <v-btn width="150px">game</v-btn>
-      </nuxt-link> -->
-      <v-btn to="/main" width="150px" color="primary" class="font-weight-bold"
-         >game</v-btn
+      <HomeCarousel />
+      <HomeBody />
+      <v-footer dark>
+         <v-col
+         class="text-center"
+         cols="12"
       >
+         Developer: <strong style="cursor:pointer;" @click="open_my_profile()"><u>Kevin</u></strong> 
+      </v-col>
+   </v-footer>
    </v-container>
 </template>
 
 <script>
+import HomeCarousel from "@/components/HomeCarousel.vue";
+import HomeBody from "@/components/HomeBody.vue";
+
 export default {
    name: "Home",
+   components: { HomeCarousel, HomeBody },
    data: () => ({
       drawer: false,
    }),
+   methods: {
+      reload_page() {
+         window.location.reload();
+      },
+      open_my_profile() {
+         window.open('https://www.instagram.com/kevinmnm/');
+      }
+   },
    mounted() {
       if (process.env.NODE_ENV === "production") {
          if (location.protocol !== "https:") {

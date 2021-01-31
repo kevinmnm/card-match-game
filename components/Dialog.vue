@@ -6,7 +6,7 @@
                <slot name="button"></slot>
             </v-btn>
          </template>
-         <v-card>
+         <v-card color="whiteSmoke">
             <v-card-title class="headline">
                <slot name="title"></slot>
             </v-card-title>

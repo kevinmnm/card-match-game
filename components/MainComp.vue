@@ -1,7 +1,7 @@
 <template>
    <v-container fluid style="height: 100%">
       <v-row class="text-center">
-         <v-col cols="12">
+         <v-col cols="12" class="headline">
             <v-btn to="/" text plain>Monster Matches</v-btn>
          </v-col>
          <v-col cols="12" sm="7" md="5" class="ma-auto">
@@ -74,7 +74,7 @@
          </v-col>
          <v-col cols="12">or</v-col>
          <v-col cols="12" class="ma-auto">
-            <v-btn width="150px" color="secondary" to="/signup" :disabled="show_server_loading">signup</v-btn>
+            <v-btn width="150px" color="success" to="/signup" :disabled="show_server_loading">signup</v-btn>
          </v-col>
          <v-col cols="12">or</v-col>
          <v-col cols="12" class="ma-auto">

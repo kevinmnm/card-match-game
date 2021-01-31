@@ -45,12 +45,17 @@ export default {
          themes: {
             light: {
                classic: colors.deepPurple.accent4,
+               classic_text: '#FFFFFF',
                // lovely: colors.pink.lighten1,
                // lovely: '#FFBDE7',
                lovely: '#FFD7F0',
+               lovely_text: '#000000',
                plain: colors.grey.darken4,
+               plain_text: '#FFFFFF',
                ghosty: '#000000',
-               colorless: colors.grey.lighten5
+               ghosty_text: '#FFFFFF',
+               colorless: colors.grey.lighten5,
+               colorless_text: '#000000',
 
             },
             dark: {

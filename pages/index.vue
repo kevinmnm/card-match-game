@@ -13,19 +13,19 @@
          <v-app-bar-nav-icon class="hidden-sm-and-up white--text" @click="drawer = !drawer">
          </v-app-bar-nav-icon>
       </v-app-bar>
-      <v-navigation-drawer app v-model="drawer">
+      <v-navigation-drawer app v-model="drawer" disable-resize-watcher dark>
          <v-list nav>
             <v-list-item-group class="font-weight-bold">
                <v-list-item>
-                  <v-icon sm>mdi-help-box</v-icon>
+                  <v-icon sm color="info">mdi-help-box</v-icon>
                   <v-list-item-content class="ml-2">ABOUT</v-list-item-content>
                </v-list-item>
                <v-list-item>
-                  <v-icon sm>mdi-lightbulb-on</v-icon>
+                  <v-icon sm color="yellow">mdi-lightbulb-on</v-icon>
                   <v-list-item-content class="ml-2">GUIDE</v-list-item-content>
                </v-list-item>
                <v-list-item>
-                  <v-icon sm>mdi-trophy-variant</v-icon>
+                  <v-icon sm color="warning">mdi-trophy-variant</v-icon>
                   <v-list-item-content class="ml-2"
                      >RANKING</v-list-item-content
                   >

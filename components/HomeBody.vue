@@ -12,7 +12,7 @@
       </v-sheet>
 
       <v-sheet class="ma-auto pa-3" :width="content_width" color="warning white--text" rounded elevation="12">
-         <h2 style="word-wrap:break-word; white-space: pre-wrap;" class="transparent">Make More Friends</h2>
+         <h2 style="word-wrap:break-word; white-space: pre-wrap;" class="transparent">Level Up Your IQ</h2>
       </v-sheet>
 
       <v-sheet class="ma-auto pa-3" :width="content_width" color="rgb(0,0,0,0.8)">

@@ -6,6 +6,8 @@ export const state = () => ({
    end_game_screen: false,
    end_game_message: '',
    global_loading: false,
+   winner_1vs1: null,
+   loser_1vs1: null,
 })
 
 export const mutations = {
@@ -21,6 +23,8 @@ export const mutations = {
    CLOSE_END_GAME_SCREEN(state) {
       state.end_game_screen = false;
       state.end_game_message = '';
+      state.winner_1vs1 = null;
+      state.loser_1vs1 = null;
    },
    END_GAME_SCREEN(state, payload) { // payload = { winner: {...}, losers: [{...}, {...}], draws: [{...}, {...}] };
       state.end_game_screen = true;
@@ -33,6 +37,10 @@ export const mutations = {
                }
             });
          } else { // If it's not 2vs2,
+            state.winner_1vs1 = payload.winner;
+            state.loser_1vs1 = payload.losers[0];
+            console.log(state.winner_1vs1);
+            console.log(state.loser_1vs1);
             if (payload.winner.displayName === state.my_display_name) {
                state.end_game_message = 'VICTORY';
             }

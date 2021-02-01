@@ -2,6 +2,7 @@
    <v-sheet width="100%" min-width="280px">
       <v-sheet class="d-flex flex-column pa-2" width="100%">
          <v-sheet class="flex-grow-1">
+            <DevEndGame v-if="development" />
             <div class="text-center subtitle-1 font-weight-bold">AUDIO</div>
             <v-sheet class="d-flex flex-row ma-auto mb-2" width="50%" min-width="240px">
                <AudioControl :custom-game="true" />
@@ -159,6 +160,7 @@
 import AudioControl from "@/components/AudioControl.vue";
 import RoomInfoMaster from "@/components/RoomInfoMaster.vue";
 import FriendList from "@/components/FriendList.vue";
+import DevEndGame from "@/components/devOnly/DevEndGame.vue";
 
 export default {
    name: "RoomInfoComp",
@@ -166,8 +168,12 @@ export default {
       kick_player_model: false,
       online_only: true, 
    }),
-   components: { AudioControl, RoomInfoMaster, FriendList },
+   components: { AudioControl, RoomInfoMaster, FriendList, DevEndGame },
    computed: {
+      development() {
+         if (process.env.NODE_ENV === 'development') return true;
+         return false;
+      },
       room_info() {
          return this.$store.state.room.room_info;
       },

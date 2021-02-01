@@ -167,6 +167,7 @@ export default {
          });
 
          window.socket.on('game-ended', payload => { // payload = { winner: {...}, losers: [{...}, {...}], draws: [{...}, {...}] };
+         console.log('trigg');
             this.$store.commit('general/END_GAME_SCREEN', payload);
             this.$store.commit('card/INITIAL_STATE_CARD');
             this.$store.dispatch('card/countdown_function', false);

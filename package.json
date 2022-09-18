@@ -9,9 +9,6 @@
       "generate": "nuxt generate",
       "heroku-postbuild": "npm run build"
    },
-   "engines": {
-      "node": "14.15.3"
-   },
    "dependencies": {
       "animate.css": "^4.1.1",
       "core-js": "^3.6.5",

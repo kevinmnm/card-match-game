@@ -1,15 +1,28 @@
 <template>
    <!-- <v-sheet class="pa-0 ma-0 d-flex flex-wrap" :style="(my_turn && !my_turn_temp_disable) ? turnStyle : null"> -->
    <v-sheet class="pa-0 ma-0 d-flex flex-wrap">
-      <v-overlay absolute z-index="1" class="text-center" opacity="0.6" v-if="show_loading">
+      <v-overlay
+         absolute
+         z-index="1"
+         class="text-center"
+         opacity="0.6"
+         v-if="show_loading"
+      >
          <span>Loading...</span>
          <Loading />
       </v-overlay>
 
-<!-- IF QUICK GAME -->
-      <v-sheet v-if="room_type === 'quick'" class="card-set-wrapper pa-0 ma-0 d-flex flex-wrap" width="100%" height="100%">
-
-         <div style="position:absolute; z-index:2; width:100%; height:100%;" v-if="show_endGameScreen">
+      <!-- IF QUICK GAME -->
+      <v-sheet
+         v-if="room_type === 'quick'"
+         class="card-set-wrapper pa-0 ma-0 d-flex flex-wrap"
+         width="100%"
+         height="100%"
+      >
+         <div
+            style="position: absolute; z-index: 2; width: 100%; height: 100%"
+            v-if="show_endGameScreen"
+         >
             <EndGameScreen />
          </div>
 
@@ -22,35 +35,72 @@
             :key="all + ind"
             :width="card_size"
             :height="card_size"
-            @click="room_capacity === 2 ? card_flip(all, ind) : card_flip_two_vs_two(all, ind)"
+            @click="
+               room_capacity === 2
+                  ? card_flip(all, ind)
+                  : card_flip_two_vs_two(all, ind)
+            "
             :disabled="!my_turn || my_turn_temp_disable"
-            :style="(all.card_matched) ? 'opacity:0.8;' : 'opacity:1;'"
+            :style="all.card_matched ? 'opacity:0.8;' : 'opacity:1;'"
             color="classic"
          >
-            <transition name="flip" class="d-flex flex-wrap" tag="div" :key="card_key" mode="out-in">
+            <transition
+               name="flip"
+               class="d-flex flex-wrap"
+               tag="div"
+               :key="card_key"
+               mode="out-in"
+            >
                <!-- <v-img
                   :src="(all.show) ? require(`@/assets/img/card/set_1/${all.card_id}.png`) : require(`@/assets/img/card/cover/default_white.png`)"
                   :key="all.show"
                >
                </v-img> -->
                <!-- <v-img v-if="!all.show" :src="require(`~/assets/img/card/${window_width > 600 ? 'cover' : 'cover_low'}/default_white.png`)" :key="all.show" eager style="z-index: 1;"></v-img> -->
-               <v-img v-if="(dev_env) ? all.show : !all.show" :src="require(`~/assets/img/card/${window_width > 600 ? 'cover' : 'cover_low'}/default_white.png`)" :key="all.show" eager style="z-index: 1;"></v-img>
-               <v-img v-else :src="require(`~/assets/img/card/${window_width > 600 ? 'classic' : 'classic_low'}/${all.card_id}.png`)" :key="all.show"></v-img>
+               <v-img
+                  v-if="dev_env ? all.show : !all.show"
+                  :src="
+                     require(`~/assets/img/card/${
+                        window_width > 600 ? 'cover' : 'cover_low'
+                     }/default_white.png`)
+                  "
+                  :key="all.show"
+                  eager
+                  style="z-index: 1"
+               ></v-img>
+               <v-img
+                  v-else
+                  :src="
+                     require(`~/assets/img/card/${
+                        window_width > 600 ? 'classic' : 'classic_low'
+                     }/${all.card_id}.png`)
+                  "
+                  :key="all.show"
+               ></v-img>
             </transition>
-
          </v-card>
       </v-sheet>
 
-<!-- IF CUSTOM GAME -->
+      <!-- IF CUSTOM GAME -->
       <v-sheet v-if="room_type === 'custom'">
-         
          <v-responsive
             :aspect-ratio="1 / 1"
-            :width="screen_layout === 'horizontal' ? +(card_size_horizontal.replace('px','')) * 6 + 'px' : window_width"
-            :height="screen_layout === 'horizontal' ? +(card_size_horizontal.replace('px','')) * 6 + 'px' : 'auto'"
+            :width="
+               screen_layout === 'horizontal'
+                  ? +card_size_horizontal.replace('px', '') * 6 + 'px'
+                  : window_width
+            "
+            :height="
+               screen_layout === 'horizontal'
+                  ? +card_size_horizontal.replace('px', '') * 6 + 'px'
+                  : 'auto'
+            "
             class="ma-auto responsive-content-class pa-0"
          >
-            <div v-if="!game_started" style="position:absolute; z-index:2; width:100%; height:100%;">
+            <div
+               v-if="!game_started"
+               style="position: absolute; z-index: 2; width: 100%; height: 100%"
+            >
                <EndGameScreen v-if="show_endGameScreen" />
                <TerminateScreen v-if="!show_endGameScreen && terminate_room" />
                <CardOverlay v-if="!show_endGameScreen && !terminate_room" />
@@ -58,26 +108,57 @@
 
             <v-card
                class="card-set ma-0 pa-0"
-               :width="screen_layout === 'horizontal' ? card_size_horizontal : $vuetify.breakpoint.width / 6 + 'px'"
-               :height="screen_layout === 'horizontal' ? card_size_horizontal : $vuetify.breakpoint.width / 6 + 'px'"
+               :width="
+                  screen_layout === 'horizontal'
+                     ? card_size_horizontal
+                     : $vuetify.breakpoint.width / 6 + 'px'
+               "
+               :height="
+                  screen_layout === 'horizontal'
+                     ? card_size_horizontal
+                     : $vuetify.breakpoint.width / 6 + 'px'
+               "
                :ripple="false"
                hover
                tile
                v-for="(all, ind) in card_array"
                :key="all + ind"
                :color="game_theme"
-               @click="room_capacity === 2 ? card_flip(all, ind) : card_flip_two_vs_two(all, ind)"
+               @click="
+                  room_capacity === 2
+                     ? card_flip(all, ind)
+                     : card_flip_two_vs_two(all, ind)
+               "
                :disabled="!my_turn || my_turn_temp_disable"
-               :style="(all.card_matched) ? 'opacity:0.8;' : 'opacity:1;'"
+               :style="all.card_matched ? 'opacity:0.8;' : 'opacity:1;'"
             >
-               <transition name="flip" class="d-flex flex-wrap" tag="div" :key="card_key" mode="out-in">
-                  <v-img v-if="(dev_env) ? all.show : !all.show" :src="require(`@/assets/img/card/cover${card_quality}/${card_cover}.png`)" :key="all.show" style="z-index: 1;" eager></v-img>
-                  <v-img v-else :src="require(`@/assets/img/card/${game_theme}${card_quality}/${all.card_id}.png`)" :key="all.show"></v-img>
+               <transition
+                  name="flip"
+                  class="d-flex flex-wrap"
+                  tag="div"
+                  :key="card_key"
+                  mode="out-in"
+               >
+                  <v-img
+                     v-if="dev_env ? all.show : !all.show"
+                     :src="
+                        require(`@/assets/img/card/cover${card_quality}/${card_cover}.png`)
+                     "
+                     :key="all.show"
+                     style="z-index: 1"
+                     eager
+                  ></v-img>
+                  <v-img
+                     v-else
+                     :src="
+                        require(`@/assets/img/card/${game_theme}${card_quality}/${all.card_id}.png`)
+                     "
+                     :key="all.show"
+                  ></v-img>
                </transition>
             </v-card>
          </v-responsive>
       </v-sheet>
-
    </v-sheet>
 </template>
 
@@ -98,7 +179,7 @@ export default {
          // turnStyle: 'box-shadow: 0 0 10px yellow, 0 0 10px yellow,0 0 10px yellow;',
          starter_track: 0,
          dev_env: false,
-      }
+      };
    },
    computed: {
       window_width() {
@@ -108,19 +189,22 @@ export default {
          return this.$vuetify.breakpoint.height;
       },
       screen_layout() {
-         if (this.window_width > this.window_height) { // If device is horizontal (likely a PC),
-            return 'horizontal';
-         } else if (this.window_width <= this.window_height) { // If device is vertical (likely a phone),
-            return 'vertical';
+         if (this.window_width > this.window_height) {
+            // If device is horizontal (likely a PC),
+            return "horizontal";
+         } else if (this.window_width <= this.window_height) {
+            // If device is vertical (likely a phone),
+            return "vertical";
          }
       },
       card_size_horizontal() {
-         return (this.window_height * 0.7) / 6 + 'px';
+         return (this.window_height * 0.7) / 6 + "px";
       },
       room_type() {
          return this.$store.state.room.room_type;
       },
-      my_turn() { // Sets initial turn to player_1 on game start for quick-game only;
+      my_turn() {
+         // Sets initial turn to player_1 on game start for quick-game only;
          return this.myTurn;
       },
       my_turn_temp_disable() {
@@ -144,7 +228,7 @@ export default {
                return "60px"; // < 600px -- 60px
             case "sm":
                // return "100px"; // 600px > < 960px -- 80px
-               return "80px"
+               return "80px";
             case "md":
                return "100px"; // 960px > < 1264px* -- 100px
             case "lg":
@@ -175,21 +259,21 @@ export default {
          return this.$store.state.room.room_info.theme;
       },
       card_cover() {
-         if (this.game_theme === 'classic') {
-            return 'default_white';
-         } else if (this.game_theme === 'lovely') {
-            return 'lovely_cover';
-         } else if (this.game_theme === 'colorless') {
-            return 'frame_black';
-         } else if (this.game_theme === 'plain') {
-            return 'default_white';
+         if (this.game_theme === "classic") {
+            return "default_white";
+         } else if (this.game_theme === "lovely") {
+            return "lovely_cover";
+         } else if (this.game_theme === "colorless") {
+            return "frame_black";
+         } else if (this.game_theme === "plain") {
+            return "default_white";
          } else {
-            return 'default_white';
+            return "default_white";
          }
       },
       card_quality() {
-         if (this.window_width < 500) return '_low';
-         else return '';
+         if (this.window_width < 500) return "_low";
+         else return "";
       },
       room_capacity() {
          return this.$store.state.room.room_info.capacity;
@@ -203,29 +287,35 @@ export default {
          } else {
             return false;
          }
-      }
+      },
+      game_starting() {
+         return this.$store.state.room.game_starting;
+      },
    },
    methods: {
       card_flip(card, ind) {
-/**** ONCLICK ****/
+         /**** ONCLICK ****/
          // this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn (ensures quick disabling);
          // if (card.show) return this.$store.commit('card/MY_TURN_TEMP_DISABLE', false); // If card already showing, enable my turn;
          if (card.show) return;
-         this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn (ensures quick disabling);
-         window.socket.emit('pause-countdown', this.room_number); // Request pause countdown for all clients;
+         this.$store.commit("card/MY_TURN_TEMP_DISABLE", true); // Temporarily disable my turn (ensures quick disabling);
+         window.socket.emit("pause-countdown", this.room_number); // Request pause countdown for all clients;
 
-         this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card });
+         this.$store.commit("card/FLIPPED_TRACKER", {
+            action: "push",
+            flippedCard: card,
+         });
 
          let changed_card = {
             ...card,
-            show: true
-         }
+            show: true,
+         };
 
          // this.$store.commit("room/ROOM_CARD", { card: changed_card, cardIndex: ind } );
 
-         window.socket.emit('card-flip', { 
-            roomNumber: this.room_number, 
-            card: changed_card, 
+         window.socket.emit("card-flip", {
+            roomNumber: this.room_number,
+            card: changed_card,
             cardIndex: ind,
             flippedAmount: this.flipped_tracker.length,
             roomCapacity: this.room_capacity,
@@ -233,8 +323,7 @@ export default {
             // flippedTracker: this.flipped_tracker
          });
 
-
-/**
+         /**
          if (card.show) return
          this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn (ensures quick disabling);
          let changed_card = {
@@ -256,41 +345,48 @@ export default {
 
          // Waiting for socket.io to grant my turn again when only one card flipped...
 
+         /**** 1VS1 FLIPED 2 ****/
+         if (this.flipped_tracker.length === 2 && this.room_capacity === 2) {
+            // If player flipped 2 cards,
+            this.$store.commit("card/MY_TURN_TEMP_DISABLE", true); // Temporarily disable my turn (ensures quick disabling);
 
-/**** 1VS1 FLIPED 2 ****/
-         if (this.flipped_tracker.length === 2 && this.room_capacity === 2) { // If player flipped 2 cards,
-            this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn (ensures quick disabling);
-
-            if (this.flipped_tracker[0].card_id === this.flipped_tracker[1].card_id) { // If matching cards found,
-               window.socket.emit('room-player-update', { // DB score + 10 and set matched card show to true;
-                  action: 'add-score', 
-                  currentPlayer: this.current_turn_player, 
+            if (
+               this.flipped_tracker[0].card_id ===
+               this.flipped_tracker[1].card_id
+            ) {
+               // If matching cards found,
+               window.socket.emit("room-player-update", {
+                  // DB score + 10 and set matched card show to true;
+                  action: "add-score",
+                  currentPlayer: this.current_turn_player,
                   roomNumber: this.room_number,
-                  cardMatch: this.flipped_tracker
+                  cardMatch: this.flipped_tracker,
                });
 
-               this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
+               this.$store.commit("card/FLIPPED_TRACKER", { action: "clear" });
                // this.$store.commit('card/MY_TURN_TEMP_DISABLE', false); // Enable my turn again;
-
-            } else { // If no matching cards found,
+            } else {
+               // If no matching cards found,
                // window.socket.emit('pause-countdown', this.room_number); // Request pause countdown for both clients;
-               this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn (ensures quick disabling);
+               this.$store.commit("card/MY_TURN_TEMP_DISABLE", true); // Temporarily disable my turn (ensures quick disabling);
 
-               setTimeout( () => { // Change turn after some delay;
-                  window.socket.emit('change-turn', { 
-                     current: this.current_turn_player, 
+               setTimeout(() => {
+                  // Change turn after some delay;
+                  window.socket.emit("change-turn", {
+                     current: this.current_turn_player,
                      roomNumber: this.room_number,
-                     roomCapacity: this.$store.state.room.room_info.capacity
+                     roomCapacity: this.$store.state.room.room_info.capacity,
                   });
 
-                  this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
-
+                  this.$store.commit("card/FLIPPED_TRACKER", {
+                     action: "clear",
+                  });
                }, 1500);
             }
          }
 
-/**** 2VS2 FLIPPED 1 ****/
-/**
+         /**** 2VS2 FLIPPED 1 ****/
+         /**
          if (this.flipped_tracker.length === 1 && this.room_capacity === 4) { // I'm not a finisher for the team;
             this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn (ensures quick disabling);
 
@@ -307,8 +403,8 @@ export default {
             }, 1500);
          }
 **/
-/**** 2VS2 FLIPPED 2 ****/
-/**
+         /**** 2VS2 FLIPPED 2 ****/
+         /**
          if (this.flipped_tracker.length === 2 && this.room_capacity === 4) { // If I'm a finisher for the team,
             this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn (ensures quick disabling);
             // window.socket.emit('pause-countdown', this.room_number); // Request pause countdown for all clients;
@@ -342,67 +438,78 @@ export default {
 **/
       },
       card_flip_two_vs_two(card, ind) {
-/**** 2VS2 (onclick) ****/
+         /**** 2VS2 (onclick) ****/
          if (card.show) return;
-         this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn (ensures quick disabling);
-         window.socket.emit('pause-countdown', this.room_number); // Request pause countdown for all clients;
+         this.$store.commit("card/MY_TURN_TEMP_DISABLE", true); // Temporarily disable my turn (ensures quick disabling);
+         window.socket.emit("pause-countdown", this.room_number); // Request pause countdown for all clients;
 
          let changed_card = {
             ...card,
-            show: true
-         }
+            show: true,
+         };
 
-         this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: changed_card });
+         this.$store.commit("card/FLIPPED_TRACKER", {
+            action: "push",
+            flippedCard: changed_card,
+         });
 
-   /**** 2VS2 FLIPPED 1 ****/
-         if (this.flipped_tracker.length === 1 && this.room_capacity === 4) { // If I'm a start for the team,
-            window.socket.emit('change-turn', { 
-               current: this.current_turn_player, 
+         /**** 2VS2 FLIPPED 1 ****/
+         if (this.flipped_tracker.length === 1 && this.room_capacity === 4) {
+            // If I'm a start for the team,
+            window.socket.emit("change-turn", {
+               current: this.current_turn_player,
                roomNumber: this.room_number,
                roomCapacity: this.$store.state.room.room_info.capacity,
-               flippedCardArray: this.flipped_tracker
+               flippedCardArray: this.flipped_tracker,
             });
-            this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
+            this.$store.commit("card/FLIPPED_TRACKER", { action: "clear" });
          }
-         
-   /**** 2VS2 FLIPPED 2 ****/
-         if (this.flipped_tracker.length === 2 && this.room_capacity === 4) { // If I'm a finisher for the team,
-            if (this.flipped_tracker[0].card_id === this.flipped_tracker[1].card_id) { // If team found matching card for 2vs2,
-               window.socket.emit('room-player-update', {
-                  action: 'add-score',
-                  currentPlayer: this.current_turn_player, 
+
+         /**** 2VS2 FLIPPED 2 ****/
+         if (this.flipped_tracker.length === 2 && this.room_capacity === 4) {
+            // If I'm a finisher for the team,
+            if (
+               this.flipped_tracker[0].card_id ===
+               this.flipped_tracker[1].card_id
+            ) {
+               // If team found matching card for 2vs2,
+               window.socket.emit("room-player-update", {
+                  action: "add-score",
+                  currentPlayer: this.current_turn_player,
                   roomNumber: this.room_number,
                   cardMatch: this.flipped_tracker,
                   roomCapacity: this.room_capacity,
-                  flippedCardArray: this.flipped_tracker
+                  flippedCardArray: this.flipped_tracker,
                });
-               this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
-
-            } else { // If cards are not matching for 2vs2,
-               window.socket.emit('change-turn', { 
-                  current: this.current_turn_player, 
+               this.$store.commit("card/FLIPPED_TRACKER", { action: "clear" });
+            } else {
+               // If cards are not matching for 2vs2,
+               window.socket.emit("change-turn", {
+                  current: this.current_turn_player,
                   roomNumber: this.room_number,
                   roomCapacity: this.$store.state.room.room_info.capacity,
-                  flippedCardArray: this.flipped_tracker
+                  flippedCardArray: this.flipped_tracker,
                });
 
                let hideCardArray = [];
 
-               this.flipped_tracker.forEach( cardInfo => {
+               this.flipped_tracker.forEach((cardInfo) => {
                   hideCardArray.push({
                      ...cardInfo,
-                     show: false
+                     show: false,
                   });
                });
 
-               setTimeout( () => {
-                  window.socket.emit('change-turn', {
-                     current: this.current_turn_player, 
+               setTimeout(() => {
+                  window.socket.emit("change-turn", {
+                     current: this.current_turn_player,
                      roomNumber: this.room_number,
                      roomCapacity: this.$store.state.room.room_info.capacity,
-                     flippedCardArray: hideCardArray
+                     flippedCardArray: hideCardArray,
                   });
-                  this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
+                  this.$store.commit("card/FLIPPED_TRACKER", {
+                     action: "clear",
+                  });
                }, 1500);
 
                // ( async () => {
@@ -410,7 +517,7 @@ export default {
                //       return new Promise( (res, rej) => {
                //          setTimeout( () => {
                //             window.socket.emit('change-turn', {
-               //                current: this.current_turn_player, 
+               //                current: this.current_turn_player,
                //                roomNumber: this.room_number,
                //                roomCapacity: this.$store.state.room.room_info.capacity,
                //                flippedCardArray: hideCardArray
@@ -419,11 +526,9 @@ export default {
                //       });
                //    } )();
                // } )();
-
             }
-
          }
-      }
+      },
    },
    watch: {
       game_started(val) {
@@ -431,59 +536,71 @@ export default {
          if (val) {
             let card_array_length = this.card_array.length; // Flipped card length in array;
             let time_delay = 0; // Initial loading setInterval time delay;
-            this.$store.commit('card/MY_TURN_TEMP_DISABLE', true); // Temporarily disable my turn;
+            this.$store.commit("card/MY_TURN_TEMP_DISABLE", true); // Temporarily disable my turn;
             this.show_loading = true; // Show loading component;
-            this.$store.commit('room/BEGINNING_PREVIEW_FLIPPING', true);
+            this.$store.commit("room/BEGINNING_PREVIEW_FLIPPING", true);
 
-            let id_1 = setTimeout( () => {
+            let id_1 = setTimeout(() => {
                this.show_loading = false;
 
-               for (let i=0; i<card_array_length; i++) {
-                  setTimeout( () => {
-                     if (this.$store.state.room.room_info === null || !this.game_started) return;
-                     this.$store.commit('room/INITIAL_CARD_SHOW_TRIGGER', { show_card: true, card_index: i });  // payload = {show_card: true || false, card_index: ...}
+               for (let i = 0; i < card_array_length; i++) {
+                  setTimeout(() => {
+                     if (
+                        this.$store.state.room.room_info === null ||
+                        !this.game_started
+                     )
+                        return;
+                     this.$store.commit("room/INITIAL_CARD_SHOW_TRIGGER", {
+                        show_card: true,
+                        card_index: i,
+                     }); // payload = {show_card: true || false, card_index: ...}
                   }, time_delay);
 
-                  setTimeout( () => {
-                     if (this.$store.state.room.room_info === null || !this.game_started) return;
-                     this.$store.commit('room/INITIAL_CARD_SHOW_TRIGGER', { show_card: false, card_index: i });
+                  setTimeout(() => {
+                     if (
+                        this.$store.state.room.room_info === null ||
+                        !this.game_started
+                     )
+                        return;
+                     this.$store.commit("room/INITIAL_CARD_SHOW_TRIGGER", {
+                        show_card: false,
+                        card_index: i,
+                     });
                   }, time_delay + 500);
 
                   time_delay = time_delay + 200;
                }
             }, 1000);
          } else {
-            this.$store.commit('room/BEGINNING_PREVIEW_FLIPPING', false);
+            this.$store.commit("room/BEGINNING_PREVIEW_FLIPPING", false);
          }
       },
-      my_turn_temp_disable(val) { // Watching this value (only at start);
+      my_turn_temp_disable(val) {
+         // Watching this value (only at start);
          this.starter_track++;
          if (this.starter_track === 1) {
-            this.$store.dispatch('card/countdown_function', true); // Trigger countdown;
+            this.$store.dispatch("card/countdown_function", true); // Trigger countdown;
          }
       },
       play_myturn_sound(val) {
          if (val) {
-            this.$store.commit('audio/PLAY_SOUND', 'confirmation');
+            this.$store.commit("audio/PLAY_SOUND", "confirmation");
          }
-      }
+      },
    },
    mounted() {
-      this.$store.commit('card/COUNTDOWN', this.default_countdown); // Set room countdown value;
-      (process.env.NODE_ENV === 'development')
-         ? this.dev_env = true
-         : this.dev_env = false;
+      this.$store.commit("card/COUNTDOWN", this.default_countdown); // Set room countdown value;
+      process.env.NODE_ENV === "development"
+         ? (this.dev_env = true)
+         : (this.dev_env = false);
    },
    destroyed() {
-      this.$store.commit('card/COUNTDOWN', null);
-   }
-
+      this.$store.commit("card/COUNTDOWN", null);
+   },
 };
-
 </script>
 
 <style lang="scss" scoped>
-
 .v-card--disabled > *:not(.v-card__progress) {
    opacity: 1;
 }
@@ -516,6 +633,4 @@ export default {
 .flip-leave-to {
    box-shadow: none;
 }
-
-
 </style>

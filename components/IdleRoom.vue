@@ -21,7 +21,8 @@ export default {
    components: {
       IdleRoomChild,
       GameComp,
-      Loading
+      Loading,
+      CustomGame,
    },
    computed: {
       custom_room_key() {

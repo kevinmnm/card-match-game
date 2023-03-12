@@ -1,5 +1,5 @@
 export const state = () => ({
-   // server_url: 'http://localhost:5555',
+   // server_url: 
    signed_in: false,
    connect_socket: false,
    my_display_name: '',

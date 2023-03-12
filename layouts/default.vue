@@ -15,10 +15,11 @@ import { io } from "socket.io-client";
 export default {
    name: "Layout",
    computed: {
-      connect_socket_watch(){
+      connect_socket_watch() {
          return this.$store.state.general.connect_socket;
       },
-      my_player_number() { // player_1, etc;
+      my_player_number() {
+         // player_1, etc;
          if (this.$store.state.room.room_info) {
             let roomInfo = this.$store.state.room.room_info;
             let myDisplayName = this.$store.state.general.my_display_name;
@@ -28,12 +29,12 @@ export default {
                   myPlayerNumber = playerN;
                   break;
                } else {
-                  myPlayerNumber = '';
+                  myPlayerNumber = "";
                }
             }
             return myPlayerNumber;
          } else {
-            return '';
+            return "";
          }
       },
       room_capacity() {
@@ -41,18 +42,20 @@ export default {
       },
       room_turn() {
          return this.$store.state.room.room_info.turn;
-      }
+      },
    },
    methods: {
       connect_socket() {
-         let handshake_data = this.$store.state.guest.guest_info || this.$store.state.user.user_info;
+         let handshake_data =
+            this.$store.state.guest.guest_info ||
+            this.$store.state.user.user_info;
 
          // console.dir("Handshake Data Available");
 
          window.socket = io(window.server_url, {
             query: {
-               payload: JSON.stringify(handshake_data)
-            }
+               payload: JSON.stringify(handshake_data),
+            },
          });
 
          /** Toggles show between <MainComp> and <IdleComep> in main.vue **/
@@ -61,19 +64,20 @@ export default {
             this.$store.commit("general/SIGNED_IN", true);
          });
 
-         window.socket.on("global-room-update", payload => { // payload = [...];
-            this.$store.commit('chat/GLOBAL_ROOM_CLIENTS', payload);
+         window.socket.on("global-room-update", (payload) => {
+            // payload = [...];
+            this.$store.commit("chat/GLOBAL_ROOM_CLIENTS", payload);
          });
 
          /** Update room data in room.js store. (Similar to update-room event) **/
-         window.socket.on('create-room', payload => {
-            this.$store.commit("room/ROOM_INFO_CREATE", payload); 
+         window.socket.on("create-room", (payload) => {
+            this.$store.commit("room/ROOM_INFO_CREATE", payload);
             this.$store.commit("room/SHOW_ROOM", true);
          });
 
          /** Update room data in room.js store. **/
-         window.socket.on('update-room', payload => {
-            this.$store.commit("room/ROOM_INFO_CREATE", payload); 
+         window.socket.on("update-room", (payload) => {
+            this.$store.commit("room/ROOM_INFO_CREATE", payload);
             this.$store.commit("room/SHOW_ROOM", true); // This is necessary! (laster joined player's game board will show);
             // if (payload.capacity === payload.joined) { // If room is full, trigger auto start game;
             //    // window.socket.emit('full-room');
@@ -81,35 +85,37 @@ export default {
          });
 
          /** Update room data in room.js and hide GameComp in IdleRoom.vue **/
-         window.socket.on('left-room', payload => {
+         window.socket.on("left-room", (payload) => {
             this.$store.commit("room/GAME_STARTING", false);
-            this.$store.commit("room/ROOM_INFO_CREATE", null); 
+            this.$store.commit("room/ROOM_INFO_CREATE", null);
             this.$store.commit("room/SHOW_ROOM", false);
             this.$store.commit("room/SET_ROOM_CHAT", false);
          });
 
-         window.socket.on('add-chat', payload => { // payload = {room_number: 'room#', my_display_name: 'sdf', chat_value: 'sss'};
+         window.socket.on("add-chat", (payload) => {
+            // payload = {room_number: 'room#', my_display_name: 'sdf', chat_value: 'sss'};
             this.$store.commit("room/OPPONENT_ROOM_CHAT", payload);
          });
 
-         window.socket.on('system-chat', payload => {
-            this.$store.commit('room/SYSTEM_ROOM_CHAT', payload);
+         window.socket.on("system-chat", (payload) => {
+            this.$store.commit("room/SYSTEM_ROOM_CHAT", payload);
          });
 
-         window.socket.on('add-global-chat', payload => {
-            this.$store.commit('chat/GLOBAL_CHAT', payload);
+         window.socket.on("add-global-chat", (payload) => {
+            this.$store.commit("chat/GLOBAL_CHAT", payload);
          });
 
-         window.socket.on('game-started', payload => { // payload = { room };
-            this.$store.commit('room/GAME_STARTED', payload);
-            this.$store.commit('general/CLOSE_END_GAME_SCREEN');
-            this.$store.commit('audio/PLAY_BGM', 'lith');
-            
+         window.socket.on("game-started", (payload) => {
+            // payload = { room };
+            this.$store.commit("room/GAME_STARTED", payload);
+            this.$store.commit("general/CLOSE_END_GAME_SCREEN");
+            this.$store.commit("audio/PLAY_BGM", "lith");
          });
 
-         window.socket.on('flipped-card', payload => { // payload = { card, cardIndex };
-            this.$store.commit('room/ROOM_CARD', payload);
-            this.$store.commit('audio/PLAY_SOUND', 'card_flip');
+         window.socket.on("flipped-card", (payload) => {
+            // payload = { card, cardIndex };
+            this.$store.commit("room/ROOM_CARD", payload);
+            this.$store.commit("audio/PLAY_SOUND", "card_flip");
             // if (payload.flippedCardArray && this.$store.state.room.room_info.turn === this.my_player_number) {
             //    payload.flippedCardArray.forEach( card => {
             //       this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card });
@@ -117,121 +123,144 @@ export default {
             // }
          });
 
-         window.socket.on('my-turn-temp-disable', payload => { // payload = true || false (false is enable my turn);
-            this.$store.commit('card/MY_TURN_TEMP_DISABLE', payload);
+         window.socket.on("my-turn-temp-disable", (payload) => {
+            // payload = true || false (false is enable my turn);
+            this.$store.commit("card/MY_TURN_TEMP_DISABLE", payload);
          });
 
-         window.socket.on('turn-changed', payload => { // payload = { roomInfo };
-            this.$store.commit('room/ROOM_INFO_UPDATE', payload.roomInfo); // Simply updates room info;
+         window.socket.on("turn-changed", (payload) => {
+            // payload = { roomInfo };
+            this.$store.commit("room/ROOM_INFO_UPDATE", payload.roomInfo); // Simply updates room info;
             // If it's 2vs2 game,
             if (this.room_capacity === 4) {
-               if (this.room_turn === this.my_player_number && !payload.dontEnableTurn) { // If it's my turn, add card info to tracker;
-                  if (payload.flippedCardArray) { // If other team's cards weren't matching,
-                     payload.flippedCardArray.forEach( card => { // Should really be one card;
+               if (
+                  this.room_turn === this.my_player_number &&
+                  !payload.dontEnableTurn
+               ) {
+                  // If it's my turn, add card info to tracker;
+                  if (payload.flippedCardArray) {
+                     // If other team's cards weren't matching,
+                     payload.flippedCardArray.forEach((card) => {
+                        // Should really be one card;
                         if (card.show) {
-                           this.$store.commit('card/FLIPPED_TRACKER', { action: 'push', flippedCard: card });
+                           this.$store.commit("card/FLIPPED_TRACKER", {
+                              action: "push",
+                              flippedCard: card,
+                           });
                         }
                      });
-                  } else { // If other team timed out,
-                     this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' }); // Should already be empty but for safety;
+                  } else {
+                     // If other team timed out,
+                     this.$store.commit("card/FLIPPED_TRACKER", {
+                        action: "clear",
+                     }); // Should already be empty but for safety;
                   }
                } else {
-                  this.$store.commit('card/FLIPPED_TRACKER', { action: 'clear' });
+                  this.$store.commit("card/FLIPPED_TRACKER", {
+                     action: "clear",
+                  });
                }
-               this.$store.commit('card/CARD_KEY');
+               this.$store.commit("card/CARD_KEY");
                if (payload.dontEnableTurn) return;
             }
-            this.$store.commit('card/MY_TURN_TEMP_DISABLE', false); // Enable temp turn (turn will be determined by other turn data);
+            this.$store.commit("card/MY_TURN_TEMP_DISABLE", false); // Enable temp turn (turn will be determined by other turn data);
          });
 
-         window.socket.on('play-sound', payload => { // payload = String;
-            this.$store.commit('audio/PLAY_SOUND', payload);
+         window.socket.on("play-sound", (payload) => {
+            // payload = String;
+            this.$store.commit("audio/PLAY_SOUND", payload);
             // this.$store.commit('audio/PLAY_SOUND', payload.sound);
          });
 
-         window.socket.on('room-info-update', payload => { // payload = { roomInfo: ... };
-            this.$store.commit('room/ROOM_INFO_UPDATE', payload.roomInfo);
+         window.socket.on("room-info-update", (payload) => {
+            // payload = { roomInfo: ... };
+            this.$store.commit("room/ROOM_INFO_UPDATE", payload.roomInfo);
             if (this.room_capacity === 4) {
-               this.$store.commit('room/ROOM_CARD', payload);
+               this.$store.commit("room/ROOM_CARD", payload);
                // this.$store.commit('audio/PLAY_SOUND', 'card_flip');
-               this.$store.commit('card/CARD_KEY');
+               this.$store.commit("card/CARD_KEY");
             }
          });
 
-         window.socket.on('restart-countdown', payload => { // true or false;
-            this.$store.dispatch('card/countdown_function', payload);
+         window.socket.on("restart-countdown", (payload) => {
+            // true or false;
+            this.$store.dispatch("card/countdown_function", payload);
          });
 
-         window.socket.on('countdown-paused', () => { // Pauses countdown and resets its value to default;
-            this.$store.commit('card/PAUSE_COUNTDOWN');
+         window.socket.on("countdown-paused", () => {
+            // Pauses countdown and resets its value to default;
+            this.$store.commit("card/PAUSE_COUNTDOWN");
          });
 
-         window.socket.on('game-ended', payload => { // payload = { winner: {...}, losers: [{...}, {...}], draws: [{...}, {...}] };
-         console.log('trigg');
-            this.$store.commit('general/END_GAME_SCREEN', payload);
-            this.$store.commit('card/INITIAL_STATE_CARD');
-            this.$store.dispatch('card/countdown_function', false);
-         });
-         
-         window.socket.on('joined-custom-room', () => {
-            this.$store.commit('room/ROOM_TYPE', 'custom');
+         window.socket.on("game-ended", (payload) => {
+            // payload = { winner: {...}, losers: [{...}, {...}], draws: [{...}, {...}] };
+            console.log("trigg");
+            this.$store.commit("general/END_GAME_SCREEN", payload);
+            this.$store.commit("card/INITIAL_STATE_CARD");
+            this.$store.dispatch("card/countdown_function", false);
          });
 
-         window.socket.on('custom-game-start', () => {
-            this.$store.commit('room/GAME_STARTING', true); 
+         window.socket.on("joined-custom-room", () => {
+            this.$store.commit("room/ROOM_TYPE", "custom");
          });
 
-         window.socket.on('global-loading', payload => {
-            this.$store.commit('general/GLOBAL_LOADING', payload);
+         window.socket.on("custom-game-start", () => {
+            this.$store.commit("room/GAME_STARTING", true);
          });
 
-         window.socket.on('position-changed', payload => {
-            this.$store.commit('room/POSITION_CHANGED', payload);
+         window.socket.on("global-loading", (payload) => {
+            this.$store.commit("general/GLOBAL_LOADING", payload);
          });
 
-         window.socket.on('update-my-info', payload => { // For users only;
+         window.socket.on("position-changed", (payload) => {
+            this.$store.commit("room/POSITION_CHANGED", payload);
+         });
+
+         window.socket.on("update-my-info", (payload) => {
+            // For users only;
             this.$store.commit("user/USER_INFO", payload);
          });
 
-         window.socket.on('personal-alert', payload => {
+         window.socket.on("personal-alert", (payload) => {
             if (payload.type) {
-               this.$store.commit('alert/SPECIAL_ALERT', payload);
+               this.$store.commit("alert/SPECIAL_ALERT", payload);
                return;
             }
-            this.$store.commit('alert/SHOW_ALERT', payload);
+            this.$store.commit("alert/SHOW_ALERT", payload);
          });
 
-         window.socket.on('update-spectators-only', payload => {
-            this.$store.commit('room/UPDATE_SPECTATORS_ONLY', payload);
+         window.socket.on("update-spectators-only", (payload) => {
+            this.$store.commit("room/UPDATE_SPECTATORS_ONLY", payload);
          });
 
-         window.socket.on('unfriended', payload => {
-            this.$store.commit('friend/FRIEND_LIST_ALL', payload.newFriendList);
-            this.$store.commit('general/GLOBAL_LOADING', false);
+         window.socket.on("unfriended", (payload) => {
+            this.$store.commit("friend/FRIEND_LIST_ALL", payload.newFriendList);
+            this.$store.commit("general/GLOBAL_LOADING", false);
          });
 
-         window.socket.on('add-whisper', payload => {
-            this.$store.commit('chat/FRIEND_WHISPER', payload);
+         window.socket.on("add-whisper", (payload) => {
+            this.$store.commit("chat/FRIEND_WHISPER", payload);
          });
-
       },
       detect_ios() {
-         return [
-            'iPad Simulator',
-            'iPhone Simulator',
-            'iPod Simulator',
-            'iPad',
-            'iPhone',
-            'iPod'
-         ].includes(navigator.platform)
-         // iPad on iOS 13 detection
-         || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
-      }
+         return (
+            [
+               "iPad Simulator",
+               "iPhone Simulator",
+               "iPod Simulator",
+               "iPad",
+               "iPhone",
+               "iPod",
+            ].includes(navigator.platform) ||
+            // iPad on iOS 13 detection
+            (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+         );
+      },
    },
    watch: {
       connect_socket_watch(newVal) {
          newVal && this.connect_socket();
-      }
+      },
    },
    mounted() {
       if (process.env.NODE_ENV === "production") {
@@ -240,28 +269,27 @@ export default {
                https:${location.href.substring(location.protocol.length)}
             `);
          }
-         window.server_url = "https://monstermatches-server.herokuapp.com";
+         // window.server_url = "https://monstermatches-server.herokuapp.com";
+         window.server_url = "https://server.monstermatches";
       } else {
-         window.server_url = "http://localhost:5555";
+         window.server_url = "http://localhost:5000";
          // window.server_url = this.$store.state.general.server_url;
       }
-
    },
    beforeMount() {
       localStorage.__ios = this.detect_ios();
 
       if (this.detect_ios()) {
-         this.$store.commit('audio/FILE_TYPE', 'mp3');
-         this.$store.commit('audio/MP3_FOLDER', 'mp3/');
+         this.$store.commit("audio/FILE_TYPE", "mp3");
+         this.$store.commit("audio/MP3_FOLDER", "mp3/");
       } else {
-         this.$store.commit('audio/FILE_TYPE', 'ogg');
-         this.$store.commit('audio/MP3_FOLDER', '');
+         this.$store.commit("audio/FILE_TYPE", "ogg");
+         this.$store.commit("audio/MP3_FOLDER", "");
       }
-
-   }
+   },
    // created() {
    //    // localStorage.__ios = this.detect_ios();
-      
+
    //    // if (/iPhone|iPad|iPod/i.test(navigator.userAgent)){ // If IOS device,
    //    //    console.log(navigator.userAgent);
    //    // } else {
@@ -273,8 +301,12 @@ export default {
 
 <style>
 .purple-theme {
-   background: rgb(128,0,128);
-   background: linear-gradient(198deg, rgba(128,0,128,1) 0%, rgba(128,0,56,1) 100%);
+   background: rgb(128, 0, 128);
+   background: linear-gradient(
+      198deg,
+      rgba(128, 0, 128, 1) 0%,
+      rgba(128, 0, 56, 1) 100%
+   );
 }
 
 /* width */
@@ -285,7 +317,6 @@ export default {
 /* Track */
 ::-webkit-scrollbar-track {
    background: #f1f1f1;
-
 }
 
 /* Handle */

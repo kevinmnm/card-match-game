@@ -264,11 +264,11 @@ export default {
    },
    mounted() {
       if (process.env.NODE_ENV === "production") {
-         if (location.protocol !== "https:") {
-            location.replace(`
-               https:${location.href.substring(location.protocol.length)}
-            `);
-         }
+         // if (location.protocol !== "https:") {
+         //    location.replace(`
+         //       https:${location.href.substring(location.protocol.length)}
+         //    `);
+         // }
          // window.server_url = "https://monstermatches-server.herokuapp.com";
          window.server_url = "https://server.monstermatches";
       } else {

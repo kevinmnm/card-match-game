@@ -5,12 +5,16 @@ ARG NAME
 ARG TYPE
 ARG PORT
 ARG WORKDIR
+ARG NUXT_HOST
 
 ENV \
    NAME=${NAME:?error} \
    TYPE=${TYPE:-main} \
    PORT=${PORT:?${NAME}_error} \
-   WORKDIR=${WORKDIR:?${NAME}_error}
+   WORKDIR=${WORKDIR:?${NAME}_error} \
+   ### FOR NUXT APP ###
+   NUXT_HOST=${NUXT_HOST:-0.0.0.0} \
+   NUXT_PORT=${PORT:?${NAME}_error}
 
 WORKDIR ${WORKDIR}
 

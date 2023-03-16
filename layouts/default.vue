@@ -262,21 +262,22 @@ export default {
          newVal && this.connect_socket();
       },
    },
-   mounted() {
-      if (process.env.NODE_ENV === "production") {
-         // if (location.protocol !== "https:") {
-         //    location.replace(`
-         //       https:${location.href.substring(location.protocol.length)}
-         //    `);
-         // }
-         // window.server_url = "https://monstermatches-server.herokuapp.com";
-         window.server_url = "https://server.monstermatches";
-      } else {
-         window.server_url = "http://localhost:5000";
-         // window.server_url = this.$store.state.general.server_url;
-      }
-   },
+   // mounted() {
+   //    if (process.env.NODE_ENV === "production") {
+   //       // if (location.protocol !== "https:") {
+   //       //    location.replace(`
+   //       //       https:${location.href.substring(location.protocol.length)}
+   //       //    `);
+   //       // }
+   //       // window.server_url = "https://monstermatches-server.herokuapp.com";
+   //       window.server_url = "https://server.monstermatches.com";
+   //    } else {
+   //       window.server_url = "http://localhost:5000";
+   //       // window.server_url = this.$store.state.general.server_url;
+   //    }
+   // },
    beforeMount() {
+      window.server_url = process.env.SERVER_URL;
       localStorage.__ios = this.detect_ios();
 
       if (this.detect_ios()) {

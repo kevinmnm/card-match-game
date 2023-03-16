@@ -1,6 +1,27 @@
 import colors from 'vuetify/es5/util/colors'
 
+const {
+  NODE_ENV,
+  SERVER_PORT, // Set by docker-compose.
+} = process.env;
+
+const isDev = NODE_ENV === 'development';
+const nodeEnv = NODE_ENV.toUpperCase();
+
+const HOST = process.env[`NUXT_HOST_${nodeEnv}`];
+const PORT = process.env[`NUXT_PORT_${nodeEnv}`];
+const SERVER_URL = process.env[`NUXT_SERVER_URL_${nodeEnv}`];
+
 export default {
+  // Env configuration (https://nuxtjs.org/docs/configuration-glossary/configuration-env/)
+  env: {
+    //  server_url: isDev ? `http://localhost:5000` : `https://monstermatches.com`,
+    SERVER_URL,
+  },
+  server: {
+    host: HOST,
+    port: PORT,
+  },
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
     titleTemplate: '%s - card-match-game',
@@ -96,9 +117,4 @@ export default {
   loading: {
     color: '#800080'
   },
-
-  // Env configuration (https://nuxtjs.org/docs/configuration-glossary/configuration-env/)
-//   env: {
-//    server_url: process.env.NODE_ENV === 'production' ? 'http://localhost'
-//   }
 }

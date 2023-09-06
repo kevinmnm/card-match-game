@@ -278,11 +278,14 @@ export default {
    // },
    beforeMount() {
       window.server_url = process.env.SERVER_URL;
-      localStorage.__ios = this.detect_ios();
+      const isIOS = this.detect_ios();
+      localStorage.__ios = isIOS;
 
-      if (this.detect_ios()) {
+      if (isIOS) {
          this.$store.commit("audio/FILE_TYPE", "mp3");
          this.$store.commit("audio/MP3_FOLDER", "mp3/");
+         this.$store.commit("audio/MUTE_BGM", true);
+         this.$store.commit("audio/MUTE_SOUND", true);
       } else {
          this.$store.commit("audio/FILE_TYPE", "ogg");
          this.$store.commit("audio/MP3_FOLDER", "");

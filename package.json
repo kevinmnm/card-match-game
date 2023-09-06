@@ -7,7 +7,12 @@
       "build": "nuxt build",
       "start": "nuxt start",
       "generate": "nuxt generate",
-      "heroku-postbuild": "npm run build"
+      "heroku-postbuild": "npm run build",
+      "docker:build": "docker build . -f Dockerfile.standalone -t harbor.kevsong.com/monstermatches/frontend:latest --no-cache",
+      "docker:push": "docker push harbor.kevsong.com/monstermatches/frontend:latest",
+      "docker:run": "docker run -d -p 80:80 harbor.kevsong.com/monstermatches/frontend:latest",
+      "docker:preview": "npm run docker:build && npm run docker:run",
+      "docker:deploy": "npm run docker:build && npm run docker:push"
    },
    "dependencies": {
       "animate.css": "^4.1.1",

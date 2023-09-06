@@ -1,3 +1,10 @@
 .git
 .gitignore
 node_modules
+.nuxt
+dist
+*.env*
+Procfile
+README.md
+.vscode
+.editorconfig
